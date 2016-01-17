@@ -13,6 +13,7 @@ import {CribbageHand} from "./CribbageHand";
 import {CribbagePlayer} from "./CribbagePlayer";
 import {CribbageTeam} from "./CribbageTeam";
 import {StandardDeck} from "./StandardDeck";
+import {BaseCard} from "../Base Classes/Items/Card";
 
 "use strict";
 
@@ -65,6 +66,13 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         this.playersInPlay = new ItemCollection<CribbagePlayer>([]);
         this.sequence = new Sequence();
     }
+
+    /**
+     * Initialize the game.
+     * - Set the game mode (team or free for all)
+     * - Create the teams
+     * @throws CribbageErrorStrings.INVALID_NUMBER_OF_PLAYERS if there are too few or too many players
+     */
     private initializeGame(): void {
         this.numPlayers = this.players.countItems();
         if (this.numPlayers < 2 || this.numPlayers > 6)
@@ -99,11 +107,28 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             }
         }
     }
+
+    /**
+     * Begin the game.
+     * - initialize the game
+     * - cut for dealer
+     * - deal the cards
+     */
     begin():void {
         this.initializeGame();
         this.cutForDealer();
         this.deal();
     }
+
+    /**
+     * The given player plays the given cards from their hand into the kitty. The game size determines how
+     * many cards the player should be throwing into the kitty.
+     * @param player
+     * @param cards
+     * @throws CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD if the player doesn't have the cards
+     * @throws CribbageErrorStrings.INVALID_NUM_CARDS_THROWN_TO_KITTY if the player throws the wrong number of cards
+     * @throws CribbageErrorStrings.INVALID_THROWER if the player cannot legally throw to the kitty
+     */
     giveToKitty(player: CribbagePlayer, cards: ItemCollection<Card>): void {
         // Check that the player has the cards they're trying to throw
         var numThrown = cards.countItems();
@@ -134,8 +159,8 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 }
                 else if (this.numPlayers == 6) {
                     var team = this.findTeam(player);
-                    for (var ix = 0; ix < team.players.countItems(); ix++) {
-                        if (team.players.itemAt(ix).equalsOther(this.dealer)) {
+                    for (var ix = 0; ix < team.countPlayers(); ix++) {
+                        if (team.playerAt(ix).equalsOther(this.dealer)) {
                             throw CribbageErrorStrings.INVALID_THROWER;
                         }
                     }
@@ -153,6 +178,14 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             this.cutTheDeck();
         }
     }
+
+    /**
+     * The given player is playing the given card: determine if they can play the card and if so, then count
+     * any points the player may have gotten from playing the card.
+     * @param playerName
+     * @param card
+     * @returns {boolean}
+     */
     playCard(playerName: string, card: Card):boolean {
         // Make sure everyone has thrown to the kitty
         if (this.kitty.size() != 4) {
@@ -200,6 +233,16 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         }
         return gameOver;
     }
+
+    /**
+     * The given player is the one that said "go": determine if the player can still play. If the player cannot
+     * play, then determine if the round is over. If the round is over, then count the points, set the next dealer,
+     * deal the cards, and start over again.
+     * @param playerName the player who said "go"
+     * @returns {boolean} true if it's game over, false if the game is not over
+     * @throws CribbageErrorStrings.PLAYER_DOES_NOT_EXIST if the player is not part of the current game
+     * @throws CribbageErrorStrings.PLAYER_CAN_PLAY if the player has a card that they can still play
+     */
     go(playerName: string):boolean {
         var player = this.findPlayer(playerName);
         if (player == null) {
@@ -212,7 +255,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         if (this.playersInPlay.countItems() == 0) {
             // No more players in play, give the player a point for a go
             var team = this.findTeam(player);
-            if (team.addPoints(1)) {
+            if (team.addPoints(player, 1)) {
                 // Game over
                 this.winningTeam = team;
                 return true;
@@ -236,6 +279,12 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         }
         return false;
     }
+
+    /**
+     * Add a player to the current game
+     * @param player the player to add
+     * @throws CribbageErrorStrings.PLAYER_ALREADY_IN_GAME if the player is already in the game
+     */
     addPlayer(player:CribbagePlayer):void {
         if (this.findPlayer(player.name)) {
             throw CribbageErrorStrings.PLAYER_ALREADY_IN_GAME;
@@ -244,6 +293,11 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             this.players.addPlayer(player);
         }
     }
+
+    /**
+     * Describe the current state of the game
+     * @returns {string}
+     */
     describe():string {
         var scores = "";
         if (this.teams) {
@@ -256,7 +310,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 scores += (" = " + team.countPoints() + " }, ");
             }
         }
-        var players = new Array<string>();
+        var players = [];
         for (var jx = 0; jx < this.players.countItems(); jx++) {
             players.push(this.players.itemAt(jx).name);
         }
@@ -269,6 +323,12 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             players
         ));
     }
+
+    /**
+     * Find the player with the given name
+     * @param playerName
+     * @returns {CribbagePlayer}
+     */
     private findPlayer(playerName: string):CribbagePlayer {
         var player = null;
         var match = new CribbagePlayer(playerName, new CribbageHand([]));
@@ -281,8 +341,13 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         }
         return player;
     }
+
+    /**
+     * Determine if the round is over by seeing if any of the players in play have cards left to play
+     * @returns {boolean}
+     */
     private roundOver():boolean {
-        var done = true;;
+        var done = true;
         for (var index = 0; index < this.players.countItems(); index++) {
             if (this.players.itemAt(index).hand.size() > 0) {
                 done = false;
@@ -297,18 +362,18 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * @returns {boolean} true = game over
      */
     private countPoints():boolean {
-        var firstPlayer = this.nextPlayerInOrder(this.dealer)
+        var firstPlayer = this.nextPlayerInOrder(this.dealer);
         var countingPlayer = firstPlayer;
         do {
             var team = this.findTeam(countingPlayer);
-            if (team.addPoints(countingPlayer.countPoints(this.cut))) {
+            if (team.addPoints(countingPlayer, countingPlayer.countPoints(this.cut))) {
                 // Game over
                 this.winningTeam = team;
                 return true;
             }
             if (this.dealer.equalsOther(countingPlayer)) {
                 // Add the kitty up
-                if (team.addPoints(this.kitty.countPoints(this.cut, true))) {
+                if (team.addPoints(countingPlayer, this.kitty.countPoints(this.cut, true))) {
                     // Game over
                     this.winningTeam = team;
                     return true;
@@ -377,20 +442,36 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 throw CribbageErrorStrings.INVALID_NUMBER_OF_PLAYERS;
         }
     }
+
+    /**
+     * Select a random card (without replacement) as the cut card
+     */
     private cutTheDeck() {
         this.cut = this.deck.randomDraw(false);
     }
-    private draw() {
+
+    /**
+     * Draw a card from the deck
+     * @returns {BaseCard}
+     */
+    private draw():BaseCard {
         return this.deck.draw();
     }
-    private dealForTwo() {
+
+    /**
+     * Deal the cards for a two player game
+     */
+    private dealForTwo():void {
         var player = this.nextPlayerInOrder(this.dealer);
         while (player.numCards() < 6) {
             player.hand.takeCard(this.draw());
             player = this.nextPlayerInOrder(player);
         }
     }
-    private dealForThree() {
+    /**
+     * Deal the cards for a three player game
+     */
+    private dealForThree():void {
         var player = this.nextPlayerInOrder(this.dealer);
         while (player.numCards() < 5) {
             player.takeCard(this.draw());
@@ -401,33 +482,49 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         }
         this.kitty.takeCard(this.draw());
     }
-    private dealForFour() {
+    /**
+     * Deal the cards for a four player game
+     */
+    private dealForFour():void {
         var player = this.nextPlayerInOrder(this.dealer);
         while (player.numCards() < 5) {
             player.takeCard(this.draw());
             player = this.nextPlayerInOrder(player);
         }
     }
-    private dealForFive() {
+    /**
+     * Deal the cards for a five player game
+     */
+    private dealForFive():void {
         throw "Not Implemented!";
     }
-    private dealForSix() {
+    /**
+     * Deal the cards for a six player game
+     */
+    private dealForSix():void {
         var player = this.nextPlayerInOrder(this.dealer);
         var dealingTeam = this.findTeam(this.dealer);
         while (player.numCards() < 5) {
-            if (player.equalsOther(this.dealer) || dealingTeam.equals(this.findTeam(player))) {
-                continue;
-            }
-            else {
+            if (!(player.equalsOther(this.dealer) || dealingTeam.equalsOther(this.findTeam(player)))) {
                 player.takeCard(this.draw());
             }
         }
     }
-    private setNextDealer() {
+
+    /**
+     * Set the dealer and next player to play a card
+     */
+    private setNextDealer():void {
         this.dealer = this.nextPlayerInOrder(this.dealer);
         this.nextPlayerInSequence = this.nextPlayerInOrder(this.dealer);
     }
-    private nextPlayerInOrder(player: CribbagePlayer) {
+
+    /**
+     * Determine the next player to play a card
+     * @param player the player who just played a card
+     * @returns {CribbagePlayer} the next player to play
+     */
+    private nextPlayerInOrder(player: CribbagePlayer):CribbagePlayer {
         var index = this.players.indexOfItem(player);
         if ((index + 1) >= this.numPlayers) {
             index = 0;
@@ -437,7 +534,13 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         }
         return this.players.itemAt(index);
     }
-    private findTeam(player: CribbagePlayer) {
+
+    /**
+     * Find the team that the given player belongs to
+     * @param player
+     * @returns {CribbageTeam} the team the player belongs to
+     */
+    private findTeam(player: CribbagePlayer):CribbageTeam {
         var team = null;
         for (var index = 0; index < this.teams.numTeams(); index++) {
             var t = this.teams[index];
