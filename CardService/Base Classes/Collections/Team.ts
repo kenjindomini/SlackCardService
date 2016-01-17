@@ -14,6 +14,12 @@ export class BaseTeam<SomePlayerClass extends Player> extends ItemCollection<Som
         super(players);
         this.id = id;
     }
+    countPlayers():number {
+        return this.countItems();
+    }
+    playerAt(index:number):SomePlayerClass {
+        return this.itemAt(index);
+    }
     hasPlayer(player: SomePlayerClass) {
         return (this.indexOfItem(player) != -1);
     }
