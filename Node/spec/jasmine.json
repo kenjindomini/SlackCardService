@@ -1,0 +1,6 @@
+{
+  "spec_files": [
+    "SlackCardService/*[sS]pec.js"
+  ]
+}
+
