@@ -35,7 +35,7 @@ var CribbageRoutes = (function () {
         res.status(response.status).send(response.message);
     };
     CribbageRoutes.prototype.joinGame = function (req, res) {
-        var playerName = req.body.player.name;
+        var playerName = req.body.user_name;
         var newPlayer = new cribbage_player_1.CribbagePlayer(playerName, new cribbage_hand_1.CribbageHand([]));
         var response = new CribbageResponse(200, "Welcome, " + playerName);
         if (this.currentGame == null) {
@@ -95,7 +95,7 @@ var CribbageRoutes = (function () {
         CribbageRoutes.sendResponse(response, res);
     };
     CribbageRoutes.prototype.playCard = function (req, res) {
-        var player = req.body.player.name;
+        var player = req.body.user_name;
         var card = new card_1.BaseCard(req.body.suit, req.body.value);
         var response = new CribbageResponse(200, "");
         try {

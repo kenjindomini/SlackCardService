@@ -56,7 +56,7 @@ export class CribbageRoutes {
     /* ***** Initializing the Game ***** */
 
     joinGame(req:express.Request, res:express.Response) {
-        var playerName = req.body.player.name;
+        var playerName = req.body.user_name;
         var newPlayer = new CribbagePlayer(playerName, new CribbageHand([]));
         var response = new CribbageResponse(200, "Welcome, " + playerName);
         if (this.currentGame == null) {
@@ -127,7 +127,7 @@ export class CribbageRoutes {
     }
 
     playCard(req:express.Request, res:express.Response) {
-        var player = req.body.player.name;
+        var player = req.body.user_name;
         var card:Card = new Card(req.body.suit, req.body.value);
         var response = new CribbageResponse(200, "");
         try {
