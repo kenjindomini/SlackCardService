@@ -1,18 +1,18 @@
 /// <reference path="../../typings/jasmine/jasmine.d.ts" />
-/// <reference path="../../CardService/Base Classes/Collections/hand.ts" />
-/// <reference path="../../CardService/Implementations/cribbage_player.ts" />
-/// <reference path="../../CardService/Implementations/cribbage_team.ts" />
-/// <reference path="../../CardService/Implementations/cribbage.ts" />
-/// <reference path="../../CardService/Base Classes/card_game.ts" />
+/// <reference path="../../card_service/base_classes/collections/hand.ts" />
+/// <reference path="../../card_service/implementations/cribbage_player.ts" />
+/// <reference path="../../card_service/implementations/cribbage_team.ts" />
+/// <reference path="../../card_service/implementations/cribbage.ts" />
+/// <reference path="../../card_service/base_classes/card_game.ts" />
 
-import {BaseCard, Suit, Value} from "../../CardService/Base Classes/Items/card";
-import {BaseHand} from "../../CardService/Base Classes/Collections/hand";
-import {CribbagePlayer} from "../../CardService/Implementations/cribbage_player";
-import {CribbageTeam} from "../../CardService/Implementations/cribbage_team";
-import {Cribbage, CribbageGameDescription, CribbageErrorStrings} from "../../CardService/Implementations/cribbage";
-import {BaseCardGame, Players, Sequence} from "../../CardService/Base Classes/card_game";
-import {CribbageHand} from "../../CardService/Implementations/cribbage_hand";
-import {ItemCollection} from "../../CardService/Base Classes/Collections/item_collection";
+import {BaseCard, Suit, Value} from "../../card_service/base_classes/items/card";
+import {BaseHand} from "../../card_service/base_classes/collections/hand";
+import {CribbagePlayer} from "../../card_service/implementations/cribbage_player";
+import {CribbageTeam} from "../../card_service/implementations/cribbage_team";
+import {Cribbage, CribbageGameDescription, CribbageErrorStrings} from "../../card_service/implementations/cribbage";
+import {BaseCardGame, Players, Sequence} from "../../card_service/base_classes/card_game";
+import {CribbageHand} from "../../card_service/implementations/cribbage_hand";
+import {ItemCollection} from "../../card_service/base_classes/collections/item_collection";
 import {setup, CribbageRoutePrefix} from "../../app";
 import {createNewServer} from "./setup";
 import {CribbageRoutes, CribbageStrings} from "../../routes/Cribbage/index";

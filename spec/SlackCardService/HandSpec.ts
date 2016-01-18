@@ -1,9 +1,9 @@
 /// <reference path="../../typings/jasmine/jasmine.d.ts" />
-/// <reference path="../../CardService/Base Classes/Collections/hand.ts" />
-/// <reference path="../../CardService/Base Classes/Items/card.ts" />
+/// <reference path="../../card_service/base_classes/collections/hand.ts" />
+/// <reference path="../../card_service/base_classes/items/card.ts" />
 
-import {BaseCard, Suit, Value} from "../../CardService/Base Classes/Items/card";
-import {BaseHand} from "../../CardService/Base Classes/Collections/hand";
+import {BaseCard, Suit, Value} from "../../card_service/base_classes/items/card";
+import {BaseHand} from "../../card_service/base_classes/collections/hand";
 
 describe("Test the Hand's functionality", function() {
     var hand;

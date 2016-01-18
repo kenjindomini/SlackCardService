@@ -1,11 +1,11 @@
 /// <reference path="../../typings/jasmine/jasmine.d.ts" />
-/// <reference path="../../CardService/Base Classes/Collections/hand.ts" />
-/// <reference path="../../CardService/Base Classes/Items/card.ts" />
-/// <reference path="../../CardService/Base Classes/Items/player.ts" />
+/// <reference path="../../card_service/base_classes/collections/hand.ts" />
+/// <reference path="../../card_service/base_classes/items/card.ts" />
+/// <reference path="../../card_service/base_classes/items/player.ts" />
 
-import {BaseHand} from "../../CardService/Base Classes/Collections/hand";
-import {BaseCard, Suit, Value} from "../../CardService/Base Classes/Items/card";
-import {BasePlayer} from "../../CardService/Base Classes/Items/player";
+import {BaseHand} from "../../card_service/base_classes/collections/hand";
+import {BaseCard, Suit, Value} from "../../card_service/base_classes/items/card";
+import {BasePlayer} from "../../card_service/base_classes/items/player";
 
 describe("Test the Base Player's functionality", function() {
 	var player;

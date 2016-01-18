@@ -1,9 +1,9 @@
 /// <reference path="../../typings/jasmine/jasmine.d.ts" />
-/// <reference path="../../CardService/Base Classes/Items/card.ts" />
-/// <reference path="../../CardService/Implementations/standard_deck.ts" />
+/// <reference path="../../card_service/base_classes/items/card.ts" />
+/// <reference path="../../card_service/implementations/standard_deck.ts" />
 
-import {StandardDeck} from "../../CardService/Implementations/standard_deck";
-import {BaseCard} from "../../CardService/Base Classes/Items/card";
+import {StandardDeck} from "../../card_service/implementations/standard_deck";
+import {BaseCard} from "../../card_service/base_classes/items/card";
 
 describe("Test the Standard Deck's functionality", function () {
     var deck;

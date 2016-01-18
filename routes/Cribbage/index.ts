@@ -1,16 +1,16 @@
 /// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="../../CardService/Implementations/cribbage.ts" />
-/// <reference path="../../CardService/Implementations/cribbage_hand.ts" />
-/// <reference path="../../CardService/Implementations/cribbage_player.ts" />
-/// <reference path="../../CardService/Base Classes/card_game.ts" />
+/// <reference path="../../card_service/implementations/cribbage.ts" />
+/// <reference path="../../card_service/implementations/cribbage_hand.ts" />
+/// <reference path="../../card_service/implementations/cribbage_player.ts" />
+/// <reference path="../../card_service/base_classes/card_game.ts" />
 
 import * as express from "express";
 
-import {CribbagePlayer} from "../../CardService/Implementations/cribbage_player";
-import {Cribbage} from "../../CardService/Implementations/cribbage";
-import {CribbageHand} from "../../CardService/Implementations/cribbage_hand";
-import {Players, Teams} from "../../CardService/Base Classes/card_game";
-import {BaseCard as Card} from "../../CardService/Base Classes/Items/card";
+import {CribbagePlayer} from "../../card_service/implementations/cribbage_player";
+import {Cribbage} from "../../card_service/implementations/cribbage";
+import {CribbageHand} from "../../card_service/implementations/cribbage_hand";
+import {Players, Teams} from "../../card_service/base_classes/card_game";
+import {BaseCard as Card} from "../../card_service/base_classes/items/card";
 
 export module CribbageStrings {
     export class MessageStrings {

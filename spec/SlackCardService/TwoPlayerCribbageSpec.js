@@ -1,10 +1,10 @@
-var card_1 = require("../../CardService/Base Classes/Items/card");
-var hand_1 = require("../../CardService/Base Classes/Collections/hand");
-var cribbage_player_1 = require("../../CardService/Implementations/cribbage_player");
-var cribbage_1 = require("../../CardService/Implementations/cribbage");
-var card_game_1 = require("../../CardService/Base Classes/card_game");
-var cribbage_hand_1 = require("../../CardService/Implementations/cribbage_hand");
-var item_collection_1 = require("../../CardService/Base Classes/Collections/item_collection");
+var card_1 = require("../../card_service/base_classes/items/card");
+var hand_1 = require("../../card_service/base_classes/collections/hand");
+var cribbage_player_1 = require("../../card_service/implementations/cribbage_player");
+var cribbage_1 = require("../../card_service/implementations/cribbage");
+var card_game_1 = require("../../card_service/base_classes/card_game");
+var cribbage_hand_1 = require("../../card_service/implementations/cribbage_hand");
+var item_collection_1 = require("../../card_service/base_classes/collections/item_collection");
 "use strict";
 describe("Test a Cribbage game between two players", function () {
     var game, playerOne, playerTwo;

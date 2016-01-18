@@ -1,5 +1,5 @@
-var standard_deck_1 = require("../../CardService/Implementations/standard_deck");
-var card_1 = require("../../CardService/Base Classes/Items/card");
+var standard_deck_1 = require("../../card_service/implementations/standard_deck");
+var card_1 = require("../../card_service/base_classes/items/card");
 describe("Test the Standard Deck's functionality", function () {
     var deck;
     beforeEach(function () {

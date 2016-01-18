@@ -1,4 +1,4 @@
-var item_collection_1 = require("../../CardService/Base Classes/Collections/item_collection");
+var item_collection_1 = require("../../card_service/base_classes/collections/item_collection");
 var BasicItem = (function () {
     function BasicItem(value) {
         this.value = value;

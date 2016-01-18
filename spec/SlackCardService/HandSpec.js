@@ -1,5 +1,5 @@
-var card_1 = require("../../CardService/Base Classes/Items/card");
-var hand_1 = require("../../CardService/Base Classes/Collections/hand");
+var card_1 = require("../../card_service/base_classes/items/card");
+var hand_1 = require("../../card_service/base_classes/collections/hand");
 describe("Test the Hand's functionality", function () {
     var hand;
     beforeEach(function () {

@@ -1,6 +1,6 @@
-var hand_1 = require("../../CardService/Base Classes/Collections/hand");
-var card_1 = require("../../CardService/Base Classes/Items/card");
-var player_1 = require("../../CardService/Base Classes/Items/player");
+var hand_1 = require("../../card_service/base_classes/collections/hand");
+var card_1 = require("../../card_service/base_classes/items/card");
+var player_1 = require("../../card_service/base_classes/items/player");
 describe("Test the Base Player's functionality", function () {
     var player;
     beforeEach(function () {

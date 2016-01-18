@@ -1,6 +1,6 @@
-var card_1 = require("../../CardService/Base Classes/Items/card");
-var cribbage_player_1 = require("../../CardService/Implementations/cribbage_player");
-var cribbage_hand_1 = require("../../CardService/Implementations/cribbage_hand");
+var card_1 = require("../../card_service/base_classes/items/card");
+var cribbage_player_1 = require("../../card_service/implementations/cribbage_player");
+var cribbage_hand_1 = require("../../card_service/implementations/cribbage_hand");
 describe("Test the Cribbage Player's functionality", function () {
     var player;
     var duplicateCard;

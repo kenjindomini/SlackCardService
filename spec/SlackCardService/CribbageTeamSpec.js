@@ -1,7 +1,7 @@
-var cribbage_player_1 = require("../../CardService/Implementations/cribbage_player");
-var cribbage_hand_1 = require("../../CardService/Implementations/cribbage_hand");
-var cribbage_team_1 = require("../../CardService/Implementations/cribbage_team");
-var card_1 = require("../../CardService/Base Classes/Items/card");
+var cribbage_player_1 = require("../../card_service/implementations/cribbage_player");
+var cribbage_hand_1 = require("../../card_service/implementations/cribbage_hand");
+var cribbage_team_1 = require("../../card_service/implementations/cribbage_team");
+var card_1 = require("../../card_service/base_classes/items/card");
 describe("Test the Cribbage Team's functionality", function () {
     var team;
     var playerOne;
