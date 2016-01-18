@@ -110,7 +110,19 @@ export class CribbageRoutes {
     /* ***** Run of play ***** */
 
     describe(req:express.Request, res:express.Response) {
-        var response = new CribbageResponse(200, (this.currentGame ? this.currentGame.describe() : "not started"));
+        var response = new CribbageResponse(200, (this.currentGame ? this.currentGame.describe() : "The game is not yet initialized"));
+        CribbageRoutes.sendResponse(response, res);
+    }
+
+    showCards(req:express.Request, res:express.Response) {
+        var response = new CribbageResponse(200, "");
+        try {
+            response.message = this.currentGame.getPlayerHand(req.body.user_name);
+        }
+        catch (e) {
+            response.status = 400;
+            response.message = e;
+        }
         CribbageRoutes.sendResponse(response, res);
     }
 

@@ -140,7 +140,7 @@ var Cribbage = (function (_super) {
         if (this.kitty.size() != 4) {
             throw CribbageErrorStrings.KITTY_NOT_READY;
         }
-        var player = this.players.findPlayer(playerName);
+        var player = this.findPlayer(playerName);
         if (!player.equalsOther(this.nextPlayerInSequence)) {
             throw CribbageErrorStrings.FMT_NOT_NEXT_PLAYER + this.nextPlayerInSequence.name;
         }
@@ -237,6 +237,19 @@ var Cribbage = (function (_super) {
             players.push(this.players.itemAt(jx).name);
         }
         return JSON.stringify(new CribbageGameDescription((this.dealer ? this.dealer.name : ""), (this.nextPlayerInSequence ? this.nextPlayerInSequence.name : ""), this.count, this.sequence.toString(), scores, players));
+    };
+    Cribbage.prototype.getPlayerHand = function (playerName) {
+        var hand = "";
+        var player = this.findPlayer(playerName);
+        if (player != null) {
+            for (var ix = 0; ix < player.numCards(); ix++) {
+                hand += (player.hand.itemAt(ix).toString() + ", ");
+            }
+        }
+        else {
+            throw CribbageErrorStrings.PLAYER_DOES_NOT_EXIST;
+        }
+        return hand;
     };
     Cribbage.prototype.findPlayer = function (playerName) {
         var player = null;

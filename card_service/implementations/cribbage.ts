@@ -192,7 +192,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             throw CribbageErrorStrings.KITTY_NOT_READY;
         }
         // Find the player
-        var player = this.players.findPlayer(playerName);
+        var player = this.findPlayer(playerName);
         if (!player.equalsOther(this.nextPlayerInSequence)) {
             throw CribbageErrorStrings.FMT_NOT_NEXT_PLAYER + this.nextPlayerInSequence.name;
         }
@@ -322,6 +322,26 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             scores,
             players
         ));
+    }
+
+    /**
+     * Find the given player and return their hand as a string
+     * @param playerName
+     * @returns {string} the string representation of the player's hand
+     * @throws CribbageErrorStrings.PLAYER_DOES_NOT_EXIST if the player does not exist
+     */
+    getPlayerHand(playerName: string):string {
+        var hand = "";
+        var player = this.findPlayer(playerName);
+        if (player != null) {
+            for (var ix = 0; ix < player.numCards(); ix++) {
+                hand += (player.hand.itemAt(ix).toString() + ", ");
+            }
+        }
+        else {
+            throw CribbageErrorStrings.PLAYER_DOES_NOT_EXIST;
+        }
+        return hand;
     }
 
     /**

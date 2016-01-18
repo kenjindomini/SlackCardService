@@ -80,7 +80,18 @@ var CribbageRoutes = (function () {
         CribbageRoutes.sendResponse(response, res);
     };
     CribbageRoutes.prototype.describe = function (req, res) {
-        var response = new CribbageResponse(200, (this.currentGame ? this.currentGame.describe() : "not started"));
+        var response = new CribbageResponse(200, (this.currentGame ? this.currentGame.describe() : "The game is not yet initialized"));
+        CribbageRoutes.sendResponse(response, res);
+    };
+    CribbageRoutes.prototype.showCards = function (req, res) {
+        var response = new CribbageResponse(200, "");
+        try {
+            response.message = this.currentGame.getPlayerHand(req.body.user_name);
+        }
+        catch (e) {
+            response.status = 400;
+            response.message = e;
+        }
         CribbageRoutes.sendResponse(response, res);
     };
     CribbageRoutes.prototype.playCard = function (req, res) {
