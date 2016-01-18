@@ -1,19 +1,14 @@
-/// <reference path="../../typings/jasmine/jasmine.d.ts" />
-/// <reference path="../../../CardService/Base Classes/Items/Card.ts" />
-/// <reference path="../../../CardService/Implementations/StandardDeck.ts" />
-
-import {StandardDeck} from "../../../CardService/Implementations/StandardDeck";
-import {BaseCard} from "../../../CardService/Base Classes/Items/Card";
-
+var StandardDeck_1 = require("../../CardService/Implementations/StandardDeck");
+var Card_1 = require("../../CardService/Base Classes/Items/Card");
 describe("Test the Standard Deck's functionality", function () {
     var deck;
     beforeEach(function () {
-        deck = new StandardDeck();
+        deck = new StandardDeck_1.StandardDeck();
     });
-    function makeDeckCopy(cards: Array<BaseCard>) {
+    function makeDeckCopy(cards) {
         var copy = [];
         for (var card in cards) {
-            copy.push(new BaseCard(card.suit, card.value));
+            copy.push(new Card_1.BaseCard(card.suit, card.value));
         }
         return copy;
     }
@@ -44,3 +39,4 @@ describe("Test the Standard Deck's functionality", function () {
         expect(deck.items).not.toContain(card);
     });
 });
+//# sourceMappingURL=StandardDeckSpec.js.map

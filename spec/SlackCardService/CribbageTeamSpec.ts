@@ -1,12 +1,12 @@
 /// <reference path="../../typings/jasmine/jasmine.d.ts" />
-/// <reference path="../../../CardService/Base Classes/Collections/Hand.ts" />
-/// <reference path="../../../CardService/Implementations/CribbageTeam.ts" />
-/// <reference path="../../../CardService/Implementations/CribbagePlayer.ts" />
+/// <reference path="../../CardService/Base Classes/Collections/Hand.ts" />
+/// <reference path="../../CardService/Implementations/CribbageTeam.ts" />
+/// <reference path="../../CardService/Implementations/CribbagePlayer.ts" />
 
-import {CribbagePlayer} from "../../../CardService/Implementations/CribbagePlayer";
-import {CribbageHand} from "../../../CardService/Implementations/CribbageHand";
-import {CribbageTeam} from "../../../CardService/Implementations/CribbageTeam";
-import {BaseCard, Suit, Value} from "../../../CardService/Base Classes/Items/Card";
+import {CribbagePlayer} from "../../CardService/Implementations/CribbagePlayer";
+import {CribbageHand} from "../../CardService/Implementations/CribbageHand";
+import {CribbageTeam} from "../../CardService/Implementations/CribbageTeam";
+import {BaseCard, Suit, Value} from "../../CardService/Base Classes/Items/Card";
 
 describe("Test the Cribbage Team's functionality", function() {
     var team;
