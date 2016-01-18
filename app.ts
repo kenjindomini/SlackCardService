@@ -4,7 +4,7 @@
 // Dependencies
 
 import {Express, Request, Response} from "express";
-import {CribbageRoutes} from "routes/Cribbage/index";
+import {CribbageRoutes} from "./routes/Cribbage/index";
 
 var bodyParser  = require("body-parser"),
     errorHandler= require("errorhandler"),

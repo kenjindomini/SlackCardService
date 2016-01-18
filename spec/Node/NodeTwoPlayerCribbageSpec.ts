@@ -1,18 +1,18 @@
 /// <reference path="../../typings/jasmine/jasmine.d.ts" />
-/// <reference path="../../../CardService/Base Classes/Collections/Hand.ts" />
-/// <reference path="../../../CardService/Implementations/CribbagePlayer.ts" />
-/// <reference path="../../../CardService/Implementations/CribbageTeam.ts" />
-/// <reference path="../../../CardService/Implementations/Cribbage.ts" />
-/// <reference path="../../../CardService/Base Classes/CardGame.ts" />
+/// <reference path="../../CardService/Base Classes/Collections/Hand.ts" />
+/// <reference path="../../CardService/Implementations/CribbagePlayer.ts" />
+/// <reference path="../../CardService/Implementations/CribbageTeam.ts" />
+/// <reference path="../../CardService/Implementations/Cribbage.ts" />
+/// <reference path="../../CardService/Base Classes/CardGame.ts" />
 
-import {BaseCard, Suit, Value} from "../../../CardService/Base Classes/Items/Card";
-import {BaseHand} from "../../../CardService/Base Classes/Collections/Hand";
-import {CribbagePlayer} from "../../../CardService/Implementations/CribbagePlayer";
-import {CribbageTeam} from "../../../CardService/Implementations/CribbageTeam";
-import {Cribbage, CribbageGameDescription, CribbageErrorStrings} from "../../../CardService/Implementations/Cribbage";
-import {BaseCardGame, Players, Sequence} from "../../../CardService/Base Classes/CardGame";
-import {CribbageHand} from "../../../CardService/Implementations/CribbageHand";
-import {ItemCollection} from "../../../CardService/Base Classes/Collections/ItemCollection";
+import {BaseCard, Suit, Value} from "../../CardService/Base Classes/Items/Card";
+import {BaseHand} from "../../CardService/Base Classes/Collections/Hand";
+import {CribbagePlayer} from "../../CardService/Implementations/CribbagePlayer";
+import {CribbageTeam} from "../../CardService/Implementations/CribbageTeam";
+import {Cribbage, CribbageGameDescription, CribbageErrorStrings} from "../../CardService/Implementations/Cribbage";
+import {BaseCardGame, Players, Sequence} from "../../CardService/Base Classes/CardGame";
+import {CribbageHand} from "../../CardService/Implementations/CribbageHand";
+import {ItemCollection} from "../../CardService/Base Classes/Collections/ItemCollection";
 import {setup, CribbageRoutePrefix} from "../../app";
 import {createNewServer} from "./setup";
 import {CribbageRoutes, CribbageStrings} from "../../routes/Cribbage/index";

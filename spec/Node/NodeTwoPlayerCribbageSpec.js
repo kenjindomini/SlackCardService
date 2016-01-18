@@ -1,5 +1,5 @@
-var CribbagePlayer_1 = require("../../../CardService/Implementations/CribbagePlayer");
-var CribbageHand_1 = require("../../../CardService/Implementations/CribbageHand");
+var CribbagePlayer_1 = require("../../CardService/Implementations/CribbagePlayer");
+var CribbageHand_1 = require("../../CardService/Implementations/CribbageHand");
 var app_1 = require("../../app");
 var setup_1 = require("./setup");
 var index_1 = require("../../routes/Cribbage/index");

@@ -1,8 +1,8 @@
-var CribbagePlayer_1 = require("../../../CardService/Implementations/CribbagePlayer");
-var Cribbage_1 = require("../../../CardService/Implementations/Cribbage");
-var CribbageHand_1 = require("../../../CardService/Implementations/CribbageHand");
-var CardGame_1 = require("../../../CardService/Base Classes/CardGame");
-var Card_1 = require("../../../CardService/Base Classes/Items/Card");
+var CribbagePlayer_1 = require("../../CardService/Implementations/CribbagePlayer");
+var Cribbage_1 = require("../../CardService/Implementations/Cribbage");
+var CribbageHand_1 = require("../../CardService/Implementations/CribbageHand");
+var CardGame_1 = require("../../CardService/Base Classes/CardGame");
+var Card_1 = require("../../CardService/Base Classes/Items/Card");
 var CribbageStrings;
 (function (CribbageStrings) {
     var MessageStrings = (function () {

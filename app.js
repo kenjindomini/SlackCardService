@@ -1,4 +1,4 @@
-var index_1 = require("routes/Cribbage/index");
+var index_1 = require("./routes/Cribbage/index");
 var bodyParser = require("body-parser"), errorHandler = require("errorhandler"), express = require("express"), port = process.env.PORT || 5029;
 exports.CribbageRoutePrefix = "/cribbage";
 function setup(app) {
