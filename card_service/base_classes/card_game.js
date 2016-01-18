@@ -3,7 +3,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var item_collection_1 = require("collections/item_collection");
+var item_collection_1 = require("./collections/item_collection");
 "use strict";
 var Players = (function (_super) {
     __extends(Players, _super);

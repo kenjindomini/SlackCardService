@@ -4,11 +4,11 @@
 /// <reference path="collections/deck.ts" />
 /// <reference path="collections/item_collection.ts" />
 
-import {BaseCard as Card} from "items/card";
-import {BasePlayer as Player} from "items/player";
-import {BaseTeam as Team} from "collections/team";
-import {BaseDeck as Deck} from "collections/deck";
-import {ItemCollection} from "collections/item_collection";
+import {BaseCard as Card} from "./items/card";
+import {BasePlayer as Player} from "./items/player";
+import {BaseTeam as Team} from "./collections/team";
+import {BaseDeck as Deck} from "./collections/deck";
+import {ItemCollection} from "./collections/item_collection";
 
 "use strict";
 
