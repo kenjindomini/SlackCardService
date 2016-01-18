@@ -79,7 +79,7 @@ var CribbageRoutes = (function () {
         }
         CribbageRoutes.sendResponse(response, res);
     };
-    CribbageRoutes.prototype.queryState = function (req, res) {
+    CribbageRoutes.prototype.describe = function (req, res) {
         var response = new CribbageResponse(200, (this.currentGame ? this.currentGame.describe() : "not started"));
         CribbageRoutes.sendResponse(response, res);
     };

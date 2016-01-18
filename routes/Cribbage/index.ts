@@ -109,7 +109,7 @@ export class CribbageRoutes {
 
     /* ***** Run of play ***** */
 
-    queryState(req:express.Request, res:express.Response) {
+    describe(req:express.Request, res:express.Response) {
         var response = new CribbageResponse(200, (this.currentGame ? this.currentGame.describe() : "not started"));
         CribbageRoutes.sendResponse(response, res);
     }
