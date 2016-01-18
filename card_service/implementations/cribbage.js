@@ -236,7 +236,7 @@ var Cribbage = (function (_super) {
         for (var jx = 0; jx < this.players.countItems(); jx++) {
             players.push(this.players.itemAt(jx).name);
         }
-        return JSON.stringify(new CribbageGameDescription(this.dealer.name, this.nextPlayerInSequence.name, this.count, this.sequence.toString(), scores, players));
+        return JSON.stringify(new CribbageGameDescription((this.dealer ? this.dealer.name : ""), (this.nextPlayerInSequence ? this.nextPlayerInSequence.name : ""), this.count, this.sequence.toString(), scores, players));
     };
     Cribbage.prototype.findPlayer = function (playerName) {
         var player = null;

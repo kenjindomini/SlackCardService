@@ -315,8 +315,8 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             players.push(this.players.itemAt(jx).name);
         }
         return JSON.stringify(new CribbageGameDescription(
-            this.dealer.name,
-            this.nextPlayerInSequence.name,
+            (this.dealer ? this.dealer.name : ""),
+            (this.nextPlayerInSequence ? this.nextPlayerInSequence.name : ""),
             this.count,
             this.sequence.toString(),
             scores,
