@@ -1,10 +1,10 @@
-/// <reference path="../Base Classes/Collections/ItemCollection.ts" />
-/// <reference path="CribbagePlayer.ts" />
-/// <reference path="../Base Classes/Collections/Team.ts" />
+/// <reference path="../Base Classes/Collections/item_collection.ts" />
+/// <reference path="cribbage_player.ts" />
+/// <reference path="../Base Classes/Collections/team.ts" />
 
-import {ItemCollection} from "../Base Classes/Collections/ItemCollection";
-import {CribbagePlayer} from "./CribbagePlayer";
-import {BaseTeam} from "../Base Classes/Collections/Team";
+import {ItemCollection} from "../Base Classes/Collections/item_collection";
+import {CribbagePlayer} from "./cribbage_player";
+import {BaseTeam} from "../Base Classes/Collections/team";
 
 "use strict";
 

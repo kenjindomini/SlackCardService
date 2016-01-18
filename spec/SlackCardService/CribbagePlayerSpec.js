@@ -1,16 +1,16 @@
-var Card_1 = require("../../CardService/Base Classes/Items/Card");
-var CribbagePlayer_1 = require("../../CardService/Implementations/CribbagePlayer");
-var CribbageHand_1 = require("../../CardService/Implementations/CribbageHand");
+var card_1 = require("../../CardService/Base Classes/Items/card");
+var cribbage_player_1 = require("../../CardService/Implementations/cribbage_player");
+var cribbage_hand_1 = require("../../CardService/Implementations/cribbage_hand");
 describe("Test the Cribbage Player's functionality", function () {
     var player;
     var duplicateCard;
     beforeEach(function () {
-        duplicateCard = new Card_1.BaseCard(Card_1.Suit.Spades, Card_1.Value.Ace);
-        player = new CribbagePlayer_1.CribbagePlayer("Bob", new CribbageHand_1.CribbageHand([
+        duplicateCard = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Ace);
+        player = new cribbage_player_1.CribbagePlayer("Bob", new cribbage_hand_1.CribbageHand([
             duplicateCard,
-            new Card_1.BaseCard(Card_1.Suit.Clubs, Card_1.Value.Four),
-            new Card_1.BaseCard(Card_1.Suit.Diamonds, Card_1.Value.Jack),
-            new Card_1.BaseCard(Card_1.Suit.Hearts, Card_1.Value.King)
+            new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Four),
+            new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Jack),
+            new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.King)
         ]));
     });
     it("tracks the cards it has played", function () {

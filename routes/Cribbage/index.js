@@ -1,8 +1,8 @@
-var CribbagePlayer_1 = require("../../CardService/Implementations/CribbagePlayer");
-var Cribbage_1 = require("../../CardService/Implementations/Cribbage");
-var CribbageHand_1 = require("../../CardService/Implementations/CribbageHand");
-var CardGame_1 = require("../../CardService/Base Classes/CardGame");
-var Card_1 = require("../../CardService/Base Classes/Items/Card");
+var cribbage_player_1 = require("../../CardService/Implementations/cribbage_player");
+var cribbage_1 = require("../../CardService/Implementations/cribbage");
+var cribbage_hand_1 = require("../../CardService/Implementations/cribbage_hand");
+var card_game_1 = require("../../CardService/Base Classes/card_game");
+var card_1 = require("../../CardService/Base Classes/Items/card");
 var CribbageStrings;
 (function (CribbageStrings) {
     var MessageStrings = (function () {
@@ -36,10 +36,10 @@ var CribbageRoutes = (function () {
     };
     CribbageRoutes.prototype.joinGame = function (req, res) {
         var playerName = req.body.player.name;
-        var newPlayer = new CribbagePlayer_1.CribbagePlayer(playerName, new CribbageHand_1.CribbageHand([]));
+        var newPlayer = new cribbage_player_1.CribbagePlayer(playerName, new cribbage_hand_1.CribbageHand([]));
         var response = new CribbageResponse(200, "Welcome, " + playerName);
         if (this.currentGame == null) {
-            this.currentGame = new Cribbage_1.Cribbage(new CardGame_1.Players([newPlayer]));
+            this.currentGame = new cribbage_1.Cribbage(new card_game_1.Players([newPlayer]));
         }
         else {
             try {
@@ -75,7 +75,7 @@ var CribbageRoutes = (function () {
         if (secret != null && secret == "secret") {
             response.status = 200;
             response.message = CribbageStrings.MessageStrings.GAME_RESET;
-            this.currentGame = new Cribbage_1.Cribbage(new CardGame_1.Players([]));
+            this.currentGame = new cribbage_1.Cribbage(new card_game_1.Players([]));
         }
         CribbageRoutes.sendResponse(response, res);
     };
@@ -85,7 +85,7 @@ var CribbageRoutes = (function () {
     };
     CribbageRoutes.prototype.playCard = function (req, res) {
         var player = req.body.player.name;
-        var card = new Card_1.BaseCard(req.body.suit, req.body.value);
+        var card = new card_1.BaseCard(req.body.suit, req.body.value);
         var response = new CribbageResponse(200, "");
         try {
             var gameOver = this.currentGame.playCard(player, card);

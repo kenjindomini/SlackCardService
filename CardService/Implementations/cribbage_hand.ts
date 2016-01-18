@@ -1,9 +1,9 @@
-/// <reference path="../Base Classes/Collections/Hand.ts" />
-/// <reference path="../Base Classes/Items/Card.ts" />
+/// <reference path="../Base Classes/Collections/hand.ts" />
+/// <reference path="../Base Classes/Items/card.ts" />
 
-import {BaseHand} from "../Base Classes/Collections/Hand";
-import {BaseCard as Card, Suit, Value} from "../Base Classes/Items/Card";
-import {Sequence} from "../Base Classes/CardGame";
+import {BaseHand} from "../Base Classes/Collections/hand";
+import {BaseCard as Card, Suit, Value} from "../Base Classes/Items/card";
+import {Sequence} from "../Base Classes/card_game";
 
 "use strict";
 

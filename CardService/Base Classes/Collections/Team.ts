@@ -1,10 +1,10 @@
-/// <reference path="../Items/Player.ts" />
-/// <reference path="../../Interfaces/IItem.ts" />
-/// <reference path="ItemCollection.ts" />
+/// <reference path="../Items/player.ts" />
+/// <reference path="../../Interfaces/iitem.ts" />
+/// <reference path="item_collection.ts" />
 
-import {ItemCollection} from "./ItemCollection";
-import {BasePlayer as Player} from "../Items/Player";
-import {IItem} from "../../Interfaces/IItem";
+import {ItemCollection} from "./item_collection";
+import {BasePlayer as Player} from "../Items/player";
+import {IItem} from "../../Interfaces/iitem";
 
 "use strict";
 

@@ -1,14 +1,14 @@
-/// <reference path="../Base Classes/Items/Card.ts" />
-/// <reference path="../Base Classes/Items/Player.ts" />
-/// <reference path="../Base Classes/Collections/ItemCollection.ts" />
-/// <reference path="../Base Classes/CardGame.ts" />
-/// <reference path="CribbageHand.ts" />
+/// <reference path="../Base Classes/Items/card.ts" />
+/// <reference path="../Base Classes/Items/player.ts" />
+/// <reference path="../Base Classes/Collections/item_collection.ts" />
+/// <reference path="../Base Classes/card_game.ts" />
+/// <reference path="cribbage_hand.ts" />
 
-import {BaseCard as Card} from "../Base Classes/Items/Card";
-import {BasePlayer as Player} from "../Base Classes/Items/Player";
-import {ItemCollection} from "../Base Classes/Collections/ItemCollection";
-import {BaseCardGame as CardGame} from "../Base Classes/CardGame";
-import {CribbageHand} from "./CribbageHand";
+import {BaseCard as Card} from "../Base Classes/Items/card";
+import {BasePlayer as Player} from "../Base Classes/Items/player";
+import {ItemCollection} from "../Base Classes/Collections/item_collection";
+import {BaseCardGame as CardGame} from "../Base Classes/card_game";
+import {CribbageHand} from "./cribbage_hand";
 
 "use strict";
 

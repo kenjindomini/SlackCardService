@@ -1,4 +1,4 @@
-var ItemCollection_1 = require("../../CardService/Base Classes/Collections/ItemCollection");
+var item_collection_1 = require("../../CardService/Base Classes/Collections/item_collection");
 var BasicItem = (function () {
     function BasicItem(value) {
         this.value = value;
@@ -11,7 +11,7 @@ var BasicItem = (function () {
 describe("Test the ItemCollection functionality", function () {
     var collection;
     beforeEach(function () {
-        collection = new ItemCollection_1.ItemCollection([
+        collection = new item_collection_1.ItemCollection([
             new BasicItem(1),
             new BasicItem(2)
         ]);

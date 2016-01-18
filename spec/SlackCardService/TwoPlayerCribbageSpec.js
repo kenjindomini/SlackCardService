@@ -1,21 +1,21 @@
-var Card_1 = require("../../CardService/Base Classes/Items/Card");
-var Hand_1 = require("../../CardService/Base Classes/Collections/Hand");
-var CribbagePlayer_1 = require("../../CardService/Implementations/CribbagePlayer");
-var Cribbage_1 = require("../../CardService/Implementations/Cribbage");
-var CardGame_1 = require("../../CardService/Base Classes/CardGame");
-var CribbageHand_1 = require("../../CardService/Implementations/CribbageHand");
-var ItemCollection_1 = require("../../CardService/Base Classes/Collections/ItemCollection");
+var card_1 = require("../../CardService/Base Classes/Items/card");
+var hand_1 = require("../../CardService/Base Classes/Collections/hand");
+var cribbage_player_1 = require("../../CardService/Implementations/cribbage_player");
+var cribbage_1 = require("../../CardService/Implementations/cribbage");
+var card_game_1 = require("../../CardService/Base Classes/card_game");
+var cribbage_hand_1 = require("../../CardService/Implementations/cribbage_hand");
+var item_collection_1 = require("../../CardService/Base Classes/Collections/item_collection");
 "use strict";
 describe("Test a Cribbage game between two players", function () {
     var game, playerOne, playerTwo;
     beforeEach(function () {
-        playerOne = new CribbagePlayer_1.CribbagePlayer("Alice", new CribbageHand_1.CribbageHand([]));
-        playerTwo = new CribbagePlayer_1.CribbagePlayer("Bob", new CribbageHand_1.CribbageHand([]));
-        game = new Cribbage_1.Cribbage(new CardGame_1.Players([playerOne, playerTwo]));
+        playerOne = new cribbage_player_1.CribbagePlayer("Alice", new cribbage_hand_1.CribbageHand([]));
+        playerTwo = new cribbage_player_1.CribbagePlayer("Bob", new cribbage_hand_1.CribbageHand([]));
+        game = new cribbage_1.Cribbage(new card_game_1.Players([playerOne, playerTwo]));
         game.initializeGame();
     });
     it("doesn't allow duplicate players", function () {
-        expect(function () { game.addPlayer(playerOne); }).toThrow(Cribbage_1.CribbageErrorStrings.PLAYER_ALREADY_IN_GAME);
+        expect(function () { game.addPlayer(playerOne); }).toThrow(cribbage_1.CribbageErrorStrings.PLAYER_ALREADY_IN_GAME);
     });
     it("cuts a random dealer", function () {
         var sameDealerEveryTime = true;
@@ -64,9 +64,9 @@ describe("Test a Cribbage game between two players", function () {
         var copy = [];
         for (var index = 0; index < cards.length; index++) {
             var card = cards[index];
-            copy.push(new Card_1.BaseCard(card.suit, card.value));
+            copy.push(new card_1.BaseCard(card.suit, card.value));
         }
-        return new Hand_1.BaseHand(copy);
+        return new hand_1.BaseHand(copy);
     }
     function handsAreDistinct(handOne, handTwo) {
         var areDistinct = false;
@@ -99,32 +99,32 @@ describe("Test a Cribbage game between two players", function () {
         expect(handsAreDistinct(handTwo, handTwoAgain)).toBe(true);
     });
     it("waits for the kitty to be full before letting players play", function () {
-        expect(function () { game.playCard(playerTwo.name); }).toThrow(Cribbage_1.CribbageErrorStrings.KITTY_NOT_READY);
+        expect(function () { game.playCard(playerTwo.name); }).toThrow(cribbage_1.CribbageErrorStrings.KITTY_NOT_READY);
     });
     describe("Test with fixed hands, starting at 0 points", function () {
         var sevenOfSpades, sevenOfDiamonds, eightOfHearts, eightOfSpades, nineOfDiamonds, tenOfClubs, nineOfHearts, tenOfDiamonds, jackOfSpades, queenOfHearts, kingOfClubs, kingOfHearts;
         beforeEach(function () {
-            sevenOfSpades = new Card_1.BaseCard(Card_1.Suit.Spades, Card_1.Value.Seven);
-            sevenOfDiamonds = new Card_1.BaseCard(Card_1.Suit.Diamonds, Card_1.Value.Seven);
-            eightOfHearts = new Card_1.BaseCard(Card_1.Suit.Hearts, Card_1.Value.Eight);
-            eightOfSpades = new Card_1.BaseCard(Card_1.Suit.Spades, Card_1.Value.Eight);
-            nineOfDiamonds = new Card_1.BaseCard(Card_1.Suit.Diamonds, Card_1.Value.Nine);
-            tenOfClubs = new Card_1.BaseCard(Card_1.Suit.Clubs, Card_1.Value.Ten);
+            sevenOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Seven);
+            sevenOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Seven);
+            eightOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Eight);
+            eightOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Eight);
+            nineOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Nine);
+            tenOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Ten);
             playerOne.hand =
-                new CribbageHand_1.CribbageHand([sevenOfSpades, sevenOfDiamonds, eightOfHearts, eightOfSpades, nineOfDiamonds, tenOfClubs]);
-            nineOfHearts = new Card_1.BaseCard(Card_1.Suit.Hearts, Card_1.Value.Nine);
-            tenOfDiamonds = new Card_1.BaseCard(Card_1.Suit.Diamonds, Card_1.Value.Ten);
-            jackOfSpades = new Card_1.BaseCard(Card_1.Suit.Spades, Card_1.Value.Jack);
-            queenOfHearts = new Card_1.BaseCard(Card_1.Suit.Hearts, Card_1.Value.Queen);
-            kingOfClubs = new Card_1.BaseCard(Card_1.Suit.Clubs, Card_1.Value.King);
-            kingOfHearts = new Card_1.BaseCard(Card_1.Suit.Hearts, Card_1.Value.King);
+                new cribbage_hand_1.CribbageHand([sevenOfSpades, sevenOfDiamonds, eightOfHearts, eightOfSpades, nineOfDiamonds, tenOfClubs]);
+            nineOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Nine);
+            tenOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Ten);
+            jackOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Jack);
+            queenOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Queen);
+            kingOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.King);
+            kingOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.King);
             playerTwo.hand =
-                new CribbageHand_1.CribbageHand([nineOfHearts, tenOfDiamonds, jackOfSpades, queenOfHearts, kingOfClubs, kingOfHearts]);
+                new cribbage_hand_1.CribbageHand([nineOfHearts, tenOfDiamonds, jackOfSpades, queenOfHearts, kingOfClubs, kingOfHearts]);
             game.dealer = playerOne;
             game.nextPlayerInSequence = playerTwo;
-            game.giveToKitty(playerOne, new ItemCollection_1.ItemCollection([nineOfDiamonds, tenOfClubs]));
-            game.giveToKitty(playerTwo, new ItemCollection_1.ItemCollection([kingOfClubs, kingOfHearts]));
-            game.cut = new Card_1.BaseCard(Card_1.Suit.Spades, Card_1.Value.King);
+            game.giveToKitty(playerOne, new item_collection_1.ItemCollection([nineOfDiamonds, tenOfClubs]));
+            game.giveToKitty(playerTwo, new item_collection_1.ItemCollection([kingOfClubs, kingOfHearts]));
+            game.cut = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.King);
         });
         it("takes cards from the players hands when they give to the kitty", function () {
             expect(playerOne.hand.size()).toEqual(4);
@@ -132,10 +132,10 @@ describe("Test a Cribbage game between two players", function () {
             expect(game.kitty.size()).toEqual(4);
         });
         it("doesn't let a player play a card they don't have", function () {
-            expect(function () { game.playCard(playerTwo.name, tenOfClubs); }).toThrow(Cribbage_1.CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD);
+            expect(function () { game.playCard(playerTwo.name, tenOfClubs); }).toThrow(cribbage_1.CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD);
         });
         it("ensures players play in order", function () {
-            expect(function () { game.playCard(playerOne.name, sevenOfSpades); }).toThrow(Cribbage_1.CribbageErrorStrings.FMT_NOT_NEXT_PLAYER + playerTwo.name);
+            expect(function () { game.playCard(playerOne.name, sevenOfSpades); }).toThrow(cribbage_1.CribbageErrorStrings.FMT_NOT_NEXT_PLAYER + playerTwo.name);
         });
         it("knows how to count points in round 2", function () {
             expect(playerOne.countPoints(game.cut)).toEqual(12);
@@ -149,14 +149,14 @@ describe("Test a Cribbage game between two players", function () {
                 game.playCard(playerTwo.name, nineOfHearts);
             });
             it("does not allow exceeding 31", function () {
-                expect(function () { game.playCard(playerOne.name, sevenOfSpades); }).toThrow(Cribbage_1.CribbageErrorStrings.EXCEEDS_31);
+                expect(function () { game.playCard(playerOne.name, sevenOfSpades); }).toThrow(cribbage_1.CribbageErrorStrings.EXCEEDS_31);
             });
             it("adds to the sequence", function () {
                 expect(game.sequence.cards.countItems()).toEqual(3);
             });
             it("knows when the game is over", function () {
                 game.teams.findTeam(playerOne).addPoints(playerOne, 119);
-                expect(playerOne.hand.takeCard(new Card_1.BaseCard(Card_1.Suit.Spades, Card_1.Value.Ace))).toBe(true);
+                expect(playerOne.hand.takeCard(new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Ace))).toBe(true);
             });
         });
     });
@@ -180,7 +180,7 @@ describe("Test a Cribbage game between two players", function () {
                 return this.sequence.countPoints();
             };
             SeqVal.makeSequence = function (cards) {
-                var seq = new CardGame_1.Sequence();
+                var seq = new card_game_1.Sequence();
                 seq.addCards(cards);
                 return seq;
             };
@@ -201,7 +201,7 @@ describe("Test a Cribbage game between two players", function () {
                 permute(sequence.cards.items);
                 var ret = [];
                 for (var ix = 0; ix < permutations.length; ix++) {
-                    var newSeq = new CardGame_1.Sequence();
+                    var newSeq = new card_game_1.Sequence();
                     newSeq.addCards(permutations[ix]);
                     ret.push(newSeq);
                 }
@@ -209,7 +209,7 @@ describe("Test a Cribbage game between two players", function () {
             };
             return SeqVal;
         })();
-        var fourOfHearts = new Card_1.BaseCard(Card_1.Suit.Hearts, Card_1.Value.Four), fourOfSpades = new Card_1.BaseCard(Card_1.Suit.Spades, Card_1.Value.Four), fourOfClubs = new Card_1.BaseCard(Card_1.Suit.Clubs, Card_1.Value.Four), fourOfDiamonds = new Card_1.BaseCard(Card_1.Suit.Diamonds, Card_1.Value.Four), fiveOfHearts = new Card_1.BaseCard(Card_1.Suit.Hearts, Card_1.Value.Five), fiveOfSpades = new Card_1.BaseCard(Card_1.Suit.Spades, Card_1.Value.Five), fiveOfClubs = new Card_1.BaseCard(Card_1.Suit.Clubs, Card_1.Value.Five), fiveOfDiamonds = new Card_1.BaseCard(Card_1.Suit.Diamonds, Card_1.Value.Five), sixOfHearts = new Card_1.BaseCard(Card_1.Suit.Hearts, Card_1.Value.Six), sixOfSpades = new Card_1.BaseCard(Card_1.Suit.Spades, Card_1.Value.Six), sixOfClubs = new Card_1.BaseCard(Card_1.Suit.Clubs, Card_1.Value.Six), sixOfDiamonds = new Card_1.BaseCard(Card_1.Suit.Diamonds, Card_1.Value.Six), sevenOfHearts = new Card_1.BaseCard(Card_1.Suit.Hearts, Card_1.Value.Seven), sevenOfSpades = new Card_1.BaseCard(Card_1.Suit.Spades, Card_1.Value.Seven), sevenOfClubs = new Card_1.BaseCard(Card_1.Suit.Clubs, Card_1.Value.Seven), sevenOfDiamonds = new Card_1.BaseCard(Card_1.Suit.Diamonds, Card_1.Value.Seven), eightOfHearts = new Card_1.BaseCard(Card_1.Suit.Hearts, Card_1.Value.Eight), eightOfSpades = new Card_1.BaseCard(Card_1.Suit.Spades, Card_1.Value.Eight), eightOfClubs = new Card_1.BaseCard(Card_1.Suit.Clubs, Card_1.Value.Eight), eightOfDiamonds = new Card_1.BaseCard(Card_1.Suit.Diamonds, Card_1.Value.Eight), jackOfSpades = new Card_1.BaseCard(Card_1.Suit.Spades, Card_1.Value.Jack);
+        var fourOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Four), fourOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Four), fourOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Four), fourOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Four), fiveOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Five), fiveOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Five), fiveOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Five), fiveOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Five), sixOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Six), sixOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Six), sixOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Six), sixOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Six), sevenOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Seven), sevenOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Seven), sevenOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Seven), sevenOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Seven), eightOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Eight), eightOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Eight), eightOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Eight), eightOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Eight), jackOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Jack);
         describe("Test counting points in the run-of-play", function () {
             describe("knows how to count runs", function () {
                 it("is a run of three", function () {

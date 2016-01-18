@@ -1,12 +1,12 @@
-/// <reference path="../../Interfaces/IPlayer.ts" />
-/// <reference path="../../Interfaces/IItem.ts" />
-/// <reference path="Card.ts" />
-/// <reference path="../Collections/Hand.ts" />
+/// <reference path="../../Interfaces/iplayer.ts" />
+/// <reference path="../../Interfaces/iitem.ts" />
+/// <reference path="card.ts" />
+/// <reference path="../Collections/hand.ts" />
 
-import {PlayerActions} from "../../Interfaces/IPlayer";
-import {IItem} from "../../Interfaces/IItem";
-import {BaseCard as Card} from "./Card";
-import {BaseHand as Hand} from "../Collections/Hand";
+import {PlayerActions} from "../../Interfaces/iplayer";
+import {IItem} from "../../Interfaces/iitem";
+import {BaseCard as Card} from "./card";
+import {BaseHand as Hand} from "../Collections/hand";
 
 "use strict";
 

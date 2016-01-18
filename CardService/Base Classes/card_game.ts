@@ -1,14 +1,14 @@
-/// <reference path="Items/Card.ts" />
-/// <reference path="Items/Player.ts" />
-/// <reference path="Collections/Team.ts" />
-/// <reference path="Collections/Deck.ts" />
-/// <reference path="Collections/ItemCollection.ts" />
+/// <reference path="Items/card.ts" />
+/// <reference path="Items/player.ts" />
+/// <reference path="Collections/team.ts" />
+/// <reference path="Collections/deck.ts" />
+/// <reference path="Collections/item_collection.ts" />
 
-import {BaseCard as Card} from "./Items/Card";
-import {BasePlayer as Player} from "./Items/Player";
-import {BaseTeam as Team} from "./Collections/Team";
-import {BaseDeck as Deck} from "./Collections/Deck";
-import {ItemCollection} from "./Collections/ItemCollection";
+import {BaseCard as Card} from "./Items/card";
+import {BasePlayer as Player} from "./Items/player";
+import {BaseTeam as Team} from "./Collections/team";
+import {BaseDeck as Deck} from "./Collections/deck";
+import {ItemCollection} from "./Collections/item_collection";
 
 "use strict";
 

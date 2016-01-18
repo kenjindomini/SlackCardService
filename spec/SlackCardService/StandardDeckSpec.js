@@ -1,14 +1,14 @@
-var StandardDeck_1 = require("../../CardService/Implementations/StandardDeck");
-var Card_1 = require("../../CardService/Base Classes/Items/Card");
+var standard_deck_1 = require("../../CardService/Implementations/standard_deck");
+var card_1 = require("../../CardService/Base Classes/Items/card");
 describe("Test the Standard Deck's functionality", function () {
     var deck;
     beforeEach(function () {
-        deck = new StandardDeck_1.StandardDeck();
+        deck = new standard_deck_1.StandardDeck();
     });
     function makeDeckCopy(cards) {
         var copy = [];
         for (var card in cards) {
-            copy.push(new Card_1.BaseCard(card.suit, card.value));
+            copy.push(new card_1.BaseCard(card.suit, card.value));
         }
         return copy;
     }

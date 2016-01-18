@@ -1,6 +1,6 @@
-/// <reference path="../../Interfaces/IItem.ts" />
+/// <reference path="../../Interfaces/iitem.ts" />
 
-import {IItem} from "../../Interfaces/IItem";
+import {IItem} from "../../Interfaces/iitem";
 
 "use strict";
 export class ItemCollection<ItemType extends IItem> {

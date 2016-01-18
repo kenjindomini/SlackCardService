@@ -1,18 +1,18 @@
 /// <reference path="../../typings/jasmine/jasmine.d.ts" />
-/// <reference path="../../CardService/Base Classes/Collections/Hand.ts" />
-/// <reference path="../../CardService/Implementations/CribbagePlayer.ts" />
-/// <reference path="../../CardService/Implementations/CribbageTeam.ts" />
-/// <reference path="../../CardService/Implementations/Cribbage.ts" />
-/// <reference path="../../CardService/Base Classes/CardGame.ts" />
+/// <reference path="../../CardService/Base Classes/Collections/hand.ts" />
+/// <reference path="../../CardService/Implementations/cribbage_player.ts" />
+/// <reference path="../../CardService/Implementations/cribbage_team.ts" />
+/// <reference path="../../CardService/Implementations/cribbage.ts" />
+/// <reference path="../../CardService/Base Classes/card_game.ts" />
 
-import {BaseCard, Suit, Value} from "../../CardService/Base Classes/Items/Card";
-import {BaseHand} from "../../CardService/Base Classes/Collections/Hand";
-import {CribbagePlayer} from "../../CardService/Implementations/CribbagePlayer";
-import {CribbageTeam} from "../../CardService/Implementations/CribbageTeam";
-import {Cribbage, CribbageErrorStrings} from "../../CardService/Implementations/Cribbage";
-import {BaseCardGame, Players, Sequence} from "../../CardService/Base Classes/CardGame";
-import {CribbageHand} from "../../CardService/Implementations/CribbageHand";
-import {ItemCollection} from "../../CardService/Base Classes/Collections/ItemCollection";
+import {BaseCard, Suit, Value} from "../../CardService/Base Classes/Items/card";
+import {BaseHand} from "../../CardService/Base Classes/Collections/hand";
+import {CribbagePlayer} from "../../CardService/Implementations/cribbage_player";
+import {CribbageTeam} from "../../CardService/Implementations/cribbage_team";
+import {Cribbage, CribbageErrorStrings} from "../../CardService/Implementations/cribbage";
+import {BaseCardGame, Players, Sequence} from "../../CardService/Base Classes/card_game";
+import {CribbageHand} from "../../CardService/Implementations/cribbage_hand";
+import {ItemCollection} from "../../CardService/Base Classes/Collections/item_collection";
 
 "use strict";
 

@@ -1,8 +1,8 @@
-/// <reference path="../Base Classes/Collections/Deck.ts" />
-/// <reference path="../Base Classes/Items/Card.ts" />
+/// <reference path="../Base Classes/Collections/deck.ts" />
+/// <reference path="../Base Classes/Items/card.ts" />
 
-import {BaseDeck} from "../Base Classes/Collections/Deck";
-import {BaseCard, EnumExt, Suit, Value} from "../Base Classes/Items/Card";
+import {BaseDeck} from "../Base Classes/Collections/deck";
+import {BaseCard, EnumExt, Suit, Value} from "../Base Classes/Items/card";
 
 "use strict";
 

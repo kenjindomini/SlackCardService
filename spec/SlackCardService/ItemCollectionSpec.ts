@@ -1,9 +1,9 @@
 /// <reference path="../../typings/jasmine/jasmine.d.ts" />
-/// <reference path="../../CardService/Interfaces/IItem.ts" />
-/// <reference path="../../CardService/Base Classes/Collections/ItemCollection.ts" />
+/// <reference path="../../CardService/Interfaces/iitem.ts" />
+/// <reference path="../../CardService/Base Classes/Collections/item_collection.ts" />
 
-import {IItem} from "../../CardService/Interfaces/IItem";
-import {ItemCollection} from "../../CardService/Base Classes/Collections/ItemCollection";
+import {IItem} from "../../CardService/Interfaces/iitem";
+import {ItemCollection} from "../../CardService/Base Classes/Collections/item_collection";
 
 class BasicItem implements IItem {
     value: number;

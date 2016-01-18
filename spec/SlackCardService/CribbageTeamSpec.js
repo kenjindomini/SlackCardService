@@ -1,25 +1,25 @@
-var CribbagePlayer_1 = require("../../CardService/Implementations/CribbagePlayer");
-var CribbageHand_1 = require("../../CardService/Implementations/CribbageHand");
-var CribbageTeam_1 = require("../../CardService/Implementations/CribbageTeam");
-var Card_1 = require("../../CardService/Base Classes/Items/Card");
+var cribbage_player_1 = require("../../CardService/Implementations/cribbage_player");
+var cribbage_hand_1 = require("../../CardService/Implementations/cribbage_hand");
+var cribbage_team_1 = require("../../CardService/Implementations/cribbage_team");
+var card_1 = require("../../CardService/Base Classes/Items/card");
 describe("Test the Cribbage Team's functionality", function () {
     var team;
     var playerOne;
     var playerTwo;
     beforeEach(function () {
-        playerOne = new CribbagePlayer_1.CribbagePlayer("Bob", new CribbageHand_1.CribbageHand([
-            new Card_1.BaseCard(Card_1.Suit.Spades, Card_1.Value.Ace),
-            new Card_1.BaseCard(Card_1.Suit.Clubs, Card_1.Value.Six),
-            new Card_1.BaseCard(Card_1.Suit.Diamonds, Card_1.Value.Seven),
-            new Card_1.BaseCard(Card_1.Suit.Hearts, Card_1.Value.Jack)
+        playerOne = new cribbage_player_1.CribbagePlayer("Bob", new cribbage_hand_1.CribbageHand([
+            new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Ace),
+            new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Six),
+            new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Seven),
+            new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Jack)
         ]));
-        playerTwo = new CribbagePlayer_1.CribbagePlayer("Steve", new CribbageHand_1.CribbageHand([
-            new Card_1.BaseCard(Card_1.Suit.Spades, Card_1.Value.Four),
-            new Card_1.BaseCard(Card_1.Suit.Clubs, Card_1.Value.Seven),
-            new Card_1.BaseCard(Card_1.Suit.Diamonds, Card_1.Value.Queen),
-            new Card_1.BaseCard(Card_1.Suit.Hearts, Card_1.Value.King)
+        playerTwo = new cribbage_player_1.CribbagePlayer("Steve", new cribbage_hand_1.CribbageHand([
+            new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Four),
+            new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Seven),
+            new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Queen),
+            new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.King)
         ]));
-        team = new CribbageTeam_1.CribbageTeam(1, [playerOne, playerTwo]);
+        team = new cribbage_team_1.CribbageTeam(1, [playerOne, playerTwo]);
     });
     it("tracks points for the entire team", function () {
         expect(playerOne.points).toEqual(0);
@@ -32,7 +32,7 @@ describe("Test the Cribbage Team's functionality", function () {
     it("knows what players it has", function () {
         expect(team.hasPlayer(playerOne)).toBe(true);
         expect(team.hasPlayer(playerTwo)).toBe(true);
-        expect(team.hasPlayer(new CribbagePlayer_1.CribbagePlayer("Alice", new CribbageHand_1.CribbageHand([])))).toBe(false);
+        expect(team.hasPlayer(new cribbage_player_1.CribbagePlayer("Alice", new cribbage_hand_1.CribbageHand([])))).toBe(false);
     });
 });
 //# sourceMappingURL=CribbageTeamSpec.js.map

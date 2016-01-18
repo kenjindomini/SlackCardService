@@ -1,10 +1,10 @@
-/// <reference path="../../Interfaces/IHand.ts" />
-/// <reference path="ItemCollection.ts" />
-/// <reference path="../Items/Card.ts" />
+/// <reference path="../../Interfaces/ihand.ts" />
+/// <reference path="item_collection.ts" />
+/// <reference path="../Items/card.ts" />
 
-import {ItemCollection} from "./ItemCollection";
-import {BaseCard as Card} from "../Items/Card";
-import {HandActions} from "../../Interfaces/IHand";
+import {ItemCollection} from "./item_collection";
+import {BaseCard as Card} from "../Items/card";
+import {HandActions} from "../../Interfaces/ihand";
 
 "use strict";
 

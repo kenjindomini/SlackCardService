@@ -1,5 +1,5 @@
-var CribbagePlayer_1 = require("../../CardService/Implementations/CribbagePlayer");
-var CribbageHand_1 = require("../../CardService/Implementations/CribbageHand");
+var cribbage_player_1 = require("../../CardService/Implementations/cribbage_player");
+var cribbage_hand_1 = require("../../CardService/Implementations/cribbage_hand");
 var app_1 = require("../../app");
 var setup_1 = require("./setup");
 var index_1 = require("../../routes/Cribbage/index");
@@ -9,8 +9,8 @@ describe("Integration test the Cribbage game between two players", function () {
     var PeterGriffin, HomerSimpson;
     beforeEach(function () {
         setup_1.createNewServer(this);
-        PeterGriffin = new CribbagePlayer_1.CribbagePlayer("Peter Griffin", new CribbageHand_1.CribbageHand([]));
-        HomerSimpson = new CribbagePlayer_1.CribbagePlayer("Homer Simpson", new CribbageHand_1.CribbageHand([]));
+        PeterGriffin = new cribbage_player_1.CribbagePlayer("Peter Griffin", new cribbage_hand_1.CribbageHand([]));
+        HomerSimpson = new cribbage_player_1.CribbagePlayer("Homer Simpson", new cribbage_hand_1.CribbageHand([]));
     });
     function joinGameJson(player) {
         return '{"player": { "name": "' + player.name + '" } }';

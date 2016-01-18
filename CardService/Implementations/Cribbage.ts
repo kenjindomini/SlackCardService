@@ -1,19 +1,19 @@
-/// <reference path="../Base Classes/Items/Card.ts" />
-/// <reference path="../Base Classes/Collections/ItemCollection.ts" />
-/// <reference path="../Base Classes/CardGame.ts" />
-/// <reference path="CribbageHand.ts" />
-/// <reference path="CribbagePlayer.ts" />
-/// <reference path="CribbageTeam.ts" />
-/// <reference path="StandardDeck.ts" />
+/// <reference path="../Base Classes/Items/card.ts" />
+/// <reference path="../Base Classes/Collections/item_collection.ts" />
+/// <reference path="../Base Classes/card_game.ts" />
+/// <reference path="cribbage_hand.ts" />
+/// <reference path="cribbage_player.ts" />
+/// <reference path="cribbage_team.ts" />
+/// <reference path="standard_deck.ts" />
 
-import {BaseCard as Card} from "../Base Classes/Items/Card";
-import {BaseCardGame as CardGame, Players, Teams, Sequence} from "../Base Classes/CardGame";
-import {ItemCollection} from "../Base Classes/Collections/ItemCollection";
-import {CribbageHand} from "./CribbageHand";
-import {CribbagePlayer} from "./CribbagePlayer";
-import {CribbageTeam} from "./CribbageTeam";
-import {StandardDeck} from "./StandardDeck";
-import {BaseCard} from "../Base Classes/Items/Card";
+import {BaseCard as Card} from "../Base Classes/Items/card";
+import {BaseCardGame as CardGame, Players, Teams, Sequence} from "../Base Classes/card_game";
+import {ItemCollection} from "../Base Classes/Collections/item_collection";
+import {CribbageHand} from "./cribbage_hand";
+import {CribbagePlayer} from "./cribbage_player";
+import {CribbageTeam} from "./cribbage_team";
+import {StandardDeck} from "./standard_deck";
+import {BaseCard} from "../Base Classes/Items/card";
 
 "use strict";
 

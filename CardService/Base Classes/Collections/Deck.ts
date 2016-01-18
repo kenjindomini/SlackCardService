@@ -1,10 +1,10 @@
-/// <reference path="../../Interfaces/IDeck.ts" />
-/// <reference path="ItemCollection.ts" />
-/// <reference path="../Items/Card.ts" />
+/// <reference path="../../Interfaces/ideck.ts" />
+/// <reference path="item_collection.ts" />
+/// <reference path="../Items/card.ts" />
 
-import {DeckActions} from "../../Interfaces/IDeck";
-import {ItemCollection} from "./ItemCollection";
-import {BaseCard as Card} from "../Items/Card";
+import {DeckActions} from "../../Interfaces/ideck";
+import {ItemCollection} from "./item_collection";
+import {BaseCard as Card} from "../Items/card";
 
 "use strict";
 

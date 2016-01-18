@@ -1,6 +1,6 @@
-/// <reference path="../Base Classes/Items/Card.ts" />
+/// <reference path="../Base Classes/Items/card.ts" />
 
-import {BaseCard} from "../Base Classes/Items/Card";
+import {BaseCard} from "../Base Classes/Items/card";
 
 export interface DeckActions {
     shuffle(): void;
