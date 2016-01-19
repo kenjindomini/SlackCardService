@@ -50,7 +50,7 @@ describe("Integration test the Cribbage game between two players", function () {
                     .expect(200)
                     .expect(function (res) {
                     var response = JSON.parse(res.text);
-                    if (response.data.text != index_1.CribbageStrings.MessageStrings.START_GAME)
+                    if (response.text != index_1.CribbageStrings.MessageStrings.START_GAME)
                         return true;
                 })
                     .end(cb);
@@ -69,7 +69,7 @@ describe("Integration test the Cribbage game between two players", function () {
                 .expect(200)
                 .expect(function (res) {
                 var response = JSON.parse(res.text);
-                var description = JSON.parse(response.data.text);
+                var description = JSON.parse(response.text);
                 var hasDealer = (description.dealer == PeterGriffin.name || description.dealer == HomerSimpson.name);
                 expect(hasDealer).toBe(true);
             })

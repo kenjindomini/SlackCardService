@@ -17,7 +17,7 @@ import {setup, CribbageRoutePrefix} from "../../app";
 import {createNewServer} from "./setup";
 import {CribbageRoutes, CribbageStrings} from "../../routes/Cribbage/index";
 import Response = Express.Response;
-import CribbageResponse = CribbageRoutes.CribbageResponse;
+import CribbageResponseData = CribbageRoutes.CribbageResponseData;
 
 "use strict";
 
@@ -81,8 +81,8 @@ describe("Integration test the Cribbage game between two players", function() {
                     .query({token: `${Tokens.beginGame}`})
                     .expect(200)
                     .expect((res) => {
-                        var response = <CribbageResponse>JSON.parse(res.text);
-                        if (response.data.text != CribbageStrings.MessageStrings.START_GAME)
+                        var response = <CribbageResponseData>JSON.parse(res.text);
+                        if (response.text != CribbageStrings.MessageStrings.START_GAME)
                             return true; // Return true to indicate an error, see the SuperTest documentation
                     })
                     .end(cb);
@@ -104,8 +104,8 @@ describe("Integration test the Cribbage game between two players", function() {
                     .query({token: `${Tokens.describe}`})
                     .expect(200)
                     .expect(function(res) {
-                        var response = <CribbageResponse>JSON.parse(res.text);
-                        var description:CribbageGameDescription = JSON.parse(response.data.text);
+                        var response = <CribbageResponseData>JSON.parse(res.text);
+                        var description:CribbageGameDescription = JSON.parse(response.text);
                         var hasDealer = (description.dealer == PeterGriffin.name || description.dealer == HomerSimpson.name);
                         expect(hasDealer).toBe(true);
                     })
