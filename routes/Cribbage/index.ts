@@ -90,8 +90,8 @@ export module CribbageRoutes {
             return new CribbageResponse(status, new CribbageResponseData(response_type, text, attachments));
         }
 
-        private static sendResponse(response:CribbageResponse, res:express.Response, callback:any=null):void {
-            res.status(response.status).header("content-type", "application/json").json(response.data).end(callback);
+        private static sendResponse(response:CribbageResponse, res:express.Response):void {
+            res.status(response.status).header("content-type", "application/json").json(response.data);
         }
 
         private static sendDelayedResponse(responseData:CribbageResponseData, url:string):void {

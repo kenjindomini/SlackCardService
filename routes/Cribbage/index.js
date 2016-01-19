@@ -97,9 +97,8 @@ var CribbageRoutes;
             if (attachments === void 0) { attachments = []; }
             return new CribbageResponse(status, new CribbageResponseData(response_type, text, attachments));
         };
-        Router.sendResponse = function (response, res, callback) {
-            if (callback === void 0) { callback = null; }
-            res.status(response.status).header("content-type", "application/json").json(response.data).end(callback);
+        Router.sendResponse = function (response, res) {
+            res.status(response.status).header("content-type", "application/json").json(response.data);
         };
         Router.sendDelayedResponse = function (responseData, url) {
             request.post(url).json(responseData);
