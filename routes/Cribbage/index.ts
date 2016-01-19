@@ -186,6 +186,8 @@ export module CribbageRoutes {
             }
             Router.sendResponse(response, res);
             if (reset) {
+                response.data.response_type = SlackResponseType.in_channel;
+                response.data.text = `${response.data.text} by ${player}`;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
             }
         }
