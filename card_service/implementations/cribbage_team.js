@@ -19,8 +19,8 @@ var CribbageTeam = (function (_super) {
     }
     CribbageTeam.prototype.countPoints = function () {
         var points = 0;
-        for (var index in this.items) {
-            points += this.items[index].points;
+        for (var index = 0; index < this.countItems(); index++) {
+            points += this.itemAt(index).points;
         }
         return points;
     };

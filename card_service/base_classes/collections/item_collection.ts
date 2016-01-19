@@ -29,15 +29,15 @@ export class ItemCollection<ItemType extends IItem> {
         this.items.push(item);
     }
     addItems(items: Array<ItemType>) {
-        this.items.concat(items);
+        this.items = this.items.concat(items);
     }
     removeItem(item: ItemType) {
         var index = this.indexOfItem(item);
-        var hasCard = (index != -1);
-        if (hasCard) {
+        var hasItem = (index != -1);
+        if (hasItem) {
             this.items.splice(index, 1);
         }
-        return hasCard;
+        return hasItem;
     }
     removeAll() {
         this.items.splice(0, this.items.length);

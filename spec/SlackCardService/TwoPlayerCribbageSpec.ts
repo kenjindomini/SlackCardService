@@ -111,29 +111,24 @@ describe("Test a Cribbage game between two players", function() {
     it("waits for the kitty to be full before letting players play", function () {
         expect(function() { game.playCard(playerTwo.name); }).toThrow(CribbageErrorStrings.KITTY_NOT_READY);
     });
+    var sevenOfSpades = new BaseCard(Suit.Spades, Value.Seven),
+        sevenOfDiamonds = new BaseCard(Suit.Diamonds, Value.Seven),
+        eightOfHearts = new BaseCard(Suit.Hearts, Value.Eight),
+        eightOfSpades = new BaseCard(Suit.Spades, Value.Eight),
+        nineOfDiamonds = new BaseCard(Suit.Diamonds, Value.Nine),
+        tenOfClubs = new BaseCard(Suit.Clubs, Value.Ten),
+        nineOfHearts = new BaseCard(Suit.Hearts, Value.Nine),
+        tenOfDiamonds = new BaseCard(Suit.Diamonds, Value.Ten),
+        jackOfSpades = new BaseCard(Suit.Spades, Value.Jack),
+        queenOfHearts = new BaseCard(Suit.Hearts, Value.Queen),
+        kingOfClubs = new BaseCard(Suit.Clubs, Value.King),
+        kingOfHearts = new BaseCard(Suit.Hearts, Value.King);
     describe("Test with fixed hands, starting at 0 points", function() {
-        var sevenOfSpades, sevenOfDiamonds, eightOfHearts, eightOfSpades, nineOfDiamonds, tenOfClubs,
-            nineOfHearts, tenOfDiamonds, jackOfSpades, queenOfHearts, kingOfClubs, kingOfHearts;
         beforeEach(function () {
-            sevenOfSpades = new BaseCard(Suit.Spades, Value.Seven);
-            sevenOfDiamonds = new BaseCard(Suit.Diamonds, Value.Seven);
-            eightOfHearts = new BaseCard(Suit.Hearts, Value.Eight);
-            eightOfSpades = new BaseCard(Suit.Spades, Value.Eight);
-            nineOfDiamonds = new BaseCard(Suit.Diamonds, Value.Nine);
-            tenOfClubs = new BaseCard(Suit.Clubs, Value.Ten);
-
             playerOne.hand =
                 new CribbageHand([sevenOfSpades, sevenOfDiamonds, eightOfHearts, eightOfSpades, nineOfDiamonds, tenOfClubs]);
-
-            nineOfHearts = new BaseCard(Suit.Hearts, Value.Nine);
-            tenOfDiamonds = new BaseCard(Suit.Diamonds, Value.Ten);
-            jackOfSpades = new BaseCard(Suit.Spades, Value.Jack);
-            queenOfHearts = new BaseCard(Suit.Hearts, Value.Queen);
-            kingOfClubs = new BaseCard(Suit.Clubs, Value.King);
-            kingOfHearts = new BaseCard(Suit.Hearts, Value.King);
             playerTwo.hand =
                 new CribbageHand([nineOfHearts, tenOfDiamonds, jackOfSpades, queenOfHearts, kingOfClubs, kingOfHearts]);
-
             game.dealer = playerOne;
             game.nextPlayerInSequence = playerTwo;
             game.giveToKitty(playerOne, new ItemCollection<BaseCard>([nineOfDiamonds, tenOfClubs]));
@@ -172,6 +167,48 @@ describe("Test a Cribbage game between two players", function() {
                 game.teams.findTeam(playerOne).addPoints(playerOne, 119);
                 expect(playerOne.hand.takeCard(new BaseCard(Suit.Spades, Value.Ace))).toBe(true);
             });
+        });
+    });
+    describe("Test an entire round of play", function () {
+        beforeEach(function () {
+            playerOne.hand =
+                new CribbageHand([sevenOfSpades, sevenOfDiamonds, eightOfHearts, eightOfSpades, nineOfDiamonds, tenOfClubs]);
+            playerTwo.hand =
+                new CribbageHand([nineOfHearts, tenOfDiamonds, jackOfSpades, queenOfHearts, kingOfClubs, kingOfHearts]);
+            game.dealer = playerOne;
+            game.nextPlayerInSequence = playerTwo;
+            game.giveToKitty(playerOne, new ItemCollection<BaseCard>([sevenOfDiamonds, eightOfHearts]));
+            game.giveToKitty(playerTwo, new ItemCollection<BaseCard>([kingOfClubs, kingOfHearts]));
+            game.cut = new BaseCard(Suit.Spades, Value.King);
+            game.playersInPlay.addItems(game.players.items);
+        });
+        it("knows how to play one round", function () {
+            game.playCard(playerTwo.name, nineOfHearts);
+            game.playCard(playerOne.name, nineOfDiamonds);
+            expect(game.getTeam(0).countPoints()).toEqual(2); // Pair of nines
+            game.playCard(playerTwo.name, jackOfSpades);
+            game.go(playerOne.name);
+            game.go(playerTwo.name);
+            expect(game.getTeam(1).countPoints()).toEqual(1); // Point for the go
+            expect(game.nextPlayerInSequence.equalsOther(playerOne)).toBe(true);
+            game.playCard(playerOne.name, tenOfClubs);
+            game.playCard(playerTwo.name, tenOfDiamonds);
+            expect(game.getTeam(1).countPoints()).toEqual(3); // Two more points for a pair
+            game.playCard(playerOne.name, eightOfSpades);
+            game.go(playerTwo.name);
+            game.go(playerOne.name);
+            expect(game.getTeam(0).countPoints()).toEqual(3); // Point for a go
+            expect(game.nextPlayerInSequence.equalsOther(playerTwo)).toBe(true);
+            game.playCard(playerTwo.name, queenOfHearts);
+            game.playCard(playerOne.name, sevenOfSpades);
+            // The round is over
+            expect(game.getTeam(0).countPoints()).toEqual(
+                4 /* round of play */ + 6 /* their hand */ + 8 /* their kitty */
+            );
+            expect(game.getTeam(1).countPoints()).toEqual(
+                3 /* round of play */ + 6 /* their hand */
+            );
+            expect(game.dealer.equalsOther(playerTwo)).toBe(true);
         });
     });
     describe("Test the run-of-play", function() {

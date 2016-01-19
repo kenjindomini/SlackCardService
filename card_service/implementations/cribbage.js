@@ -214,6 +214,9 @@ var Cribbage = (function (_super) {
                 this.deal();
             }
             else {
+                this.count = 0;
+                this.sequence.removeAll();
+                this.playersInPlay.addItems(this.players.items);
                 this.nextPlayerInSequence = this.nextPlayerInOrder(player);
             }
         }
@@ -305,7 +308,8 @@ var Cribbage = (function (_super) {
                     return true;
                 }
             }
-        } while (!this.nextPlayerInOrder(countingPlayer).equalsOther(firstPlayer));
+            countingPlayer = this.nextPlayerInOrder(countingPlayer);
+        } while (!countingPlayer.equalsOther(firstPlayer));
         return false;
     };
     Cribbage.prototype.cutForDealer = function () {
@@ -410,7 +414,7 @@ var Cribbage = (function (_super) {
     Cribbage.prototype.findTeam = function (player) {
         var team = null;
         for (var index = 0; index < this.teams.numTeams(); index++) {
-            var t = this.teams[index];
+            var t = this.getTeam(index);
             if (t.hasPlayer(player)) {
                 team = t;
                 break;

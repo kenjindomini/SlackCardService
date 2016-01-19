@@ -23,15 +23,15 @@ var ItemCollection = (function () {
         this.items.push(item);
     };
     ItemCollection.prototype.addItems = function (items) {
-        this.items.concat(items);
+        this.items = this.items.concat(items);
     };
     ItemCollection.prototype.removeItem = function (item) {
         var index = this.indexOfItem(item);
-        var hasCard = (index != -1);
-        if (hasCard) {
+        var hasItem = (index != -1);
+        if (hasItem) {
             this.items.splice(index, 1);
         }
-        return hasCard;
+        return hasItem;
     };
     ItemCollection.prototype.removeAll = function () {
         this.items.splice(0, this.items.length);

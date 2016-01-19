@@ -159,4 +159,5 @@ export class BaseCardGame<SomePlayerClass extends Player, SomeDeckClass extends 
     shuffle() {
         this.deck.shuffle();
     }
+    getTeam(index: number) { return this.teams.teams.itemAt(index); }
 }

@@ -279,6 +279,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             }
             else {
                 // Start the sequence over again, with the person after the one that got the go
+                this.count = 0;
+                this.sequence.removeAll();
+                this.playersInPlay.addItems(this.players.items);
                 this.nextPlayerInSequence = this.nextPlayerInOrder(player);
             }
         }
@@ -416,8 +419,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                     return true;
                 }
             }
+            countingPlayer = this.nextPlayerInOrder(countingPlayer);
         }
-        while (!this.nextPlayerInOrder(countingPlayer).equalsOther(firstPlayer));
+        while (!countingPlayer.equalsOther(firstPlayer));
         return false;
     }
 
@@ -580,7 +584,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
     private findTeam(player: CribbagePlayer):CribbageTeam {
         var team = null;
         for (var index = 0; index < this.teams.numTeams(); index++) {
-            var t = this.teams[index];
+            var t = this.getTeam(index);
             if (t.hasPlayer(player)) {
                 team = t;
                 break;

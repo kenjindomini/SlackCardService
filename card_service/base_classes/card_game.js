@@ -150,6 +150,7 @@ var BaseCardGame = (function () {
     BaseCardGame.prototype.shuffle = function () {
         this.deck.shuffle();
     };
+    BaseCardGame.prototype.getTeam = function (index) { return this.teams.teams.itemAt(index); };
     return BaseCardGame;
 })();
 exports.BaseCardGame = BaseCardGame;
