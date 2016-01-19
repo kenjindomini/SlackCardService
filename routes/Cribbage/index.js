@@ -181,7 +181,9 @@ var CribbageRoutes;
             }
             Router.sendResponse(response, res);
             response.data.response_type = SlackResponseType.in_channel;
-            Router.sendDelayedResponse(response, Router.getResponseUrl(req));
+            setTimeout(function () {
+                Router.sendDelayedResponse(response, Router.getResponseUrl(req));
+            }, 3000);
         };
         Router.prototype.describe = function (req, res) {
             var response = Router.makeResponse(200, this.currentGame ? this.currentGame.describe() : "The game is not yet initialized", SlackResponseType.in_channel);

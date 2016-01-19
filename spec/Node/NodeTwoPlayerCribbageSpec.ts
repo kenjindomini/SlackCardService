@@ -58,7 +58,7 @@ describe("Integration test the Cribbage game between two players", function() {
                 // Reset the game
                 agent.post(CribbageRoutePrefix + CribbageRoutes.Routes.resetGame)
                     .type('json')
-                    .send(JSON.stringify({secret:"secret", token:Tokens.resetGame}))
+                    .send(JSON.stringify({text:"secret", token:Tokens.resetGame}))
                     .expect(200, cb);
             },
             function(cb) {
