@@ -65,10 +65,11 @@ export module CribbageRoutes {
     }
 
     export enum Routes {
-        joinGame= <any>"/joinGame",
-        beginGame= <any>"/beginGame",
-        resetGame= <any>"/resetGame",
-        describe= <any>"/describe"
+        joinGame = <any>"/joinGame",
+        beginGame = <any>"/beginGame",
+        resetGame = <any>"/resetGame",
+        describe = <any>"/describe",
+        showCards = <any>"/showCards"
     }
 
     export class Router {
@@ -99,7 +100,7 @@ export module CribbageRoutes {
         }
 
         private static getPlayerName(req:express.Request):string {
-            return (req.body.user_name ? req.body.user_name : "Unknown Player");
+            return (req.body.user_name ? req.body.user_name : req.query.user_name ? req.query.user_name : "Unknown Player");
         }
 
         private static getResponseUrl(req:express.Request):string {

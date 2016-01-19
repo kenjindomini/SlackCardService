@@ -85,6 +85,7 @@ var CribbageRoutes;
         Routes[Routes["beginGame"] = "/beginGame"] = "beginGame";
         Routes[Routes["resetGame"] = "/resetGame"] = "resetGame";
         Routes[Routes["describe"] = "/describe"] = "describe";
+        Routes[Routes["showCards"] = "/showCards"] = "showCards";
     })(CribbageRoutes.Routes || (CribbageRoutes.Routes = {}));
     var Routes = CribbageRoutes.Routes;
     var Router = (function () {
@@ -104,7 +105,7 @@ var CribbageRoutes;
             request.post(url).json(responseData);
         };
         Router.getPlayerName = function (req) {
-            return (req.body.user_name ? req.body.user_name : "Unknown Player");
+            return (req.body.user_name ? req.body.user_name : req.query.user_name ? req.query.user_name : "Unknown Player");
         };
         Router.getResponseUrl = function (req) {
             return (req.body.response_url ? req.body.response_url : "");

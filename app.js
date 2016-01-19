@@ -20,6 +20,7 @@ function setup(app) {
     });
     app.get(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.beginGame, routes.beginGame);
     app.get(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.describe, routes.describe);
+    app.get(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.showCards, routes.showCards);
     app.post(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.joinGame, routes.joinGame);
     app.post(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.resetGame, routes.resetGame);
     app.get("*", function (req, res) {
