@@ -94,8 +94,8 @@ export module CribbageRoutes {
             res.status(response.status).header("content-type", "application/json").send(JSON.stringify(response.data));
         }
 
-        private static sendDelayedResponse(response:CribbageResponse, url:string):void {
-            request.post(url, {json: response}, function (error, response, body) {
+        private static sendDelayedResponse(responseData:CribbageResponseData, url:string):void {
+            request.post(url, {json: responseData}, function (error, response, body) {
                 console.log(`Done with the delayed response: error: ${error}, response: ${JSON.stringify(response)}. body: ${body}`);
             });
         }
@@ -176,6 +176,7 @@ export module CribbageRoutes {
             var secret = req.body.text;
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(500, `You're not allowed to reset the game, ${player}!!`, SlackResponseType.in_channel);
+            var reset = false;
             if (!Router.verifyRequest(req, Routes.resetGame)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
@@ -183,12 +184,15 @@ export module CribbageRoutes {
                 // Allow the game to be reset
                 response = Router.makeResponse(200, CribbageStrings.MessageStrings.GAME_RESET, SlackResponseType.ephemeral);
                 this.currentGame = new Cribbage(new Players<CribbagePlayer>([]));
+                reset = true;
             }
             Router.sendResponse(response, res);
-            response.data.response_type = SlackResponseType.in_channel;
-            setTimeout(function() {
-                Router.sendDelayedResponse(response, Router.getResponseUrl(req));
-            }, 1000);
+            if (reset) {
+                response.data.response_type = SlackResponseType.in_channel;
+                setTimeout(function () {
+                    Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
+                }, 1000);
+            }
         }
 
 

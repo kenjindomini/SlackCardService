@@ -100,8 +100,8 @@ var CribbageRoutes;
         Router.sendResponse = function (response, res) {
             res.status(response.status).header("content-type", "application/json").send(JSON.stringify(response.data));
         };
-        Router.sendDelayedResponse = function (response, url) {
-            request.post(url, { json: response }, function (error, response, body) {
+        Router.sendDelayedResponse = function (responseData, url) {
+            request.post(url, { json: responseData }, function (error, response, body) {
                 console.log("Done with the delayed response: error: " + error + ", response: " + JSON.stringify(response) + ". body: " + body);
             });
         };
@@ -172,18 +172,22 @@ var CribbageRoutes;
             var secret = req.body.text;
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(500, "You're not allowed to reset the game, " + player + "!!", SlackResponseType.in_channel);
+            var reset = false;
             if (!Router.verifyRequest(req, Routes.resetGame)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
             else if (secret != null && secret == "secret") {
                 response = Router.makeResponse(200, CribbageStrings.MessageStrings.GAME_RESET, SlackResponseType.ephemeral);
                 this.currentGame = new cribbage_1.Cribbage(new card_game_1.Players([]));
+                reset = true;
             }
             Router.sendResponse(response, res);
-            response.data.response_type = SlackResponseType.in_channel;
-            setTimeout(function () {
-                Router.sendDelayedResponse(response, Router.getResponseUrl(req));
-            }, 1000);
+            if (reset) {
+                response.data.response_type = SlackResponseType.in_channel;
+                setTimeout(function () {
+                    Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
+                }, 1000);
+            }
         };
         Router.prototype.describe = function (req, res) {
             var response = Router.makeResponse(200, this.currentGame ? this.currentGame.describe() : "The game is not yet initialized", SlackResponseType.in_channel);
