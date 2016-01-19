@@ -61,7 +61,8 @@ export module CribbageRoutes {
         joinGame = <any>"WMYyNOpoJRM4dbNBp6x9yOqP",
         describe = <any>"IA5AtVdbkur2aIGw1B549SgD",
         resetGame = <any>"43LROOjSf8qa3KPYXvmxgdt1",
-        beginGame = <any>"GECanrrjA8dYMlv2e4jkLQGe"
+        beginGame = <any>"GECanrrjA8dYMlv2e4jkLQGe",
+        showHand = <any>"Xa73JDXrWDnU276yqwremEsO"
     }
 
     export enum Routes {
@@ -206,11 +207,16 @@ export module CribbageRoutes {
 
         showHand(req:express.Request, res:express.Response) {
             var response = Router.makeResponse(200, "...");
-            try {
-                response.data.text = this.currentGame.getPlayerHand(Router.getPlayerName(req));
+            if (!Router.verifyRequest(req, Routes.showHand)) {
+                res = Router.VALIDATION_FAILED_RESPONSE;
             }
-            catch (e) {
-                response = Router.makeResponse(400, e);
+            else {
+                try {
+                    response.data.text = this.currentGame.getPlayerHand(Router.getPlayerName(req));
+                }
+                catch (e) {
+                    response = Router.makeResponse(400, e);
+                }
             }
             Router.sendResponse(response, res);
         }

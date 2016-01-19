@@ -79,6 +79,7 @@ var CribbageRoutes;
         Tokens[Tokens["describe"] = "IA5AtVdbkur2aIGw1B549SgD"] = "describe";
         Tokens[Tokens["resetGame"] = "43LROOjSf8qa3KPYXvmxgdt1"] = "resetGame";
         Tokens[Tokens["beginGame"] = "GECanrrjA8dYMlv2e4jkLQGe"] = "beginGame";
+        Tokens[Tokens["showHand"] = "Xa73JDXrWDnU276yqwremEsO"] = "showHand";
     })(Tokens || (Tokens = {}));
     (function (Routes) {
         Routes[Routes["joinGame"] = "/joinGame"] = "joinGame";
@@ -196,11 +197,16 @@ var CribbageRoutes;
         };
         Router.prototype.showHand = function (req, res) {
             var response = Router.makeResponse(200, "...");
-            try {
-                response.data.text = this.currentGame.getPlayerHand(Router.getPlayerName(req));
+            if (!Router.verifyRequest(req, Routes.showHand)) {
+                res = Router.VALIDATION_FAILED_RESPONSE;
             }
-            catch (e) {
-                response = Router.makeResponse(400, e);
+            else {
+                try {
+                    response.data.text = this.currentGame.getPlayerHand(Router.getPlayerName(req));
+                }
+                catch (e) {
+                    response = Router.makeResponse(400, e);
+                }
             }
             Router.sendResponse(response, res);
         };
