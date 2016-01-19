@@ -3,6 +3,7 @@ var cribbage_1 = require("../../card_service/implementations/cribbage");
 var cribbage_hand_1 = require("../../card_service/implementations/cribbage_hand");
 var card_game_1 = require("../../card_service/base_classes/card_game");
 var card_1 = require("../../card_service/base_classes/items/card");
+var request = require("request");
 var CribbageStrings;
 (function (CribbageStrings) {
     var MessageStrings = (function () {
@@ -100,10 +101,7 @@ var CribbageRoutes;
             res.status(response.status).header("content-type", "application/json").send(JSON.stringify(response.data));
         };
         Router.sendDelayedResponse = function (response, url) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-            xhr.send(JSON.stringify(response));
+            request.post(url).json(JSON.stringify(response));
         };
         Router.getPlayerName = function (req) {
             return (req.body.user_name ? req.body.user_name : "Unknown Player");
@@ -183,7 +181,7 @@ var CribbageRoutes;
             response.data.response_type = SlackResponseType.in_channel;
             setTimeout(function () {
                 Router.sendDelayedResponse(response, Router.getResponseUrl(req));
-            }, 3000);
+            }, 1000);
         };
         Router.prototype.describe = function (req, res) {
             var response = Router.makeResponse(200, this.currentGame ? this.currentGame.describe() : "The game is not yet initialized", SlackResponseType.in_channel);

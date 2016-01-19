@@ -12,6 +12,8 @@ import {CribbageHand} from "../../card_service/implementations/cribbage_hand";
 import {Players, Teams} from "../../card_service/base_classes/card_game";
 import {BaseCard as Card} from "../../card_service/base_classes/items/card";
 
+var request = require("request");
+
 export module CribbageStrings {
     export class MessageStrings {
         static get START_GAME():string { return "The game is afoot, throw your cards to the crib."; }
@@ -93,10 +95,7 @@ export module CribbageRoutes {
         }
 
         private static sendDelayedResponse(response:CribbageResponse, url:string):void {
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-            xhr.send(JSON.stringify(response));
+            request.post(url).json(JSON.stringify(response));
         }
 
         private static getPlayerName(req:express.Request):string {
@@ -187,7 +186,7 @@ export module CribbageRoutes {
             response.data.response_type = SlackResponseType.in_channel;
             setTimeout(function() {
                 Router.sendDelayedResponse(response, Router.getResponseUrl(req));
-            }, 3000);
+            }, 1000);
         }
 
 
