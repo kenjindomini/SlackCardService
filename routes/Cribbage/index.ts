@@ -95,7 +95,7 @@ export module CribbageRoutes {
         }
 
         private static sendDelayedResponse(response:CribbageResponse, url:string):void {
-            request.post(url).jsonresponse);
+            request.post(url).json(response);
         }
 
         private static getPlayerName(req:express.Request):string {
