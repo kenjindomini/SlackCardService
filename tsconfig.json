@@ -9,7 +9,7 @@
     "noLib": false
   },
   "exclude": [
-    "Node/node_modules",
-    "Node/typings"
+    "node_modules",
+    "typings"
   ]
 }

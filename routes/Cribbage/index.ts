@@ -14,141 +14,209 @@ import {BaseCard as Card} from "../../card_service/base_classes/items/card";
 
 export module CribbageStrings {
     export class MessageStrings {
-        static START_GAME:string = "The game is afoot, throw your cards to the crib.";
-        static GAME_RESET:string = "The game was reset";
+        static get START_GAME():string { return "The game is afoot, throw your cards to the crib."; }
+        static get GAME_RESET():string { return "The game was reset"; }
     }
     export class ErrorStrings {
-        static NO_GAME:string = "The game hasn't been created. Add some players first.";
+        static get NO_GAME():string { return "The game hasn't been created. Add some players first."; }
     }
 }
 
-class CribbageResponse {
-    constructor(public status:number, public message:string) {
+export function removeLastTwoChars(str:string): string {
+    var ret = "";
+    var len = str.length;
+    if (len == 1) {
+        ret = str.substring(0);
     }
+    else if (len > 1) {
+        ret = str.substring(0, len - 2)
+    }
+    return ret;
 }
 
-export class CribbageRoutes {
+export module CribbageRoutes {
 
-    currentGame:Cribbage;
-
-    static Routes = {
-        joinGame: "/joinGame",
-        beginGame: "/beginGame",
-        resetGame: "/resetGame",
-        describe: "/describe"
-    };
-
-
-    /* ***** Helper Methods ***** */
-
-    private static sendResponse(response:CribbageResponse, res:express.Response) {
-        res.status(response.status).send(response.message);
+    enum SlackResponseType {
+        ephemeral = <any>"ephemeral", /* message sent to the user */
+        in_channel = <any>"in_channel" /* message sent to the channel */
     }
 
-    /**
-     * NOTE:
-     * A new Game should be created by players joining the game via "joinGame",
-     * then calling "beginGame" when all have joined
-     */
-
-    /* ***** ROUTES ***** */
-
-    /* ***** Initializing the Game ***** */
-
-    joinGame(req:express.Request, res:express.Response) {
-        var playerName = req.body.user_name;
-        var newPlayer = new CribbagePlayer(playerName, new CribbageHand([]));
-        var response = new CribbageResponse(200, "Welcome, " + playerName);
-        if (this.currentGame == null) {
-            this.currentGame = new Cribbage(new Players([newPlayer]))
+    export class CribbageResponseData {
+        constructor(
+            public response_type: SlackResponseType = SlackResponseType.ephemeral,
+            public text: string = "",
+            public attachments: string = ""
+        ) {
         }
-        else {
-            try {
-                this.currentGame.addPlayer(newPlayer);
+    }
+
+    export class CribbageResponse {
+        constructor(public status:number, public data:CribbageResponseData) {
+        }
+    }
+
+    enum Tokens {
+        joinGame = <any>"WMYyNOpoJRM4dbNBp6x9yOqP",
+        describe = <any>"IA5AtVdbkur2aIGw1B549SgD",
+        resetGame = <any>"43LROOjSf8qa3KPYXvmxgdt1",
+        beginGame = <any>"GECanrrjA8dYMlv2e4jkLQGe"
+    }
+
+    export enum Routes {
+        joinGame= <any>"/joinGame",
+        beginGame= <any>"/beginGame",
+        resetGame= <any>"/resetGame",
+        describe= <any>"/describe"
+    }
+
+    export class Router {
+
+        currentGame:Cribbage;
+        static VALIDATION_FAILED_RESPONSE: CribbageResponse =
+            new CribbageResponse(500,
+                new CribbageResponseData(SlackResponseType.ephemeral, "Token validation failed")
+            );
+
+        /* ***** Helper Methods ***** */
+
+        private static makeResponse(
+            status:number=200,
+            text:string="",
+            response_type:SlackResponseType=SlackResponseType.ephemeral,
+            attachments:string=""
+        ): CribbageResponse {
+            return new CribbageResponse(status, new CribbageResponseData(response_type, text, attachments));
+        }
+
+        private static sendResponse(response:CribbageResponse, res:express.Response):void {
+            res.status(response.status).send(JSON.stringify(response));
+        }
+
+        private static getPlayerName(request:express.Request):string {
+            return (request.body.user_name ? request.body.user_name : "Unknown Player");
+        }
+
+        private static verifyRequest(req:express.Request, route:Routes):boolean {
+            var verified = false;
+            var token = (req.body.token ? req.body.token : req.query.token ? req.query.token : null);
+            switch (route) {
+                case Routes.joinGame: verified = (token == Tokens.joinGame); break;
+                case Routes.describe: verified = (token == Tokens.describe); break;
+                case Routes.beginGame: verified = (token == Tokens.beginGame); break;
+                case Routes.resetGame: verified = (token == Tokens.resetGame); break;
             }
-            catch (e) {
-                response.status = 500;
-                response.message = e;
+            return verified;
+        }
+
+        /**
+         * NOTE:
+         * A new Game should be created by players joining the game via "joinGame",
+         * then calling "beginGame" when all have joined
+         */
+
+        /* ***** ROUTES ***** */
+
+        /* ***** Initializing the Game ***** */
+
+        joinGame(req:express.Request, res:express.Response) {
+            var playerName = Router.getPlayerName(req);
+            var newPlayer = new CribbagePlayer(playerName, new CribbageHand([]));
+            var response = Router.makeResponse(200, `${playerName} has joined the game`, SlackResponseType.in_channel);
+            if (this.currentGame == null) {
+                this.currentGame = new Cribbage(new Players([newPlayer]))
             }
-        }
-        CribbageRoutes.sendResponse(response, res);
-    }
-
-    beginGame(req:express.Request, res:express.Response) {
-        var response = new CribbageResponse(200, CribbageStrings.MessageStrings.START_GAME);
-        if (this.currentGame == null) {
-            response.status = 500;
-            response.message = CribbageStrings.ErrorStrings.NO_GAME;
-        }
-        else {
-            try {
-                this.currentGame.begin();
-            }
-            catch (e) {
-                response.status = 400;
-                // SB TODO: Elaborate on what went wrong
-                response.message = "Cannot start the game, an error has occurred";
-            }
-        }
-        CribbageRoutes.sendResponse(response, res);
-    }
-
-    resetGame(req:express.Request, res:express.Response) {
-        // SB TODO: Have a better way to have a secret on the server so that trolls can't keep resetting the game
-        var secret = req.body.secret;
-        var response = new CribbageResponse(400, "You're not authorized!!");
-        if (secret != null && secret == "secret") {
-            // Allow the game to be reset
-            response.status = 200;
-            response.message = CribbageStrings.MessageStrings.GAME_RESET;
-            this.currentGame = new Cribbage(new Players<CribbagePlayer>([]));
-        }
-        CribbageRoutes.sendResponse(response, res);
-    }
-
-
-    /* ***** Run of play ***** */
-
-    describe(req:express.Request, res:express.Response) {
-        var response = new CribbageResponse(200, (this.currentGame ? this.currentGame.describe() : "The game is not yet initialized"));
-        CribbageRoutes.sendResponse(response, res);
-    }
-
-    showCards(req:express.Request, res:express.Response) {
-        var response = new CribbageResponse(200, "");
-        try {
-            response.message = this.currentGame.getPlayerHand(req.body.user_name);
-        }
-        catch (e) {
-            response.status = 400;
-            response.message = e;
-        }
-        CribbageRoutes.sendResponse(response, res);
-    }
-
-    playCard(req:express.Request, res:express.Response) {
-        var player = req.body.user_name;
-        var card:Card = new Card(req.body.suit, req.body.value);
-        var response = new CribbageResponse(200, "");
-        try {
-            var gameOver:boolean = this.currentGame.playCard(player, card);
-            if (gameOver) {
-                var winners = "";
-                for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
-                    winners += (this.currentGame.players.itemAt(ix).name + ", ");
-                }
-                // Remove last two chars
-                winners = winners.substring(0, winners.length - 2);
-                response.message = "Game over. Winners: " + winners;
+            else if (!Router.verifyRequest(req, Routes.joinGame)) {
+                response = Router.VALIDATION_FAILED_RESPONSE;
             }
             else {
-                response.message = "Your turn, " + this.currentGame.nextPlayerInSequence.name;
+                try {
+                    this.currentGame.addPlayer(newPlayer);
+                }
+                catch (e) {
+                    response = Router.makeResponse(500, e);
+                }
             }
+            Router.sendResponse(response, res);
         }
-        catch (e) {
-            response.status = 400;
-            response.message = "Error! Something went wrong! Current player: " + this.currentGame.nextPlayerInSequence;
+
+        beginGame(req:express.Request, res:express.Response) {
+            var response = Router.makeResponse(200, CribbageStrings.MessageStrings.START_GAME, SlackResponseType.in_channel);
+            if (this.currentGame == null) {
+                response = Router.makeResponse(500, CribbageStrings.ErrorStrings.NO_GAME);
+            }
+            else if (!Router.verifyRequest(req, Routes.beginGame)) {
+                response = Router.VALIDATION_FAILED_RESPONSE;
+            }
+            else {
+                try {
+                    this.currentGame.begin();
+                }
+                catch (e) {
+                    // SB TODO: Elaborate on what went wrong
+                    response = Router.makeResponse(500, `Cannot start the game, an error has occurred: ${e}`);
+                }
+            }
+            Router.sendResponse(response, res);
         }
-        CribbageRoutes.sendResponse(response, res);
+
+        resetGame(req:express.Request, res:express.Response) {
+            // SB TODO: Have a better way to have a secret on the server so that trolls can't keep resetting the game
+            var secret = req.body.secret;
+            var player = Router.getPlayerName(req);
+            var response = Router.makeResponse(500, `You're not allowed to reset the game, ${player}!!`, SlackResponseType.in_channel);
+            if (!Router.verifyRequest(req, Routes.resetGame)) {
+                response = Router.VALIDATION_FAILED_RESPONSE;
+            }
+            else if (secret != null && secret == "secret") {
+                // Allow the game to be reset
+                response = Router.makeResponse(200, CribbageStrings.MessageStrings.GAME_RESET);
+                this.currentGame = new Cribbage(new Players<CribbagePlayer>([]));
+            }
+            Router.sendResponse(response, res);
+        }
+
+
+        /* ***** Run of play ***** */
+
+        describe(req:express.Request, res:express.Response) {
+            var response = Router.makeResponse(200, this.currentGame ? this.currentGame.describe() : "The game is not yet initialized", SlackResponseType.in_channel);
+            if (!Router.verifyRequest(req, Routes.describe)) {
+                response = Router.VALIDATION_FAILED_RESPONSE;
+            }
+            Router.sendResponse(response, res);
+        }
+
+        showCards(req:express.Request, res:express.Response) {
+            var response = Router.makeResponse(200, "...");
+            try {
+                response.data.text = this.currentGame.getPlayerHand(Router.getPlayerName(req));
+            }
+            catch (e) {
+                response = Router.makeResponse(400, e);
+            }
+            Router.sendResponse(response, res);
+        }
+
+        playCard(req:express.Request, res:express.Response) {
+            var player = Router.getPlayerName(req);
+            var card:Card = new Card(req.body.suit, req.body.value);
+            var response = Router.makeResponse(200, `${player} played ${card.toString()}. You're up, ${this.currentGame.nextPlayerInSequence.name}.`);
+            try {
+                var gameOver:boolean = this.currentGame.playCard(player, card);
+                if (gameOver) {
+                    var winners = "";
+                    for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
+                        winners += (this.currentGame.players.itemAt(ix).name + ", ");
+                    }
+                    // Remove last two chars
+                    winners = removeLastTwoChars(winners);
+                    response.data.text = `Game over. Winners: ${winners}`;
+                }
+            }
+            catch (e) {
+                response = Router.makeResponse(400, `Error! ${e}! Current player: ${this.currentGame.nextPlayerInSequence}`);
+            }
+            Router.sendResponse(response, res);
+        }
     }
 }

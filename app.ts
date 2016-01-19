@@ -26,10 +26,10 @@ export function setup(app: Express):Express {
     }
     else {
         app.use(errorHandler());
-    };
+    }
 
     // Routes
-    var routes = new CribbageRoutes();
+    var routes = new CribbageRoutes.Router();
     app.locals.cribbageRoutes = routes;
     // Respond to the base route with "Hello world"
     app.get("/", function(req: Request, res: Response) {
@@ -48,7 +48,7 @@ export function setup(app: Express):Express {
 }
 
 export var app = setup(express());
-export var server = app.listen(port, () => {;
+export var server = app.listen(port, () => {
     console.log("Express server listening on port %d in %s mode", port, app.settings.env);
 });
 

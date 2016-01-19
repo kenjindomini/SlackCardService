@@ -17,6 +17,7 @@ import {setup, CribbageRoutePrefix} from "../../app";
 import {createNewServer} from "./setup";
 import {CribbageRoutes, CribbageStrings} from "../../routes/Cribbage/index";
 import Response = Express.Response;
+import CribbageResponse = CribbageRoutes.CribbageResponse;
 
 "use strict";
 
@@ -37,8 +38,18 @@ describe("Integration test the Cribbage game between two players", function() {
         HomerSimpson = new CribbagePlayer("Homer Simpson", new CribbageHand([]));
     });
 
-    function joinGameJson(player:CribbagePlayer): string {
-        return '{"player": { "name": "' + player.name + '" } }';
+    var Tokens = {
+        joinGame: "WMYyNOpoJRM4dbNBp6x9yOqP",
+        describe: "IA5AtVdbkur2aIGw1B549SgD",
+        resetGame: "43LROOjSf8qa3KPYXvmxgdt1",
+        beginGame: "GECanrrjA8dYMlv2e4jkLQGe"
+    };
+
+    function joinGameJson(player:CribbagePlayer, token:string): string {
+        return JSON.stringify({
+            user_name: `${player.name}`,
+            token:`${token}`
+        });
     }
 
     function joinGameAndBeginSeries(agent) {
@@ -47,28 +58,34 @@ describe("Integration test the Cribbage game between two players", function() {
                 // Reset the game
                 agent.post(CribbageRoutePrefix + CribbageRoutes.Routes.resetGame)
                     .type('json')
-                    .send('{"secret":"secret"}')
+                    .send(JSON.stringify({secret:"secret", token:Tokens.resetGame}))
                     .expect(200, cb);
             },
             function(cb) {
                 // Peter Griffin joins the game
                 agent.post(CribbageRoutePrefix + CribbageRoutes.Routes.joinGame)
                     .type('json')
-                    .send(joinGameJson(PeterGriffin))
+                    .send(joinGameJson(PeterGriffin, Tokens.joinGame))
                     .expect(200, cb);
             },
             function(cb) {
                 // Homer Simpson joins the game
                 agent.post(CribbageRoutePrefix + CribbageRoutes.Routes.joinGame)
                     .type('json')
-                    .send(joinGameJson(HomerSimpson))
+                    .send(joinGameJson(HomerSimpson, Tokens.joinGame))
                     .expect(200, cb);
             },
             function(cb) {
                 // Begin the game
                 agent.get(CribbageRoutePrefix + CribbageRoutes.Routes.beginGame)
+                    .query({token: `${Tokens.beginGame}`})
                     .expect(200)
-                    .expect(CribbageStrings.MessageStrings.START_GAME, cb);
+                    .expect((res) => {
+                        var response = <CribbageResponse>JSON.parse(res.text);
+                        if (response.data.text != CribbageStrings.MessageStrings.START_GAME)
+                            return true; // Return true to indicate an error, see the SuperTest documentation
+                    })
+                    .end(cb);
             }
         ];
     }
@@ -84,9 +101,11 @@ describe("Integration test the Cribbage game between two players", function() {
             function(cb) {
                 //Get the description
                 agent.get(CribbageRoutePrefix + CribbageRoutes.Routes.describe)
+                    .query({token: `${Tokens.describe}`})
                     .expect(200)
                     .expect(function(res) {
-                        var description:CribbageGameDescription = JSON.parse(res.text);
+                        var response = <CribbageResponse>JSON.parse(res.text);
+                        var description:CribbageGameDescription = JSON.parse(response.data.text);
                         var hasDealer = (description.dealer == PeterGriffin.name || description.dealer == HomerSimpson.name);
                         expect(hasDealer).toBe(true);
                     })

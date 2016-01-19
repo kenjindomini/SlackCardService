@@ -13,8 +13,7 @@ function setup(app) {
     else {
         app.use(errorHandler());
     }
-    ;
-    var routes = new index_1.CribbageRoutes();
+    var routes = new index_1.CribbageRoutes.Router();
     app.locals.cribbageRoutes = routes;
     app.get("/", function (req, res) {
         res.status(200).send("Hello world!");
@@ -31,7 +30,6 @@ function setup(app) {
 exports.setup = setup;
 exports.app = setup(express());
 exports.server = exports.app.listen(port, function () {
-    ;
     console.log("Express server listening on port %d in %s mode", port, exports.app.settings.env);
 });
 //# sourceMappingURL=app.js.map
