@@ -208,14 +208,14 @@ export module CribbageRoutes {
         showHand(req:express.Request, res:express.Response) {
             var response = Router.makeResponse(200, "...");
             if (!Router.verifyRequest(req, Routes.showHand)) {
-                res = Router.VALIDATION_FAILED_RESPONSE;
+                response = Router.VALIDATION_FAILED_RESPONSE;
             }
             else {
                 try {
                     response.data.text = this.currentGame.getPlayerHand(Router.getPlayerName(req));
                 }
                 catch (e) {
-                    response = Router.makeResponse(400, e);
+                    response = Router.makeResponse(500, e);
                 }
             }
             Router.sendResponse(response, res);
