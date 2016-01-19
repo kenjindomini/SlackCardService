@@ -102,11 +102,7 @@ var CribbageRoutes;
         };
         Router.sendDelayedResponse = function (response, url) {
             request.post(url, { json: response }, function (error, response, body) {
-                var output = '';
-                for (var property in response) {
-                    output += property + ': ' + response[property] + '; ';
-                }
-                console.log("Done with the delayed response: error: " + error + ", response: " + output + ".");
+                console.log("Done with the delayed response: error: " + error + ", response: " + JSON.stringify(response) + ". body: " + body);
             });
         };
         Router.getPlayerName = function (req) {
