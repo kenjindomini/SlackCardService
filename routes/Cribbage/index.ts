@@ -96,7 +96,11 @@ export module CribbageRoutes {
 
         private static sendDelayedResponse(response:CribbageResponse, url:string):void {
             request.post(url, {json: response}, function (error, response, body) {
-                console.log(`Done with the delayed response: error: ${error}, response: ${response}.`);
+                var output = '';
+                for (var property in response) {
+                    output += property + ': ' + response[property]+'; ';
+                }
+                console.log(`Done with the delayed response: error: ${error}, response: ${output}.`);
             });
         }
 
