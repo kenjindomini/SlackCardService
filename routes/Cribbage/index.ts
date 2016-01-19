@@ -95,10 +95,12 @@ export module CribbageRoutes {
         }
 
         private static sendDelayedResponse(response:CribbageResponse, url:string):void {
-            request.post({
-                url: url,
-                json: true,
-                body: JSON.stringify(response)}
+            request.post(
+                url,
+                {
+                    json: true,
+                    body: JSON.stringify(response)
+                }
             );
         }
 
