@@ -97,13 +97,12 @@ var CribbageRoutes;
             if (attachments === void 0) { attachments = []; }
             return new CribbageResponse(status, new CribbageResponseData(response_type, text, attachments));
         };
-        Router.sendResponse = function (response, res) {
-            res.status(response.status).header("content-type", "application/json").send(JSON.stringify(response.data));
+        Router.sendResponse = function (response, res, callback) {
+            if (callback === void 0) { callback = null; }
+            res.status(response.status).header("content-type", "application/json").json(response.data).end(callback);
         };
         Router.sendDelayedResponse = function (responseData, url) {
-            request.post(url, { json: responseData }, function (error, response, body) {
-                console.log("Done with the delayed response: error: " + error + ", response: " + JSON.stringify(response) + ". body: " + body);
-            });
+            request.post(url).json(responseData);
         };
         Router.getPlayerName = function (req) {
             return (req.body.user_name ? req.body.user_name : "Unknown Player");
@@ -183,10 +182,7 @@ var CribbageRoutes;
             }
             Router.sendResponse(response, res);
             if (reset) {
-                response.data.response_type = SlackResponseType.in_channel;
-                setTimeout(function () {
-                    Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
-                }, 1000);
+                Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
             }
         };
         Router.prototype.describe = function (req, res) {
