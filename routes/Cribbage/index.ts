@@ -10,7 +10,7 @@ import {CribbagePlayer} from "../../card_service/implementations/cribbage_player
 import {Cribbage} from "../../card_service/implementations/cribbage";
 import {CribbageHand} from "../../card_service/implementations/cribbage_hand";
 import {Players, Teams} from "../../card_service/base_classes/card_game";
-import {BaseCard as Card} from "../../card_service/base_classes/items/card";
+import {BaseCard as Card, Value, Suit} from "../../card_service/base_classes/items/card";
 
 var request = require("request");
 
@@ -21,6 +21,9 @@ export module CribbageStrings {
     }
     export class ErrorStrings {
         static get NO_GAME():string { return "The game hasn't been created. Add some players first."; }
+        static get INVALID_CARD_SYNTAX():string {
+            return "Invalid syntax. Enter your card as (value)(suit), for example enter the five of hearts as 5H.";
+        }
     }
 }
 
@@ -38,6 +41,7 @@ export function removeLastTwoChars(str:string): string {
 
 export module CribbageRoutes {
 
+    import MessageStrings = CribbageStrings.MessageStrings;
     enum SlackResponseType {
         ephemeral = <any>"ephemeral", /* message sent to the user */
         in_channel = <any>"in_channel" /* message sent to the channel */
@@ -62,7 +66,8 @@ export module CribbageRoutes {
         describe = <any>"IA5AtVdbkur2aIGw1B549SgD",
         resetGame = <any>"43LROOjSf8qa3KPYXvmxgdt1",
         beginGame = <any>"GECanrrjA8dYMlv2e4jkLQGe",
-        showHand = <any>"Xa73JDXrWDnU276yqwremEsO"
+        showHand = <any>"Xa73JDXrWDnU276yqwremEsO",
+        playCard = <any>"hnlyb5m5PfRNWyGJ3VNb8nkt"
     }
 
     export enum Routes {
@@ -70,7 +75,8 @@ export module CribbageRoutes {
         beginGame = <any>"/beginGame",
         resetGame = <any>"/resetGame",
         describe = <any>"/describe",
-        showHand = <any>"/showHand"
+        showHand = <any>"/showHand",
+        playCard = <any>"/playCard"
     }
 
     export class Router {
@@ -117,8 +123,50 @@ export module CribbageRoutes {
                 case Routes.beginGame: verified = (token == Tokens.beginGame); break;
                 case Routes.resetGame: verified = (token == Tokens.resetGame); break;
                 case Routes.showHand: verified = (token == Tokens.showHand); break;
+                case Routes.playCard: verified = (token == Tokens.playCard); break;
             }
             return verified;
+        }
+
+        private static parseCard(req:express.Request):Card {
+            var text = req.body.text;
+            // parse the first two characters as value then suit
+            // SB TODO: make a better parser that recognizes various inputs
+            if (text.length < 2) {
+                throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+            }
+            var charValue = text[0].toLowerCase(), charSuit = text[1].toLowerCase();
+            var value: Value, suit: Suit;
+            switch (charValue) {
+                case 'a': value = Value.Ace; break;
+                case '2': value = Value.Two; break;
+                case '3': value = Value.Three; break;
+                case '4': value = Value.Four; break;
+                case '5': value = Value.Five; break;
+                case '6': value = Value.Six; break;
+                case '7': value = Value.Seven; break;
+                case '8': value = Value.Eight; break;
+                case '9': value = Value.Nine; break;
+                case '1':
+                    // assume it's a 10
+                    value = Value.Ten;
+                    // set the suit character to the next character
+                    if (text.length > 2)
+                        charSuit = text[2].toLowerCase();
+                    break;
+                case 'j': value = Value.Jack; break;
+                case 'q': value = Value.Queen; break;
+                case 'k': value = Value.King; break;
+                default: throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+            }
+            switch (charSuit) {
+                case 'h': suit = Suit.Hearts; break;
+                case 's': suit = Suit.Spades; break;
+                case 'd': suit = Suit.Diamonds; break;
+                case 'c': suit = Suit.Clubs; break;
+                default: throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+            }
+            return new Card(suit, value);
         }
 
         /**
@@ -224,10 +272,14 @@ export module CribbageRoutes {
 
         playCard(req:express.Request, res:express.Response) {
             var player = Router.getPlayerName(req);
-            var card:Card = new Card(req.body.suit, req.body.value);
-            var response = Router.makeResponse(200, `${player} played ${card.toString()}. You're up, ${this.currentGame.nextPlayerInSequence.name}.`);
+            var response = Router.makeResponse(200, "...");
             try {
+                var card:Card = Router.parseCard(req);
                 var gameOver:boolean = this.currentGame.playCard(player, card);
+                response.data.text =
+                    `${player} played ${card.toString()}.
+                    The cards in play are ${this.currentGame.sequence.toString()}.
+                    You're up, ${this.currentGame.nextPlayerInSequence.name}.`;
                 if (gameOver) {
                     var winners = "";
                     for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
@@ -239,7 +291,7 @@ export module CribbageRoutes {
                 }
             }
             catch (e) {
-                response = Router.makeResponse(400, `Error! ${e}! Current player: ${this.currentGame.nextPlayerInSequence}`);
+                response = Router.makeResponse(500, `Error! ${e}! Current player: ${this.currentGame.nextPlayerInSequence}`);
             }
             Router.sendResponse(response, res);
         }

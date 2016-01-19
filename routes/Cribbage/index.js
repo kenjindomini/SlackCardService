@@ -30,6 +30,13 @@ var CribbageStrings;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(ErrorStrings, "INVALID_CARD_SYNTAX", {
+            get: function () {
+                return "Invalid syntax. Enter your card as (value)(suit), for example enter the five of hearts as 5H.";
+            },
+            enumerable: true,
+            configurable: true
+        });
         return ErrorStrings;
     })();
     CribbageStrings.ErrorStrings = ErrorStrings;
@@ -80,6 +87,7 @@ var CribbageRoutes;
         Tokens[Tokens["resetGame"] = "43LROOjSf8qa3KPYXvmxgdt1"] = "resetGame";
         Tokens[Tokens["beginGame"] = "GECanrrjA8dYMlv2e4jkLQGe"] = "beginGame";
         Tokens[Tokens["showHand"] = "Xa73JDXrWDnU276yqwremEsO"] = "showHand";
+        Tokens[Tokens["playCard"] = "hnlyb5m5PfRNWyGJ3VNb8nkt"] = "playCard";
     })(Tokens || (Tokens = {}));
     (function (Routes) {
         Routes[Routes["joinGame"] = "/joinGame"] = "joinGame";
@@ -87,6 +95,7 @@ var CribbageRoutes;
         Routes[Routes["resetGame"] = "/resetGame"] = "resetGame";
         Routes[Routes["describe"] = "/describe"] = "describe";
         Routes[Routes["showHand"] = "/showHand"] = "showHand";
+        Routes[Routes["playCard"] = "/playCard"] = "playCard";
     })(CribbageRoutes.Routes || (CribbageRoutes.Routes = {}));
     var Routes = CribbageRoutes.Routes;
     var Router = (function () {
@@ -130,8 +139,79 @@ var CribbageRoutes;
                 case Routes.showHand:
                     verified = (token == Tokens.showHand);
                     break;
+                case Routes.playCard:
+                    verified = (token == Tokens.playCard);
+                    break;
             }
             return verified;
+        };
+        Router.parseCard = function (req) {
+            var text = req.body.text;
+            if (text.length < 2) {
+                throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+            }
+            var charValue = text[0].toLowerCase(), charSuit = text[1].toLowerCase();
+            var value, suit;
+            switch (charValue) {
+                case 'a':
+                    value = card_1.Value.Ace;
+                    break;
+                case '2':
+                    value = card_1.Value.Two;
+                    break;
+                case '3':
+                    value = card_1.Value.Three;
+                    break;
+                case '4':
+                    value = card_1.Value.Four;
+                    break;
+                case '5':
+                    value = card_1.Value.Five;
+                    break;
+                case '6':
+                    value = card_1.Value.Six;
+                    break;
+                case '7':
+                    value = card_1.Value.Seven;
+                    break;
+                case '8':
+                    value = card_1.Value.Eight;
+                    break;
+                case '9':
+                    value = card_1.Value.Nine;
+                    break;
+                case '1':
+                    value = card_1.Value.Ten;
+                    if (text.length > 2)
+                        charSuit = text[2].toLowerCase();
+                    break;
+                case 'j':
+                    value = card_1.Value.Jack;
+                    break;
+                case 'q':
+                    value = card_1.Value.Queen;
+                    break;
+                case 'k':
+                    value = card_1.Value.King;
+                    break;
+                default: throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+            }
+            switch (charSuit) {
+                case 'h':
+                    suit = card_1.Suit.Hearts;
+                    break;
+                case 's':
+                    suit = card_1.Suit.Spades;
+                    break;
+                case 'd':
+                    suit = card_1.Suit.Diamonds;
+                    break;
+                case 'c':
+                    suit = card_1.Suit.Clubs;
+                    break;
+                default: throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+            }
+            return new card_1.BaseCard(suit, value);
         };
         Router.prototype.joinGame = function (req, res) {
             var playerName = Router.getPlayerName(req);
@@ -215,10 +295,12 @@ var CribbageRoutes;
         };
         Router.prototype.playCard = function (req, res) {
             var player = Router.getPlayerName(req);
-            var card = new card_1.BaseCard(req.body.suit, req.body.value);
-            var response = Router.makeResponse(200, player + " played " + card.toString() + ". You're up, " + this.currentGame.nextPlayerInSequence.name + ".");
+            var response = Router.makeResponse(200, "...");
             try {
+                var card = Router.parseCard(req);
                 var gameOver = this.currentGame.playCard(player, card);
+                response.data.text =
+                    player + " played " + card.toString() + ".\n                    The cards in play are " + this.currentGame.sequence.toString() + ".\n                    You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
                 if (gameOver) {
                     var winners = "";
                     for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
@@ -229,7 +311,7 @@ var CribbageRoutes;
                 }
             }
             catch (e) {
-                response = Router.makeResponse(400, "Error! " + e + "! Current player: " + this.currentGame.nextPlayerInSequence);
+                response = Router.makeResponse(500, "Error! " + e + "! Current player: " + this.currentGame.nextPlayerInSequence);
             }
             Router.sendResponse(response, res);
         };
