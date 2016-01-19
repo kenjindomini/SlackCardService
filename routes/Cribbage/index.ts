@@ -116,6 +116,7 @@ export module CribbageRoutes {
                 case Routes.describe: verified = (token == Tokens.describe); break;
                 case Routes.beginGame: verified = (token == Tokens.beginGame); break;
                 case Routes.resetGame: verified = (token == Tokens.resetGame); break;
+                case Routes.showHand: verified = (token == Tokens.showHand); break;
             }
             return verified;
         }

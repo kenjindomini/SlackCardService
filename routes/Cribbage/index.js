@@ -127,6 +127,9 @@ var CribbageRoutes;
                 case Routes.resetGame:
                     verified = (token == Tokens.resetGame);
                     break;
+                case Routes.showHand:
+                    verified = (token == Tokens.showHand);
+                    break;
             }
             return verified;
         };
