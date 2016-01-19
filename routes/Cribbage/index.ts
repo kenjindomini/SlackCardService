@@ -172,7 +172,7 @@ export module CribbageRoutes {
 
         resetGame(req:express.Request, res:express.Response) {
             // SB TODO: Have a better way to have a secret on the server so that trolls can't keep resetting the game
-            var secret = req.body.secret;
+            var secret = req.body.text;
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(500, `You're not allowed to reset the game, ${player}!!`, SlackResponseType.in_channel);
             if (!Router.verifyRequest(req, Routes.resetGame)) {

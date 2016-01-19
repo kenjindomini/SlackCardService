@@ -169,7 +169,7 @@ var CribbageRoutes;
             Router.sendResponse(response, res);
         };
         Router.prototype.resetGame = function (req, res) {
-            var secret = req.body.secret;
+            var secret = req.body.text;
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(500, "You're not allowed to reset the game, " + player + "!!", SlackResponseType.in_channel);
             if (!Router.verifyRequest(req, Routes.resetGame)) {
