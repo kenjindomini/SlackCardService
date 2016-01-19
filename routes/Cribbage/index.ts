@@ -89,7 +89,7 @@ export module CribbageRoutes {
         }
 
         private static sendResponse(response:CribbageResponse, res:express.Response):void {
-            res.status(response.status).send(JSON.stringify(response));
+            res.status(response.status).send(JSON.stringify(response.data));
         }
 
         private static getPlayerName(request:express.Request):string {

@@ -97,7 +97,7 @@ var CribbageRoutes;
             return new CribbageResponse(status, new CribbageResponseData(response_type, text, attachments));
         };
         Router.sendResponse = function (response, res) {
-            res.status(response.status).send(JSON.stringify(response));
+            res.status(response.status).send(JSON.stringify(response.data));
         };
         Router.getPlayerName = function (request) {
             return (request.body.user_name ? request.body.user_name : "Unknown Player");
