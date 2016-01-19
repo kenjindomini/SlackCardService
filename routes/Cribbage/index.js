@@ -41,18 +41,6 @@ var CribbageStrings;
     })();
     CribbageStrings.ErrorStrings = ErrorStrings;
 })(CribbageStrings = exports.CribbageStrings || (exports.CribbageStrings = {}));
-function removeLastTwoChars(str) {
-    var ret = "";
-    var len = str.length;
-    if (len == 1) {
-        ret = str.substring(0);
-    }
-    else if (len > 1) {
-        ret = str.substring(0, len - 2);
-    }
-    return ret;
-}
-exports.removeLastTwoChars = removeLastTwoChars;
 var CribbageRoutes;
 (function (CribbageRoutes) {
     var SlackResponseType;
@@ -306,7 +294,7 @@ var CribbageRoutes;
                     for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
                         winners += (this.currentGame.players.itemAt(ix).name + ", ");
                     }
-                    winners = removeLastTwoChars(winners);
+                    winners = cribbage_1.removeLastTwoChars(winners);
                     response.data.text = "Game over. Winners: " + winners;
                 }
             }

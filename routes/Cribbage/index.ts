@@ -7,7 +7,7 @@
 import * as express from "express";
 
 import {CribbagePlayer} from "../../card_service/implementations/cribbage_player";
-import {Cribbage} from "../../card_service/implementations/cribbage";
+import {Cribbage, removeLastTwoChars} from "../../card_service/implementations/cribbage";
 import {CribbageHand} from "../../card_service/implementations/cribbage_hand";
 import {Players, Teams} from "../../card_service/base_classes/card_game";
 import {BaseCard as Card, Value, Suit} from "../../card_service/base_classes/items/card";
@@ -25,18 +25,6 @@ export module CribbageStrings {
             return "Invalid syntax. Enter your card as (value)(suit), for example enter the five of hearts as 5H.";
         }
     }
-}
-
-export function removeLastTwoChars(str:string): string {
-    var ret = "";
-    var len = str.length;
-    if (len == 1) {
-        ret = str.substring(0);
-    }
-    else if (len > 1) {
-        ret = str.substring(0, len - 2)
-    }
-    return ret;
 }
 
 export module CribbageRoutes {

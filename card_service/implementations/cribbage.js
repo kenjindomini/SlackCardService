@@ -15,6 +15,18 @@ var Mode;
     Mode[Mode["FFA"] = 0] = "FFA";
     Mode[Mode["Team"] = 1] = "Team";
 })(Mode || (Mode = {}));
+function removeLastTwoChars(str) {
+    var ret = "";
+    var len = str.length;
+    if (len == 1) {
+        ret = str.substring(0);
+    }
+    else if (len > 1) {
+        ret = str.substring(0, len - 2);
+    }
+    return ret;
+}
+exports.removeLastTwoChars = removeLastTwoChars;
 var CribbageErrorStrings = (function () {
     function CribbageErrorStrings() {
     }
@@ -25,8 +37,8 @@ var CribbageErrorStrings = (function () {
     CribbageErrorStrings.EXCEEDS_31 = "Exceeds 31";
     CribbageErrorStrings.FMT_NOT_NEXT_PLAYER = "The next player is ";
     CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD = "You don't have that card!";
-    CribbageErrorStrings.PLAYER_DOES_NOT_EXIST = "This player does not exist";
-    CribbageErrorStrings.PLAYER_ALREADY_IN_GAME = "This player is already in the game";
+    CribbageErrorStrings.PLAYER_DOES_NOT_EXIST = "You're not part of the game!";
+    CribbageErrorStrings.PLAYER_ALREADY_IN_GAME = "You're already in the game";
     CribbageErrorStrings.PLAYER_CAN_PLAY = "You have a card you can still play";
     return CribbageErrorStrings;
 })();
@@ -229,8 +241,10 @@ var Cribbage = (function (_super) {
                 for (var jx = 0; jx < team.numPlayers(); jx++) {
                     scores += (team.itemAt(jx).name + ", ");
                 }
+                scores = removeLastTwoChars(scores);
                 scores += (" = " + team.countPoints() + " }, ");
             }
+            scores = removeLastTwoChars(scores);
         }
         var players = [];
         for (var jx = 0; jx < this.players.countItems(); jx++) {

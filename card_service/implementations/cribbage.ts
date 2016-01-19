@@ -22,6 +22,18 @@ enum Mode {
     Team
 }
 
+export function removeLastTwoChars(str:string): string {
+    var ret = "";
+    var len = str.length;
+    if (len == 1) {
+        ret = str.substring(0);
+    }
+    else if (len > 1) {
+        ret = str.substring(0, len - 2)
+    }
+    return ret;
+}
+
 export class CribbageErrorStrings {
     static INVALID_NUMBER_OF_PLAYERS: string = "Invalid number of players";
     static INVALID_NUM_CARDS_THROWN_TO_KITTY: string = "Invalid number of cards given to the kitty";
@@ -30,8 +42,8 @@ export class CribbageErrorStrings {
     static EXCEEDS_31: string = "Exceeds 31";
     static FMT_NOT_NEXT_PLAYER: string = "The next player is ";
     static PLAYER_DOESNT_HAVE_CARD: string = "You don't have that card!";
-    static PLAYER_DOES_NOT_EXIST: string = "This player does not exist";
-    static PLAYER_ALREADY_IN_GAME: string = "This player is already in the game";
+    static PLAYER_DOES_NOT_EXIST: string = "You're not part of the game!";
+    static PLAYER_ALREADY_IN_GAME: string = "You're already in the game";
     static PLAYER_CAN_PLAY: string = "You have a card you can still play";
 }
 
@@ -307,8 +319,10 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 for (var jx = 0; jx < team.numPlayers(); jx++) {
                     scores += (team.itemAt(jx).name + ", ");
                 }
+                scores = removeLastTwoChars(scores);
                 scores += (" = " + team.countPoints() + " }, ");
             }
+            scores = removeLastTwoChars(scores);
         }
         var players = [];
         for (var jx = 0; jx < this.players.countItems(); jx++) {
