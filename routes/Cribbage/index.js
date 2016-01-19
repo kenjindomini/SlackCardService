@@ -103,7 +103,7 @@ var CribbageRoutes;
         Router.sendDelayedResponse = function (response, url) {
             request.post(url, {
                 json: true,
-                body: JSON.stringify(response)
+                body: response
             });
         };
         Router.getPlayerName = function (req) {

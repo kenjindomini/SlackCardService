@@ -99,7 +99,7 @@ export module CribbageRoutes {
                 url,
                 {
                     json: true,
-                    body: JSON.stringify(response)
+                    body: response
                 }
             );
         }
