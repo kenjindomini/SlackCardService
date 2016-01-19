@@ -45,7 +45,7 @@ export module CribbageRoutes {
         constructor(
             public response_type: SlackResponseType = SlackResponseType.ephemeral,
             public text: string = "",
-            public attachments: string = ""
+            public attachments: Array<string> = []
         ) {
         }
     }
@@ -83,7 +83,7 @@ export module CribbageRoutes {
             status:number=200,
             text:string="",
             response_type:SlackResponseType=SlackResponseType.ephemeral,
-            attachments:string=""
+            attachments:Array<string>=[]
         ): CribbageResponse {
             return new CribbageResponse(status, new CribbageResponseData(response_type, text, attachments));
         }

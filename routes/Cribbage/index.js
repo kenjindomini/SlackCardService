@@ -56,7 +56,7 @@ var CribbageRoutes;
         function CribbageResponseData(response_type, text, attachments) {
             if (response_type === void 0) { response_type = SlackResponseType.ephemeral; }
             if (text === void 0) { text = ""; }
-            if (attachments === void 0) { attachments = ""; }
+            if (attachments === void 0) { attachments = []; }
             this.response_type = response_type;
             this.text = text;
             this.attachments = attachments;
@@ -93,7 +93,7 @@ var CribbageRoutes;
             if (status === void 0) { status = 200; }
             if (text === void 0) { text = ""; }
             if (response_type === void 0) { response_type = SlackResponseType.ephemeral; }
-            if (attachments === void 0) { attachments = ""; }
+            if (attachments === void 0) { attachments = []; }
             return new CribbageResponse(status, new CribbageResponseData(response_type, text, attachments));
         };
         Router.sendResponse = function (response, res) {
