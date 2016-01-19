@@ -92,8 +92,19 @@ export module CribbageRoutes {
             res.status(response.status).header("content-type", "application/json").send(JSON.stringify(response.data));
         }
 
-        private static getPlayerName(request:express.Request):string {
-            return (request.body.user_name ? request.body.user_name : "Unknown Player");
+        private static sendDelayedResponse(response:CribbageResponse, url:string):void {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+            xhr.send(JSON.stringify(response));
+        }
+
+        private static getPlayerName(req:express.Request):string {
+            return (req.body.user_name ? req.body.user_name : "Unknown Player");
+        }
+
+        private static getResponseUrl(req:express.Request):string {
+            return (req.body.response_url ? req.body.response_url : "");
         }
 
         private static verifyRequest(req:express.Request, route:Routes):boolean {
@@ -169,10 +180,12 @@ export module CribbageRoutes {
             }
             else if (secret != null && secret == "secret") {
                 // Allow the game to be reset
-                response = Router.makeResponse(200, CribbageStrings.MessageStrings.GAME_RESET);
+                response = Router.makeResponse(200, CribbageStrings.MessageStrings.GAME_RESET, SlackResponseType.ephemeral);
                 this.currentGame = new Cribbage(new Players<CribbagePlayer>([]));
             }
             Router.sendResponse(response, res);
+            response.data.response_type = SlackResponseType.in_channel;
+            Router.sendDelayedResponse(response, Router.getResponseUrl(req));
         }
 
 
