@@ -85,7 +85,7 @@ var CribbageRoutes;
         Routes[Routes["beginGame"] = "/beginGame"] = "beginGame";
         Routes[Routes["resetGame"] = "/resetGame"] = "resetGame";
         Routes[Routes["describe"] = "/describe"] = "describe";
-        Routes[Routes["showCards"] = "/showCards"] = "showCards";
+        Routes[Routes["showHand"] = "/showHand"] = "showHand";
     })(CribbageRoutes.Routes || (CribbageRoutes.Routes = {}));
     var Routes = CribbageRoutes.Routes;
     var Router = (function () {
@@ -194,7 +194,7 @@ var CribbageRoutes;
             }
             Router.sendResponse(response, res);
         };
-        Router.prototype.showCards = function (req, res) {
+        Router.prototype.showHand = function (req, res) {
             var response = Router.makeResponse(200, "...");
             try {
                 response.data.text = this.currentGame.getPlayerHand(Router.getPlayerName(req));

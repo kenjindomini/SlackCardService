@@ -69,7 +69,7 @@ export module CribbageRoutes {
         beginGame = <any>"/beginGame",
         resetGame = <any>"/resetGame",
         describe = <any>"/describe",
-        showCards = <any>"/showCards"
+        showHand = <any>"/showHand"
     }
 
     export class Router {
@@ -204,7 +204,7 @@ export module CribbageRoutes {
             Router.sendResponse(response, res);
         }
 
-        showCards(req:express.Request, res:express.Response) {
+        showHand(req:express.Request, res:express.Response) {
             var response = Router.makeResponse(200, "...");
             try {
                 response.data.text = this.currentGame.getPlayerHand(Router.getPlayerName(req));

@@ -38,7 +38,7 @@ export function setup(app: Express):Express {
     // Cribbage Routes
     app.get(CribbageRoutePrefix + CribbageRoutes.Routes.beginGame, routes.beginGame);
     app.get(CribbageRoutePrefix + CribbageRoutes.Routes.describe, routes.describe);
-    app.get(CribbageRoutePrefix + CribbageRoutes.Routes.showCards, routes.showCards);
+    app.get(CribbageRoutePrefix + CribbageRoutes.Routes.showHand, routes.showHand);
     app.post(CribbageRoutePrefix + CribbageRoutes.Routes.joinGame, routes.joinGame);
     app.post(CribbageRoutePrefix + CribbageRoutes.Routes.resetGame, routes.resetGame);
     // All other routes send back a "request not found"
