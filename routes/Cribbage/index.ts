@@ -97,7 +97,8 @@ export module CribbageRoutes {
         private static sendDelayedResponse(response:CribbageResponse, url:string):void {
             request.post({
                 url: url,
-                json: JSON.stringify(response)}
+                json: true,
+                body: JSON.stringify(response)}
             );
         }
 
