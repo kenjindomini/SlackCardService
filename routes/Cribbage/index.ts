@@ -293,7 +293,7 @@ export module CribbageRoutes {
 
         playCard(req:Request, res:Response) {
             var player = Router.getPlayerName(req);
-            var response = Router.makeResponse(200, "...");
+            var response = Router.makeResponse(200, "...", SlackResponseType.in_channel);
             try {
                 var cards:Array<Card> = Router.parseCards(req.body.text);
                 if (cards.length == 0)
@@ -315,7 +315,7 @@ export module CribbageRoutes {
                 }
             }
             catch (e) {
-                response = Router.makeResponse(500, `Error! ${e}! Current player: ${this.currentGame.nextPlayerInSequence}`);
+                response = Router.makeResponse(500, `Error! ${e}! Current player: ${this.currentGame.nextPlayerInSequence.name}`);
             }
             Router.sendResponse(response, res);
         }
