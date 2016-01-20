@@ -328,7 +328,7 @@ var CribbageRoutes;
         };
         Router.prototype.throwCard = function (req, res) {
             var player = Router.getPlayerName(req);
-            var response = Router.makeResponse(200, player + " threw to the kitty");
+            var response = Router.makeResponse(200, player + " threw to the kitty", SlackResponseType.in_channel);
             try {
                 var cards = Router.parseCards(req.body.text);
                 this.currentGame.giveToKitty(player, new item_collection_1.ItemCollection(cards));

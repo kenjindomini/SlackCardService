@@ -322,7 +322,7 @@ export module CribbageRoutes {
 
         throwCard(req:Request, res:Response) {
             var player = Router.getPlayerName(req);
-            var response = Router.makeResponse(200, `${player} threw to the kitty`);
+            var response = Router.makeResponse(200, `${player} threw to the kitty`, SlackResponseType.in_channel);
             try {
                 var cards:Array<Card> = Router.parseCards(req.body.text);
                 this.currentGame.giveToKitty(player, new ItemCollection(cards));
