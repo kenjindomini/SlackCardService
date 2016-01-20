@@ -328,7 +328,7 @@ var CribbageRoutes;
         };
         Router.prototype.throwCard = function (req, res) {
             var player = Router.getPlayerName(req);
-            var response = Router.makeResponse(200, player + " threw to the kitty", SlackResponseType.in_channel);
+            var response = Router.makeResponse(200, "...");
             try {
                 var cards = Router.parseCards(req.body.text);
                 this.currentGame.giveToKitty(player, new item_collection_1.ItemCollection(cards));
@@ -337,6 +337,10 @@ var CribbageRoutes;
                 response = Router.makeResponse(500, e);
             }
             Router.sendResponse(response, res);
+            if (response.status == 200) {
+                response.data.text = player + " threw to the kitty";
+                Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
+            }
         };
         Router.VALIDATION_FAILED_RESPONSE = new CribbageResponse(500, new CribbageResponseData(SlackResponseType.ephemeral, "Token validation failed"));
         return Router;
