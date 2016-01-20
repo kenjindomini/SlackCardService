@@ -12,9 +12,9 @@ export class StandardDeck extends BaseDeck<BaseCard> {
         var cards = new Array<BaseCard>();
         var suitNames = EnumExt.getNames(Suit);
         var cardNames = EnumExt.getNames(Value);
-        for (var suit in suitNames) {
-            for (var value in cardNames) {
-                cards.push(new BaseCard(suit, value));
+        for (var ixSuit = 0; ixSuit < suitNames.length; ixSuit++) {
+            for (var ixVal = 1; ixVal < cardNames.length + 1; ixVal++) {
+                cards.push(new BaseCard(ixSuit, ixVal));
             }
         }
         super(cards);

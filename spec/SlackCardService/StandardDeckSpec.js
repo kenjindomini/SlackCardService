@@ -12,7 +12,10 @@ describe("Test the Standard Deck's functionality", function () {
         }
         return copy;
     }
-    it("should actually shuffle", function () {
+    it("has the right number of cards", function () {
+        expect(deck.countItems()).toEqual(52);
+    });
+    it("shuffles", function () {
         var original = makeDeckCopy(deck.items);
         deck.shuffle();
         var orderIsDifferent = false;
@@ -24,19 +27,24 @@ describe("Test the Standard Deck's functionality", function () {
         }
         expect(orderIsDifferent).toBe(true);
     });
-    it("should draw from the top of the deck", function () {
+    it("draws from the top of the deck", function () {
         var topCard = deck.items[0];
         var draw = deck.draw();
         expect(topCard.equalsOther(draw)).toBe(true);
         expect(topCard.equalsOther(deck.items[0])).toBe(false);
     });
-    it("should random draw a card and put it back", function () {
+    it("randomly draws a card and puts it back", function () {
         var card = deck.randomDraw(true);
         expect(deck.items).toContain(card);
     });
-    it("should random draw a card and not put it back", function () {
+    it("randomly draws a card and does not put it back", function () {
         var card = deck.randomDraw(false);
         expect(deck.items).not.toContain(card);
+    });
+    it("prints all the cards correctly", function () {
+        for (var ix = 0; ix < deck.countItems(); ix++) {
+            expect(deck.itemAt(ix).toString().indexOf("undefined")).toBe(-1);
+        }
     });
 });
 //# sourceMappingURL=StandardDeckSpec.js.map

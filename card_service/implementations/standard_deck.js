@@ -12,9 +12,9 @@ var StandardDeck = (function (_super) {
         var cards = new Array();
         var suitNames = card_1.EnumExt.getNames(card_1.Suit);
         var cardNames = card_1.EnumExt.getNames(card_1.Value);
-        for (var suit in suitNames) {
-            for (var value in cardNames) {
-                cards.push(new card_1.BaseCard(suit, value));
+        for (var ixSuit = 0; ixSuit < suitNames.length; ixSuit++) {
+            for (var ixVal = 1; ixVal < cardNames.length + 1; ixVal++) {
+                cards.push(new card_1.BaseCard(ixSuit, ixVal));
             }
         }
         _super.call(this, cards);
