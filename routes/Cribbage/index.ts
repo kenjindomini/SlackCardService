@@ -16,6 +16,7 @@ import MessageStrings = CribbageStrings.MessageStrings;
 
 var request = require("request");
 
+// Generic messages
 export module CribbageStrings {
     export class MessageStrings {
         static get START_GAME():string { return "The game is afoot, throw your cards to the crib."; }
