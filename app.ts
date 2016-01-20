@@ -39,6 +39,7 @@ export function setup(app: Express):Express {
     app.get(CribbageRoutePrefix + CribbageRoutes.Routes.beginGame, routes.beginGame);
     app.get(CribbageRoutePrefix + CribbageRoutes.Routes.describe, routes.describe);
     app.get(CribbageRoutePrefix + CribbageRoutes.Routes.showHand, routes.showHand);
+    app.post(CribbageRoutePrefix + CribbageRoutes.Routes.playCard, routes.playCard);
     app.post(CribbageRoutePrefix + CribbageRoutes.Routes.joinGame, routes.joinGame);
     app.post(CribbageRoutePrefix + CribbageRoutes.Routes.resetGame, routes.resetGame);
     app.post(CribbageRoutePrefix + CribbageRoutes.Routes.throwCard, routes.throwCard);

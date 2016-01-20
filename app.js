@@ -21,6 +21,7 @@ function setup(app) {
     app.get(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.beginGame, routes.beginGame);
     app.get(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.describe, routes.describe);
     app.get(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.showHand, routes.showHand);
+    app.post(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.playCard, routes.playCard);
     app.post(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.joinGame, routes.joinGame);
     app.post(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.resetGame, routes.resetGame);
     app.post(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.throwCard, routes.throwCard);
