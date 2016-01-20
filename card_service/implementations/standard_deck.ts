@@ -13,6 +13,7 @@ export class StandardDeck extends BaseDeck<BaseCard> {
         var suitNames = EnumExt.getNames(Suit);
         var cardNames = EnumExt.getNames(Value);
         for (var ixSuit = 0; ixSuit < suitNames.length; ixSuit++) {
+            // Start ixVal at 1 to adjust for the enum being 1-based
             for (var ixVal = 1; ixVal < cardNames.length + 1; ixVal++) {
                 cards.push(new BaseCard(ixSuit, ixVal));
             }
