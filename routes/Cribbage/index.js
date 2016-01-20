@@ -140,6 +140,12 @@ var CribbageRoutes;
                 case Routes.playCard:
                     verified = (token == Tokens.playCard);
                     break;
+                case Routes.throwCard:
+                    verified = (token == Tokens.throwCard);
+                    break;
+                case Routes.go:
+                    verified = (token == Tokens.go);
+                    break;
             }
             return verified;
         };
