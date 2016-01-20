@@ -1,7 +1,7 @@
 /// <reference path="../../interfaces/iitem.ts" />
 
 import {IItem} from "../../interfaces/iitem";
-import {removeLastTwoChars} from "../implementations/cribbage";
+import {removeLastTwoChars} from "../card_game";
 
 "use strict";
 export class ItemCollection<ItemType extends IItem> {

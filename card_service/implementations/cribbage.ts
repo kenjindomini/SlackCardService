@@ -7,7 +7,7 @@
 /// <reference path="standard_deck.ts" />
 
 import {BaseCard as Card} from "../base_classes/items/card";
-import {BaseCardGame as CardGame, Players, Teams, Sequence} from "../base_classes/card_game";
+import {BaseCardGame as CardGame, Players, Teams, Sequence, removeLastTwoChars} from "../base_classes/card_game";
 import {ItemCollection} from "../base_classes/collections/item_collection";
 import {CribbageHand} from "./cribbage_hand";
 import {CribbagePlayer} from "./cribbage_player";
@@ -20,18 +20,6 @@ import {BaseCard} from "../base_classes/items/card";
 enum Mode {
     FFA, // Free-for-All
     Team
-}
-
-export function removeLastTwoChars(str:string): string {
-    var ret = "";
-    var len = str.length;
-    if (len == 1) {
-        ret = str.substring(0);
-    }
-    else if (len > 1) {
-        ret = str.substring(0, len - 2)
-    }
-    return ret;
 }
 
 export class CribbageErrorStrings {

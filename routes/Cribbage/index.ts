@@ -6,15 +6,17 @@
 
 import {Request, Response} from "express";
 import {CribbagePlayer} from "../../card_service/implementations/cribbage_player";
-import {Cribbage, removeLastTwoChars} from "../../card_service/implementations/cribbage";
+import {Cribbage} from "../../card_service/implementations/cribbage";
 import {CribbageHand} from "../../card_service/implementations/cribbage_hand";
 import {Players, Teams} from "../../card_service/base_classes/card_game";
 import {BaseCard as Card, Value, Suit} from "../../card_service/base_classes/items/card";
 import {ItemCollection} from "../../card_service/base_classes/collections/item_collection";
+import {removeLastTwoChars} from "../../card_service/base_classes/card_game";
 import MessageStrings = CribbageStrings.MessageStrings;
 
 var request = require("request");
 
+// Generic messages
 export module CribbageStrings {
     export class MessageStrings {
         static get START_GAME():string { return "The game is afoot, throw your cards to the crib."; }
