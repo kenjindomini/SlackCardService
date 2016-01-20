@@ -162,8 +162,10 @@ export module CribbageRoutes {
                     case '8': value = Value.Eight; break;
                     case '9': value = Value.Nine; break;
                     case '1':
-                        // assume it's a 10
-                        value = Value.Ten;
+                        if (charSuit != "0")
+                            throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                        else
+                            value = Value.Ten;
                         // set the suit character to the next character
                         if (ix + 2 < textLen) {
                             charSuit = text[ix+2].toLowerCase();
@@ -320,7 +322,7 @@ export module CribbageRoutes {
 
         throwCard(req:Request, res:Response) {
             var player = Router.getPlayerName(req);
-            var response = Router.makeResponse(200, "...");
+            var response = Router.makeResponse(200, `${player} threw to the kitty`);
             try {
                 var cards:Array<Card> = Router.parseCards(req.body.text);
                 this.currentGame.giveToKitty(player, new ItemCollection(cards));

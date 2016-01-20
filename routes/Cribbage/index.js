@@ -181,7 +181,10 @@ var CribbageRoutes;
                         value = card_1.Value.Nine;
                         break;
                     case '1':
-                        value = card_1.Value.Ten;
+                        if (charSuit != "0")
+                            throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                        else
+                            value = card_1.Value.Ten;
                         if (ix + 2 < textLen) {
                             charSuit = text[ix + 2].toLowerCase();
                             ix++;
@@ -325,7 +328,7 @@ var CribbageRoutes;
         };
         Router.prototype.throwCard = function (req, res) {
             var player = Router.getPlayerName(req);
-            var response = Router.makeResponse(200, "...");
+            var response = Router.makeResponse(200, player + " threw to the kitty");
             try {
                 var cards = Router.parseCards(req.body.text);
                 this.currentGame.giveToKitty(player, new item_collection_1.ItemCollection(cards));

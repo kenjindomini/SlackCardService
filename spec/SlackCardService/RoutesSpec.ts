@@ -41,6 +41,7 @@ describe("Test the logic of the CribbageRoutes module", function() {
             expect(lowerCards[1].equalsOther(upperCards[1])).toBe(true);
         });
         it("throws when the syntax is wrong", function() {
+            expect(() => Router.parseCards("11H")).toThrow(CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX);
             expect(() => Router.parseCards("lolwut")).toThrow(CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX);
             expect(() => Router.parseCards("")).toThrow(CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX);
             expect(() => Router.parseCards(null)).toThrow(CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX);
