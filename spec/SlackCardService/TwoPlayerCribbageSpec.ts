@@ -131,8 +131,8 @@ describe("Test a Cribbage game between two players", function() {
                 new CribbageHand([nineOfHearts, tenOfDiamonds, jackOfSpades, queenOfHearts, kingOfClubs, kingOfHearts]);
             game.dealer = playerOne;
             game.nextPlayerInSequence = playerTwo;
-            game.giveToKitty(playerOne, new ItemCollection<BaseCard>([nineOfDiamonds, tenOfClubs]));
-            game.giveToKitty(playerTwo, new ItemCollection<BaseCard>([kingOfClubs, kingOfHearts]));
+            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([nineOfDiamonds, tenOfClubs]));
+            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([kingOfClubs, kingOfHearts]));
             game.cut = new BaseCard(Suit.Spades, Value.King);
         });
         it("takes cards from the players hands when they give to the kitty", function () {
@@ -177,8 +177,8 @@ describe("Test a Cribbage game between two players", function() {
                 new CribbageHand([nineOfHearts, tenOfDiamonds, jackOfSpades, queenOfHearts, kingOfClubs, kingOfHearts]);
             game.dealer = playerOne;
             game.nextPlayerInSequence = playerTwo;
-            game.giveToKitty(playerOne, new ItemCollection<BaseCard>([sevenOfDiamonds, eightOfHearts]));
-            game.giveToKitty(playerTwo, new ItemCollection<BaseCard>([kingOfClubs, kingOfHearts]));
+            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([sevenOfDiamonds, eightOfHearts]));
+            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([kingOfClubs, kingOfHearts]));
             game.cut = new BaseCard(Suit.Spades, Value.King);
             game.playersInPlay.addItems(game.players.items);
         });

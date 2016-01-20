@@ -10,6 +10,7 @@ import {Cribbage, removeLastTwoChars} from "../../card_service/implementations/c
 import {CribbageHand} from "../../card_service/implementations/cribbage_hand";
 import {Players, Teams} from "../../card_service/base_classes/card_game";
 import {BaseCard as Card, Value, Suit} from "../../card_service/base_classes/items/card";
+import {ItemCollection} from "../../card_service/base_classes/collections/item_collection";
 import MessageStrings = CribbageStrings.MessageStrings;
 
 var request = require("request");
@@ -58,7 +59,8 @@ export module CribbageRoutes {
         resetGame = <any>"43LROOjSf8qa3KPYXvmxgdt1",
         beginGame = <any>"GECanrrjA8dYMlv2e4jkLQGe",
         showHand = <any>"Xa73JDXrWDnU276yqwremEsO",
-        playCard = <any>"hnlyb5m5PfRNWyGJ3VNb8nkt"
+        playCard = <any>"hnlyb5m5PfRNWyGJ3VNb8nkt",
+        throwCard = <any>"2tanrKih6wNcq662RFlI1jnZ"
     }
 
     export enum Routes {
@@ -318,6 +320,15 @@ export module CribbageRoutes {
 
         throwCard(req:Request, res:Response) {
             var player = Router.getPlayerName(req);
+            var response = Router.makeResponse(200, "...");
+            try {
+                var cards:Array<Card> = Router.parseCards(req.body.text);
+                this.currentGame.giveToKitty(player, new ItemCollection(cards));
+            }
+            catch (e) {
+                response = Router.makeResponse(500, e);
+            }
+            Router.sendResponse(response, res);
         }
     }
 }

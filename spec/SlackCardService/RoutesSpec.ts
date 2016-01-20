@@ -1,6 +1,6 @@
-import {CribbageRoutes as Routes, CribbageStrings} from "../../routes/Cribbage";
+import {CribbageRoutes, CribbageStrings} from "../../routes/Cribbage";
 import {BaseCard as Card, Suit, Value} from "../../card_service/base_classes/items/card";
-import Router = Routes.Router;
+import Router = CribbageRoutes.Router;
 
 describe("Test the logic of the CribbageRoutes module", function() {
     describe("Test parsing cards", function() {

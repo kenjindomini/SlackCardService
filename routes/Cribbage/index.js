@@ -3,6 +3,7 @@ var cribbage_1 = require("../../card_service/implementations/cribbage");
 var cribbage_hand_1 = require("../../card_service/implementations/cribbage_hand");
 var card_game_1 = require("../../card_service/base_classes/card_game");
 var card_1 = require("../../card_service/base_classes/items/card");
+var item_collection_1 = require("../../card_service/base_classes/collections/item_collection");
 var request = require("request");
 var CribbageStrings;
 (function (CribbageStrings) {
@@ -76,6 +77,7 @@ var CribbageRoutes;
         Tokens[Tokens["beginGame"] = "GECanrrjA8dYMlv2e4jkLQGe"] = "beginGame";
         Tokens[Tokens["showHand"] = "Xa73JDXrWDnU276yqwremEsO"] = "showHand";
         Tokens[Tokens["playCard"] = "hnlyb5m5PfRNWyGJ3VNb8nkt"] = "playCard";
+        Tokens[Tokens["throwCard"] = "2tanrKih6wNcq662RFlI1jnZ"] = "throwCard";
     })(Tokens || (Tokens = {}));
     (function (Routes) {
         Routes[Routes["joinGame"] = "/joinGame"] = "joinGame";
@@ -323,6 +325,15 @@ var CribbageRoutes;
         };
         Router.prototype.throwCard = function (req, res) {
             var player = Router.getPlayerName(req);
+            var response = Router.makeResponse(200, "...");
+            try {
+                var cards = Router.parseCards(req.body.text);
+                this.currentGame.giveToKitty(player, new item_collection_1.ItemCollection(cards));
+            }
+            catch (e) {
+                response = Router.makeResponse(500, e);
+            }
+            Router.sendResponse(response, res);
         };
         Router.VALIDATION_FAILED_RESPONSE = new CribbageResponse(500, new CribbageResponseData(SlackResponseType.ephemeral, "Token validation failed"));
         return Router;

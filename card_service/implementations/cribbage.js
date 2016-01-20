@@ -103,15 +103,15 @@ var Cribbage = (function (_super) {
         this.cutForDealer();
         this.deal();
     };
-    Cribbage.prototype.giveToKitty = function (player, cards) {
+    Cribbage.prototype.giveToKitty = function (playerName, cards) {
+        var player = this.findPlayer(playerName);
+        if (!player)
+            throw CribbageErrorStrings.PLAYER_DOES_NOT_EXIST;
         var numThrown = cards.countItems();
         for (var ix = 0; ix < numThrown; ix++) {
             if (player.hand.indexOfItem(cards.itemAt(ix)) == -1) {
                 throw CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD;
             }
-        }
-        for (var ix = 0; ix < numThrown; ix++) {
-            player.hand.playCard(player.hand.itemAt(player.hand.indexOfItem(cards.itemAt(ix))));
         }
         switch (this.numPlayers) {
             case 2:
@@ -138,6 +138,9 @@ var Cribbage = (function (_super) {
                     }
                 }
                 break;
+        }
+        for (var ix = 0; ix < numThrown; ix++) {
+            player.hand.playCard(player.hand.itemAt(player.hand.indexOfItem(cards.itemAt(ix))));
         }
         var card = null;
         for (var index = 0; index < cards.countItems(); index++) {

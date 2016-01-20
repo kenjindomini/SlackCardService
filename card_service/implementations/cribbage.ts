@@ -135,22 +135,23 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
     /**
      * The given player plays the given cards from their hand into the kitty. The game size determines how
      * many cards the player should be throwing into the kitty.
-     * @param player
+     * @param playerName
      * @param cards
+     * @throws CribbageErrorStrings.PLAYER_DOES_NOT_EXIST if the player isn't part of the game
      * @throws CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD if the player doesn't have the cards
      * @throws CribbageErrorStrings.INVALID_NUM_CARDS_THROWN_TO_KITTY if the player throws the wrong number of cards
      * @throws CribbageErrorStrings.INVALID_THROWER if the player cannot legally throw to the kitty
      */
-    giveToKitty(player: CribbagePlayer, cards: ItemCollection<Card>): void {
+    giveToKitty(playerName: string, cards: ItemCollection<Card>): void {
+        var player = this.findPlayer(playerName);
+        if (!player)
+            throw CribbageErrorStrings.PLAYER_DOES_NOT_EXIST;
         // Check that the player has the cards they're trying to throw
         var numThrown = cards.countItems();
         for (var ix = 0; ix < numThrown; ix++) {
             if (player.hand.indexOfItem(cards.itemAt(ix)) == -1) {
                 throw CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD;
             }
-        }
-        for (var ix = 0; ix < numThrown; ix++) {
-            player.hand.playCard(player.hand.itemAt(player.hand.indexOfItem(cards.itemAt(ix))));
         }
         // Check that the right number of cards were thrown
         switch (this.numPlayers) {
@@ -178,6 +179,10 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                     }
                 }
                 break;
+        }
+        // Remove the cards from the player's hand
+        for (var ix = 0; ix < numThrown; ix++) {
+            player.hand.playCard(player.hand.itemAt(player.hand.indexOfItem(cards.itemAt(ix))));
         }
         // Add the cards to the kitty
         var card = null;
