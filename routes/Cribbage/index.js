@@ -311,7 +311,7 @@ var CribbageRoutes;
                 var card = cards[0];
                 var gameOver = this.currentGame.playCard(player, card);
                 response.data.text =
-                    player + " played " + card.toString() + ".\n                    The count is " + this.currentGame.count + ".\n                    The cards in play are " + this.currentGame.sequence.toString() + ".\n                    You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
+                    player + " played the " + card.toString() + ".\n                    The count is at " + this.currentGame.count + ".\n                    The cards in play are: " + this.currentGame.sequence.toString() + ".\n                    You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
                 if (gameOver) {
                     var winners = "";
                     for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
@@ -332,6 +332,11 @@ var CribbageRoutes;
             try {
                 var cards = Router.parseCards(req.body.text);
                 this.currentGame.giveToKitty(player, new item_collection_1.ItemCollection(cards));
+                var played = "";
+                for (var ix = 0; ix < cards.length; ix++) {
+                    played += cards[ix].toString() + ", ";
+                }
+                response.data.text = "You threw " + played + ". Your cards are " + this.currentGame.getPlayerHand(player);
             }
             catch (e) {
                 response = Router.makeResponse(500, e);

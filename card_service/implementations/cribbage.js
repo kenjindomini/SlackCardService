@@ -185,6 +185,9 @@ var Cribbage = (function (_super) {
                     gameOver = true;
                     break;
                 }
+                if (sequenceOver) {
+                    this.count = 0;
+                }
             }
             if (this.roundOver()) {
                 this.countPoints();

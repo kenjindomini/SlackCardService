@@ -243,6 +243,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                     gameOver = true;
                     break;
                 }
+                if (sequenceOver) {
+                    this.count = 0;
+                }
             }
             if (this.roundOver()) {
                 this.countPoints();
