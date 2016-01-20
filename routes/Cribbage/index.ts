@@ -67,7 +67,8 @@ export module CribbageRoutes {
         resetGame = <any>"/resetGame",
         describe = <any>"/describe",
         showHand = <any>"/showHand",
-        playCard = <any>"/playCard"
+        playCard = <any>"/playCard",
+        throwCard = <any>"/throw"
     }
 
     export class Router {
@@ -130,50 +131,59 @@ export module CribbageRoutes {
         }
 
         /**
-         * Parse the card out of the request
-         * @param req
+         * Parse the cards out of the request
+         * @param text the text from the request
          * @returns {BaseCard} the parsed card
          * @throws CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX if parsing fails
          */
-        private static parseCard(req:Request):Card {
-            var text = req.body.text;
-            // parse the first two characters as value then suit
-            // SB TODO: make a better parser that recognizes various inputs
-            if (text.length < 2) {
+        static parseCards(text: string):Array<Card> {
+            if (!text)
                 throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+            // Strip out all the spaces
+            text = text.replace(/\s+/g, "");
+            var textLen = text.length;
+            if (textLen == 0 || textLen == 1)
+                throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+            var cards = [];
+            var ix = 0;
+            while (ix < textLen) {
+                var charValue = text[ix].toLowerCase(), charSuit = text[ix+1].toLowerCase();
+                var value: Value, suit: Suit;
+                switch (charValue) {
+                    case 'a': value = Value.Ace; break;
+                    case '2': value = Value.Two; break;
+                    case '3': value = Value.Three; break;
+                    case '4': value = Value.Four; break;
+                    case '5': value = Value.Five; break;
+                    case '6': value = Value.Six; break;
+                    case '7': value = Value.Seven; break;
+                    case '8': value = Value.Eight; break;
+                    case '9': value = Value.Nine; break;
+                    case '1':
+                        // assume it's a 10
+                        value = Value.Ten;
+                        // set the suit character to the next character
+                        if (ix + 2 < textLen) {
+                            charSuit = text[ix+2].toLowerCase();
+                            ix++;
+                        }
+                        break;
+                    case 'j': value = Value.Jack; break;
+                    case 'q': value = Value.Queen; break;
+                    case 'k': value = Value.King; break;
+                    default: throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                }
+                switch (charSuit) {
+                    case 'h': suit = Suit.Hearts; break;
+                    case 's': suit = Suit.Spades; break;
+                    case 'd': suit = Suit.Diamonds; break;
+                    case 'c': suit = Suit.Clubs; break;
+                    default: throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                }
+                cards.push(new Card(suit, value));
+                ix += 2;
             }
-            var charValue = text[0].toLowerCase(), charSuit = text[1].toLowerCase();
-            var value: Value, suit: Suit;
-            switch (charValue) {
-                case 'a': value = Value.Ace; break;
-                case '2': value = Value.Two; break;
-                case '3': value = Value.Three; break;
-                case '4': value = Value.Four; break;
-                case '5': value = Value.Five; break;
-                case '6': value = Value.Six; break;
-                case '7': value = Value.Seven; break;
-                case '8': value = Value.Eight; break;
-                case '9': value = Value.Nine; break;
-                case '1':
-                    // assume it's a 10
-                    value = Value.Ten;
-                    // set the suit character to the next character
-                    if (text.length > 2)
-                        charSuit = text[2].toLowerCase();
-                    break;
-                case 'j': value = Value.Jack; break;
-                case 'q': value = Value.Queen; break;
-                case 'k': value = Value.King; break;
-                default: throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
-            }
-            switch (charSuit) {
-                case 'h': suit = Suit.Hearts; break;
-                case 's': suit = Suit.Spades; break;
-                case 'd': suit = Suit.Diamonds; break;
-                case 'c': suit = Suit.Clubs; break;
-                default: throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
-            }
-            return new Card(suit, value);
+            return cards;
         }
 
         /**
@@ -187,9 +197,9 @@ export module CribbageRoutes {
         /* ***** Initializing the Game ***** */
 
         joinGame(req:Request, res:Response) {
-            var playerName = Router.getPlayerName(req);
-            var newPlayer = new CribbagePlayer(playerName, new CribbageHand([]));
-            var response = Router.makeResponse(200, `${playerName} has joined the game`, SlackResponseType.in_channel);
+            var player = Router.getPlayerName(req);
+            var newPlayer = new CribbagePlayer(player, new CribbageHand([]));
+            var response = Router.makeResponse(200, `${player} has joined the game`, SlackResponseType.in_channel);
             if (this.currentGame == null) {
                 this.currentGame = new Cribbage(new Players([newPlayer]))
             }
@@ -281,7 +291,10 @@ export module CribbageRoutes {
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(200, "...");
             try {
-                var card:Card = Router.parseCard(req);
+                var cards:Array<Card> = Router.parseCards(req.body.text);
+                if (cards.length == 0)
+                    throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                var card = cards[0];
                 var gameOver:boolean = this.currentGame.playCard(player, card);
                 response.data.text =
                     `${player} played ${card.toString()}.
@@ -301,6 +314,10 @@ export module CribbageRoutes {
                 response = Router.makeResponse(500, `Error! ${e}! Current player: ${this.currentGame.nextPlayerInSequence}`);
             }
             Router.sendResponse(response, res);
+        }
+
+        throwCard(req:Request, res:Response) {
+            var player = Router.getPlayerName(req);
         }
     }
 }

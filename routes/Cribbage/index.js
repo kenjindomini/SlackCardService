@@ -84,6 +84,7 @@ var CribbageRoutes;
         Routes[Routes["describe"] = "/describe"] = "describe";
         Routes[Routes["showHand"] = "/showHand"] = "showHand";
         Routes[Routes["playCard"] = "/playCard"] = "playCard";
+        Routes[Routes["throwCard"] = "/throw"] = "throwCard";
     })(CribbageRoutes.Routes || (CribbageRoutes.Routes = {}));
     var Routes = CribbageRoutes.Routes;
     var Router = (function () {
@@ -137,78 +138,88 @@ var CribbageRoutes;
             }
             return verified;
         };
-        Router.parseCard = function (req) {
-            var text = req.body.text;
-            if (text.length < 2) {
+        Router.parseCards = function (text) {
+            if (!text)
                 throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+            text = text.replace(/\s+/g, "");
+            var textLen = text.length;
+            if (textLen == 0 || textLen == 1)
+                throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+            var cards = [];
+            var ix = 0;
+            while (ix < textLen) {
+                var charValue = text[ix].toLowerCase(), charSuit = text[ix + 1].toLowerCase();
+                var value, suit;
+                switch (charValue) {
+                    case 'a':
+                        value = card_1.Value.Ace;
+                        break;
+                    case '2':
+                        value = card_1.Value.Two;
+                        break;
+                    case '3':
+                        value = card_1.Value.Three;
+                        break;
+                    case '4':
+                        value = card_1.Value.Four;
+                        break;
+                    case '5':
+                        value = card_1.Value.Five;
+                        break;
+                    case '6':
+                        value = card_1.Value.Six;
+                        break;
+                    case '7':
+                        value = card_1.Value.Seven;
+                        break;
+                    case '8':
+                        value = card_1.Value.Eight;
+                        break;
+                    case '9':
+                        value = card_1.Value.Nine;
+                        break;
+                    case '1':
+                        value = card_1.Value.Ten;
+                        if (ix + 2 < textLen) {
+                            charSuit = text[ix + 2].toLowerCase();
+                            ix++;
+                        }
+                        break;
+                    case 'j':
+                        value = card_1.Value.Jack;
+                        break;
+                    case 'q':
+                        value = card_1.Value.Queen;
+                        break;
+                    case 'k':
+                        value = card_1.Value.King;
+                        break;
+                    default: throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                }
+                switch (charSuit) {
+                    case 'h':
+                        suit = card_1.Suit.Hearts;
+                        break;
+                    case 's':
+                        suit = card_1.Suit.Spades;
+                        break;
+                    case 'd':
+                        suit = card_1.Suit.Diamonds;
+                        break;
+                    case 'c':
+                        suit = card_1.Suit.Clubs;
+                        break;
+                    default: throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                }
+                cards.push(new card_1.BaseCard(suit, value));
+                ix += 2;
             }
-            var charValue = text[0].toLowerCase(), charSuit = text[1].toLowerCase();
-            var value, suit;
-            switch (charValue) {
-                case 'a':
-                    value = card_1.Value.Ace;
-                    break;
-                case '2':
-                    value = card_1.Value.Two;
-                    break;
-                case '3':
-                    value = card_1.Value.Three;
-                    break;
-                case '4':
-                    value = card_1.Value.Four;
-                    break;
-                case '5':
-                    value = card_1.Value.Five;
-                    break;
-                case '6':
-                    value = card_1.Value.Six;
-                    break;
-                case '7':
-                    value = card_1.Value.Seven;
-                    break;
-                case '8':
-                    value = card_1.Value.Eight;
-                    break;
-                case '9':
-                    value = card_1.Value.Nine;
-                    break;
-                case '1':
-                    value = card_1.Value.Ten;
-                    if (text.length > 2)
-                        charSuit = text[2].toLowerCase();
-                    break;
-                case 'j':
-                    value = card_1.Value.Jack;
-                    break;
-                case 'q':
-                    value = card_1.Value.Queen;
-                    break;
-                case 'k':
-                    value = card_1.Value.King;
-                    break;
-                default: throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
-            }
-            switch (charSuit) {
-                case 'h':
-                    suit = card_1.Suit.Hearts;
-                    break;
-                case 's':
-                    suit = card_1.Suit.Spades;
-                    break;
-                case 'd':
-                    suit = card_1.Suit.Diamonds;
-                    break;
-                case 'c':
-                    suit = card_1.Suit.Clubs;
-                    break;
-                default: throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
-            }
-            return new card_1.BaseCard(suit, value);
+            return cards;
         };
         Router.prototype.joinGame = function (req, res) {
-            var playerName = Router.getPlayerName(req);
-            var newPlayer = new cribbage_player_1.CribbagePlayer(playerName, new cribbage_hand_1.CribbageHand([]));
-            var response = Router.makeResponse(200, playerName + " has joined the game", SlackResponseType.in_channel);
+            var player = Router.getPlayerName(req);
+            var newPlayer = new cribbage_player_1.CribbagePlayer(player, new cribbage_hand_1.CribbageHand([]));
+            var response = Router.makeResponse(200, player + " has joined the game", SlackResponseType.in_channel);
             if (this.currentGame == null) {
                 this.currentGame = new cribbage_1.Cribbage(new card_game_1.Players([newPlayer]));
             }
@@ -289,7 +300,10 @@ var CribbageRoutes;
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(200, "...");
             try {
-                var card = Router.parseCard(req);
+                var cards = Router.parseCards(req.body.text);
+                if (cards.length == 0)
+                    throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                var card = cards[0];
                 var gameOver = this.currentGame.playCard(player, card);
                 response.data.text =
                     player + " played " + card.toString() + ".\n                    The cards in play are " + this.currentGame.sequence.toString() + ".\n                    You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
@@ -306,6 +320,9 @@ var CribbageRoutes;
                 response = Router.makeResponse(500, "Error! " + e + "! Current player: " + this.currentGame.nextPlayerInSequence);
             }
             Router.sendResponse(response, res);
+        };
+        Router.prototype.throwCard = function (req, res) {
+            var player = Router.getPlayerName(req);
         };
         Router.VALIDATION_FAILED_RESPONSE = new CribbageResponse(500, new CribbageResponseData(SlackResponseType.ephemeral, "Token validation failed"));
         return Router;
