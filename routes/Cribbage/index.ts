@@ -346,6 +346,7 @@ export module CribbageRoutes {
                     for (var ix = 0; ix < cards.length; ix++) {
                         played += `${cards[ix].toString()}, `;
                     }
+                    removeLastTwoChars(played);
                     response.data.text = `You threw ${played}. Your cards are ${this.currentGame.getPlayerHand(player)}`;
                 }
                 catch (e) {

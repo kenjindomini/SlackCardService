@@ -354,6 +354,7 @@ var CribbageRoutes;
                     for (var ix = 0; ix < cards.length; ix++) {
                         played += cards[ix].toString() + ", ";
                     }
+                    card_game_2.removeLastTwoChars(played);
                     response.data.text = "You threw " + played + ". Your cards are " + this.currentGame.getPlayerHand(player);
                 }
                 catch (e) {
