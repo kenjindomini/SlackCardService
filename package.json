@@ -1,11 +1,23 @@
 {
   "name": "slack_card_service",
   "version": "1.0.0",
+  "author": "Sean Brown",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sean-Brown/SlackCardService/issues"
+  },
+  "homepage": "https://github.com/Sean-Brown/SlackCardSerevice#readme",
+  "engines": {
+    "node": "4.0.0",
+    "npm": "2.14.2"
+  },
   "description": "Web service for playing card games",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run test-node && npm run test-service",
+    "test-node": "mocha -c -b --reporter spec spec/Node/*.js",
+    "test-service": "jasmine-node --color --test-dir ./spec/SlackCardService/"
   },
   "typescript": {
     "definition": "typings/tsd.d.ts"
@@ -14,12 +26,6 @@
     "type": "git",
     "url": "git+https://github.com/Sean-Brown/SlackCardService.git"
   },
-  "author": "Sean Brown",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Sean-Brown/SlackCardService/issues"
-  },
-  "homepage": "https://github.com/Sean-Brown/SlackCardSerevice#readme",
   "dependencies": {
     "body-parser": "^1.14.1",
     "errorhandler": "^1.4.2",
