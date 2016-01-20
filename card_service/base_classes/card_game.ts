@@ -9,9 +9,20 @@ import {BasePlayer as Player} from "./items/player";
 import {BaseTeam as Team} from "./collections/team";
 import {BaseDeck as Deck} from "./collections/deck";
 import {ItemCollection} from "./collections/item_collection";
-import {removeLastTwoChars} from "../implementations/cribbage";
 
 "use strict";
+
+export function removeLastTwoChars(str:string): string {
+    var ret = "";
+    var len = str.length;
+    if (len == 1) {
+        ret = str.substring(0);
+    }
+    else if (len > 1) {
+        ret = str.substring(0, len - 2)
+    }
+    return ret;
+}
 
 export class Players<SomePlayerClass extends Player> extends ItemCollection<SomePlayerClass> {
     constructor(players: Array<SomePlayerClass>) {

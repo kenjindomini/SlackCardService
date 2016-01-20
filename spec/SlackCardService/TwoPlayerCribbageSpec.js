@@ -197,7 +197,7 @@ describe("Test a Cribbage game between two players", function () {
                     text += this.sequence.cards.itemAt(index).toString() + ', ';
                 }
                 if (text.length > 0) {
-                    cribbage_1.removeLastTwoChars(text);
+                    card_game_1.removeLastTwoChars(text);
                 }
                 return text;
             };

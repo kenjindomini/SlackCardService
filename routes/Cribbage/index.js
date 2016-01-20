@@ -4,6 +4,7 @@ var cribbage_hand_1 = require("../../card_service/implementations/cribbage_hand"
 var card_game_1 = require("../../card_service/base_classes/card_game");
 var card_1 = require("../../card_service/base_classes/items/card");
 var item_collection_1 = require("../../card_service/base_classes/collections/item_collection");
+var card_game_2 = require("../../card_service/base_classes/card_game");
 var request = require("request");
 var CribbageStrings;
 (function (CribbageStrings) {
@@ -323,7 +324,7 @@ var CribbageRoutes;
                         for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
                             winners += (this.currentGame.players.itemAt(ix).name + ", ");
                         }
-                        winners = cribbage_1.removeLastTwoChars(winners);
+                        winners = card_game_2.removeLastTwoChars(winners);
                         response.data.text = "Game over. Winners: " + winners;
                     }
                 }

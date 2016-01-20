@@ -15,18 +15,6 @@ var Mode;
     Mode[Mode["FFA"] = 0] = "FFA";
     Mode[Mode["Team"] = 1] = "Team";
 })(Mode || (Mode = {}));
-function removeLastTwoChars(str) {
-    var ret = "";
-    var len = str.length;
-    if (len == 1) {
-        ret = str.substring(0);
-    }
-    else if (len > 1) {
-        ret = str.substring(0, len - 2);
-    }
-    return ret;
-}
-exports.removeLastTwoChars = removeLastTwoChars;
 var CribbageErrorStrings = (function () {
     function CribbageErrorStrings() {
     }
@@ -250,10 +238,10 @@ var Cribbage = (function (_super) {
                 for (var jx = 0; jx < team.numPlayers(); jx++) {
                     scores += (team.itemAt(jx).name + ", ");
                 }
-                scores = removeLastTwoChars(scores);
+                scores = card_game_1.removeLastTwoChars(scores);
                 scores += (" = " + team.countPoints() + " }, ");
             }
-            scores = removeLastTwoChars(scores);
+            scores = card_game_1.removeLastTwoChars(scores);
         }
         var players = [];
         for (var jx = 0; jx < this.players.countItems(); jx++) {
@@ -270,7 +258,7 @@ var Cribbage = (function (_super) {
             for (var ix = 0; ix < player.numCards(); ix++) {
                 hand += player.hand.itemAt(ix).toString() + ", ";
             }
-            removeLastTwoChars(hand);
+            card_game_1.removeLastTwoChars(hand);
             console.log(playerName + " has hand " + hand);
         }
         else {
