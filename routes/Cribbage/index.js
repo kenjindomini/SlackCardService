@@ -100,7 +100,11 @@ var CribbageRoutes;
             res.status(response.status).header("content-type", "application/json").json(response.data);
         };
         Router.sendDelayedResponse = function (responseData, url) {
-            request.post(url).json(responseData);
+            try {
+                request.post(url).json(responseData);
+            }
+            catch (e) {
+            }
         };
         Router.getPlayerName = function (req) {
             return (req.body.user_name ? req.body.user_name : req.query.user_name ? req.query.user_name : "Unknown Player");
