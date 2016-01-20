@@ -4,6 +4,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var item_collection_1 = require("./collections/item_collection");
+var cribbage_1 = require("../implementations/cribbage");
 "use strict";
 var Players = (function (_super) {
     __extends(Players, _super);
@@ -83,7 +84,7 @@ var Sequence = (function () {
         for (var ix = 0; ix < this.cards.countItems(); ix++) {
             ret += (this.cards.itemAt(ix).toString() + ', ');
         }
-        ret = ret.slice(0, ret.length - 2);
+        cribbage_1.removeLastTwoChars(ret);
         return ret;
     };
     Sequence.isSequentialAscending = function (array) {

@@ -9,6 +9,7 @@ import {BasePlayer as Player} from "./items/player";
 import {BaseTeam as Team} from "./collections/team";
 import {BaseDeck as Deck} from "./collections/deck";
 import {ItemCollection} from "./collections/item_collection";
+import {removeLastTwoChars} from "../implementations/cribbage";
 
 "use strict";
 
@@ -90,7 +91,7 @@ export class Sequence {
         for (var ix = 0; ix < this.cards.countItems(); ix++) {
             ret += (this.cards.itemAt(ix).toString() + ', ');
         }
-        ret = ret.slice(0, ret.length - 2);
+        removeLastTwoChars(ret);
         return ret;
     }
     static isSequentialAscending(array: Array<number>) {

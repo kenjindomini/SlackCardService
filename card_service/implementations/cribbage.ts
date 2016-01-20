@@ -366,8 +366,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         if (player != null) {
             console.log(`Found ${playerName}, now iterate the cards in their hand`);
             for (var ix = 0; ix < player.numCards(); ix++) {
-                hand += (player.hand.itemAt(ix).toString() + ", ");
+                hand += `${player.hand.itemAt(ix).toString()}, `;
             }
+            removeLastTwoChars(hand);
             console.log(`${playerName} has hand ${hand}`);
         }
         else {

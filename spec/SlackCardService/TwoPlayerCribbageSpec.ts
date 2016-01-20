@@ -9,7 +9,7 @@ import {BaseCard, Suit, Value} from "../../card_service/base_classes/items/card"
 import {BaseHand} from "../../card_service/base_classes/collections/hand";
 import {CribbagePlayer} from "../../card_service/implementations/cribbage_player";
 import {CribbageTeam} from "../../card_service/implementations/cribbage_team";
-import {Cribbage, CribbageErrorStrings} from "../../card_service/implementations/cribbage";
+import {Cribbage, CribbageErrorStrings, removeLastTwoChars} from "../../card_service/implementations/cribbage";
 import {BaseCardGame, Players, Sequence} from "../../card_service/base_classes/card_game";
 import {CribbageHand} from "../../card_service/implementations/cribbage_hand";
 import {ItemCollection} from "../../card_service/base_classes/collections/item_collection";
@@ -226,7 +226,7 @@ describe("Test a Cribbage game between two players", function() {
                 }
                 if (text.length > 0) {
                     // Remove the last comma + space
-                    text = text.substring(0, text.length - 2);
+                    removeLastTwoChars(text);
                 }
                 return text;
             }

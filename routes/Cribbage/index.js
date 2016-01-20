@@ -78,6 +78,7 @@ var CribbageRoutes;
         Tokens[Tokens["showHand"] = "Xa73JDXrWDnU276yqwremEsO"] = "showHand";
         Tokens[Tokens["playCard"] = "hnlyb5m5PfRNWyGJ3VNb8nkt"] = "playCard";
         Tokens[Tokens["throwCard"] = "2tanrKih6wNcq662RFlI1jnZ"] = "throwCard";
+        Tokens[Tokens["go"] = "WdOvhPaczrOv6p8snxJSwLvL"] = "go";
     })(Tokens || (Tokens = {}));
     (function (Routes) {
         Routes[Routes["joinGame"] = "/joinGame"] = "joinGame";
@@ -87,6 +88,7 @@ var CribbageRoutes;
         Routes[Routes["showHand"] = "/showHand"] = "showHand";
         Routes[Routes["playCard"] = "/playCard"] = "playCard";
         Routes[Routes["throwCard"] = "/throw"] = "throwCard";
+        Routes[Routes["go"] = "/go"] = "go";
     })(CribbageRoutes.Routes || (CribbageRoutes.Routes = {}));
     var Routes = CribbageRoutes.Routes;
     var Router = (function () {
@@ -304,42 +306,52 @@ var CribbageRoutes;
         Router.prototype.playCard = function (req, res) {
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(200, "...", SlackResponseType.in_channel);
-            try {
-                var cards = Router.parseCards(req.body.text);
-                if (cards.length == 0)
-                    throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
-                var card = cards[0];
-                var gameOver = this.currentGame.playCard(player, card);
-                response.data.text =
-                    player + " played the " + card.toString() + ".\n                    The count is at " + this.currentGame.count + ".\n                    The cards in play are: " + this.currentGame.sequence.toString() + ".\n                    You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
-                if (gameOver) {
-                    var winners = "";
-                    for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
-                        winners += (this.currentGame.players.itemAt(ix).name + ", ");
-                    }
-                    winners = cribbage_1.removeLastTwoChars(winners);
-                    response.data.text = "Game over. Winners: " + winners;
-                }
+            if (!Router.verifyRequest(req, Routes.playCard)) {
+                response = Router.VALIDATION_FAILED_RESPONSE;
             }
-            catch (e) {
-                response = Router.makeResponse(500, "Error! " + e + "! Current player: " + this.currentGame.nextPlayerInSequence.name);
+            else {
+                try {
+                    var cards = Router.parseCards(req.body.text);
+                    if (cards.length == 0)
+                        throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                    var card = cards[0];
+                    var gameOver = this.currentGame.playCard(player, card);
+                    response.data.text =
+                        player + " played the " + card.toString() + ".\n                    The count is at " + this.currentGame.count + ".\n                    The cards in play are: " + this.currentGame.sequence.toString() + ".\n                    You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
+                    if (gameOver) {
+                        var winners = "";
+                        for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
+                            winners += (this.currentGame.players.itemAt(ix).name + ", ");
+                        }
+                        winners = cribbage_1.removeLastTwoChars(winners);
+                        response.data.text = "Game over. Winners: " + winners;
+                    }
+                }
+                catch (e) {
+                    response = Router.makeResponse(500, "Error! " + e + "! Current player: " + this.currentGame.nextPlayerInSequence.name);
+                }
             }
             Router.sendResponse(response, res);
         };
         Router.prototype.throwCard = function (req, res) {
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(200, "...");
-            try {
-                var cards = Router.parseCards(req.body.text);
-                this.currentGame.giveToKitty(player, new item_collection_1.ItemCollection(cards));
-                var played = "";
-                for (var ix = 0; ix < cards.length; ix++) {
-                    played += cards[ix].toString() + ", ";
-                }
-                response.data.text = "You threw " + played + ". Your cards are " + this.currentGame.getPlayerHand(player);
+            if (!Router.verifyRequest(req, Routes.throwCard)) {
+                response = Router.VALIDATION_FAILED_RESPONSE;
             }
-            catch (e) {
-                response = Router.makeResponse(500, e);
+            else {
+                try {
+                    var cards = Router.parseCards(req.body.text);
+                    this.currentGame.giveToKitty(player, new item_collection_1.ItemCollection(cards));
+                    var played = "";
+                    for (var ix = 0; ix < cards.length; ix++) {
+                        played += cards[ix].toString() + ", ";
+                    }
+                    response.data.text = "You threw " + played + ". Your cards are " + this.currentGame.getPlayerHand(player);
+                }
+                catch (e) {
+                    response = Router.makeResponse(500, e);
+                }
             }
             Router.sendResponse(response, res);
             if (response.status == 200) {
@@ -347,6 +359,22 @@ var CribbageRoutes;
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
             }
+        };
+        Router.prototype.go = function (req, res) {
+            var player = Router.getPlayerName(req);
+            var response = Router.makeResponse(200, player + " says \"go\"", SlackResponseType.in_channel);
+            if (!Router.verifyRequest(req, Routes.go)) {
+                response = Router.VALIDATION_FAILED_RESPONSE;
+            }
+            else {
+                try {
+                    this.currentGame.go(player);
+                }
+                catch (e) {
+                    response = Router.makeResponse(500, e);
+                }
+            }
+            Router.sendResponse(response, res);
         };
         Router.VALIDATION_FAILED_RESPONSE = new CribbageResponse(500, new CribbageResponseData(SlackResponseType.ephemeral, "Token validation failed"));
         return Router;

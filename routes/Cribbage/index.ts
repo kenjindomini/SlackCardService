@@ -60,7 +60,8 @@ export module CribbageRoutes {
         beginGame = <any>"GECanrrjA8dYMlv2e4jkLQGe",
         showHand = <any>"Xa73JDXrWDnU276yqwremEsO",
         playCard = <any>"hnlyb5m5PfRNWyGJ3VNb8nkt",
-        throwCard = <any>"2tanrKih6wNcq662RFlI1jnZ"
+        throwCard = <any>"2tanrKih6wNcq662RFlI1jnZ",
+        go = <any>"WdOvhPaczrOv6p8snxJSwLvL"
     }
 
     export enum Routes {
@@ -70,7 +71,8 @@ export module CribbageRoutes {
         describe = <any>"/describe",
         showHand = <any>"/showHand",
         playCard = <any>"/playCard",
-        throwCard = <any>"/throw"
+        throwCard = <any>"/throw",
+        go = <any>"/go"
     }
 
     export class Router {
@@ -294,29 +296,34 @@ export module CribbageRoutes {
         playCard(req:Request, res:Response) {
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(200, "...", SlackResponseType.in_channel);
-            try {
-                var cards:Array<Card> = Router.parseCards(req.body.text);
-                if (cards.length == 0)
-                    throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
-                var card = cards[0];
-                var gameOver:boolean = this.currentGame.playCard(player, card);
-                response.data.text =
-                    `${player} played the ${card.toString()}.
+            if (!Router.verifyRequest(req, Routes.playCard)) {
+                response = Router.VALIDATION_FAILED_RESPONSE;
+            }
+            else {
+                try {
+                    var cards:Array<Card> = Router.parseCards(req.body.text);
+                    if (cards.length == 0)
+                        throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                    var card = cards[0];
+                    var gameOver:boolean = this.currentGame.playCard(player, card);
+                    response.data.text =
+                        `${player} played the ${card.toString()}.
                     The count is at ${this.currentGame.count}.
                     The cards in play are: ${this.currentGame.sequence.toString()}.
                     You're up, ${this.currentGame.nextPlayerInSequence.name}.`;
-                if (gameOver) {
-                    var winners = "";
-                    for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
-                        winners += (this.currentGame.players.itemAt(ix).name + ", ");
+                    if (gameOver) {
+                        var winners = "";
+                        for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
+                            winners += (this.currentGame.players.itemAt(ix).name + ", ");
+                        }
+                        // Remove last two chars
+                        winners = removeLastTwoChars(winners);
+                        response.data.text = `Game over. Winners: ${winners}`;
                     }
-                    // Remove last two chars
-                    winners = removeLastTwoChars(winners);
-                    response.data.text = `Game over. Winners: ${winners}`;
                 }
-            }
-            catch (e) {
-                response = Router.makeResponse(500, `Error! ${e}! Current player: ${this.currentGame.nextPlayerInSequence.name}`);
+                catch (e) {
+                    response = Router.makeResponse(500, `Error! ${e}! Current player: ${this.currentGame.nextPlayerInSequence.name}`);
+                }
             }
             Router.sendResponse(response, res);
         }
@@ -324,17 +331,22 @@ export module CribbageRoutes {
         throwCard(req:Request, res:Response) {
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(200, "...");
-            try {
-                var cards:Array<Card> = Router.parseCards(req.body.text);
-                this.currentGame.giveToKitty(player, new ItemCollection(cards));
-                var played = "";
-                for (var ix = 0; ix < cards.length; ix++) {
-                    played += `${cards[ix].toString()}, `;
-                }
-                response.data.text = `You threw ${played}. Your cards are ${this.currentGame.getPlayerHand(player)}`;
+            if (!Router.verifyRequest(req, Routes.throwCard)) {
+                response = Router.VALIDATION_FAILED_RESPONSE;
             }
-            catch (e) {
-                response = Router.makeResponse(500, e);
+            else {
+                try {
+                    var cards:Array<Card> = Router.parseCards(req.body.text);
+                    this.currentGame.giveToKitty(player, new ItemCollection(cards));
+                    var played = "";
+                    for (var ix = 0; ix < cards.length; ix++) {
+                        played += `${cards[ix].toString()}, `;
+                    }
+                    response.data.text = `You threw ${played}. Your cards are ${this.currentGame.getPlayerHand(player)}`;
+                }
+                catch (e) {
+                    response = Router.makeResponse(500, e);
+                }
             }
             Router.sendResponse(response, res);
             if (response.status == 200) {
@@ -342,6 +354,23 @@ export module CribbageRoutes {
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
             }
+        }
+
+        go(req:Request, res:Response) {
+            var player = Router.getPlayerName(req);
+            var response = Router.makeResponse(200, `${player} says "go"`, SlackResponseType.in_channel);
+            if (!Router.verifyRequest(req, Routes.go)) {
+                response = Router.VALIDATION_FAILED_RESPONSE;
+            }
+            else {
+                try {
+                    this.currentGame.go(player);
+                }
+                catch (e) {
+                    response = Router.makeResponse(500, e);
+                }
+            }
+            Router.sendResponse(response, res);
         }
     }
 }
