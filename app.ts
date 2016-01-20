@@ -52,6 +52,7 @@ export function setup(app: Express):Express {
 }
 
 export var app = setup(express());
+// start listening for incoming requests
 export var server = app.listen(port, () => {
     console.log("Express server listening on port %d in %s mode", port, app.settings.env);
 });
