@@ -4,13 +4,13 @@
 /// <reference path="../../card_service/implementations/cribbage_player.ts" />
 /// <reference path="../../card_service/base_classes/card_game.ts" />
 
-import * as express from "express";
-
+import {Request, Response} from "express";
 import {CribbagePlayer} from "../../card_service/implementations/cribbage_player";
 import {Cribbage, removeLastTwoChars} from "../../card_service/implementations/cribbage";
 import {CribbageHand} from "../../card_service/implementations/cribbage_hand";
 import {Players, Teams} from "../../card_service/base_classes/card_game";
 import {BaseCard as Card, Value, Suit} from "../../card_service/base_classes/items/card";
+import MessageStrings = CribbageStrings.MessageStrings;
 
 var request = require("request");
 
@@ -29,10 +29,12 @@ export module CribbageStrings {
 
 export module CribbageRoutes {
 
-    import MessageStrings = CribbageStrings.MessageStrings;
     enum SlackResponseType {
-        ephemeral = <any>"ephemeral", /* message sent to the user */
-        in_channel = <any>"in_channel" /* message sent to the channel */
+        /* message sent to the user */
+        ephemeral = <any>"ephemeral",
+
+        /* message sent to the channel */
+        in_channel = <any>"in_channel"
     }
 
     export class CribbageResponseData {
@@ -49,6 +51,7 @@ export module CribbageRoutes {
         }
     }
 
+    // SB TODO: refactor into an env file
     enum Tokens {
         joinGame = <any>"WMYyNOpoJRM4dbNBp6x9yOqP",
         describe = <any>"IA5AtVdbkur2aIGw1B549SgD",
@@ -86,23 +89,33 @@ export module CribbageRoutes {
             return new CribbageResponse(status, new CribbageResponseData(response_type, text, attachments));
         }
 
-        private static sendResponse(response:CribbageResponse, res:express.Response):void {
+        private static sendResponse(response:CribbageResponse, res:Response):void {
             res.status(response.status).header("content-type", "application/json").json(response.data);
         }
 
         private static sendDelayedResponse(responseData:CribbageResponseData, url:string):void {
-            request.post(url).json(responseData);
+            try {
+                request.post(url).json(responseData);
+            }
+            catch (e) {
+            }
         }
 
-        private static getPlayerName(req:express.Request):string {
+        private static getPlayerName(req:Request):string {
             return (req.body.user_name ? req.body.user_name : req.query.user_name ? req.query.user_name : "Unknown Player");
         }
 
-        private static getResponseUrl(req:express.Request):string {
+        private static getResponseUrl(req:Request):string {
             return (req.body.response_url ? req.body.response_url : "");
         }
 
-        private static verifyRequest(req:express.Request, route:Routes):boolean {
+        /**
+         * Use the token sent across in the request to verify the request
+         * @param req {Request}
+         * @param route
+         * @returns {boolean}
+         */
+        private static verifyRequest(req:Request, route:Routes):boolean {
             var verified = false;
             var token = (req.body.token ? req.body.token : req.query.token ? req.query.token : null);
             switch (route) {
@@ -116,7 +129,13 @@ export module CribbageRoutes {
             return verified;
         }
 
-        private static parseCard(req:express.Request):Card {
+        /**
+         * Parse the card out of the request
+         * @param req
+         * @returns {BaseCard} the parsed card
+         * @throws CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX if parsing fails
+         */
+        private static parseCard(req:Request):Card {
             var text = req.body.text;
             // parse the first two characters as value then suit
             // SB TODO: make a better parser that recognizes various inputs
@@ -167,7 +186,7 @@ export module CribbageRoutes {
 
         /* ***** Initializing the Game ***** */
 
-        joinGame(req:express.Request, res:express.Response) {
+        joinGame(req:Request, res:Response) {
             var playerName = Router.getPlayerName(req);
             var newPlayer = new CribbagePlayer(playerName, new CribbageHand([]));
             var response = Router.makeResponse(200, `${playerName} has joined the game`, SlackResponseType.in_channel);
@@ -188,7 +207,7 @@ export module CribbageRoutes {
             Router.sendResponse(response, res);
         }
 
-        beginGame(req:express.Request, res:express.Response) {
+        beginGame(req:Request, res:Response) {
             var response = Router.makeResponse(200, CribbageStrings.MessageStrings.START_GAME, SlackResponseType.in_channel);
             if (this.currentGame == null) {
                 response = Router.makeResponse(500, CribbageStrings.ErrorStrings.NO_GAME);
@@ -208,7 +227,7 @@ export module CribbageRoutes {
             Router.sendResponse(response, res);
         }
 
-        resetGame(req:express.Request, res:express.Response) {
+        resetGame(req:Request, res:Response) {
             // SB TODO: Have a better way to have a secret on the server so that trolls can't keep resetting the game
             var secret = req.body.text;
             var player = Router.getPlayerName(req);
@@ -234,7 +253,7 @@ export module CribbageRoutes {
 
         /* ***** Run of play ***** */
 
-        describe(req:express.Request, res:express.Response) {
+        describe(req:Request, res:Response) {
             var response = Router.makeResponse(200, this.currentGame ? this.currentGame.describe() : "The game is not yet initialized", SlackResponseType.in_channel);
             if (!Router.verifyRequest(req, Routes.describe)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
@@ -242,7 +261,7 @@ export module CribbageRoutes {
             Router.sendResponse(response, res);
         }
 
-        showHand(req:express.Request, res:express.Response) {
+        showHand(req:Request, res:Response) {
             var response = Router.makeResponse(200, "...");
             if (!Router.verifyRequest(req, Routes.showHand)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
@@ -258,7 +277,7 @@ export module CribbageRoutes {
             Router.sendResponse(response, res);
         }
 
-        playCard(req:express.Request, res:express.Response) {
+        playCard(req:Request, res:Response) {
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(200, "...");
             try {
