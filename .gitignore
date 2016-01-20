@@ -2,10 +2,12 @@ node_modules/
 dist/
 *.idea
 *.d.ts
-CardService/**/*.js
-CardService/**/*.js.map
-Node/**/*.js
-Node/**/*.js.map
+card_service/**/*.js
+card_service/**/*.js.map
+routes/**/*.js
+spec/**/*.js.map
+app.js
+app.map.js
 *.log
 *.tgz
 *.csv
