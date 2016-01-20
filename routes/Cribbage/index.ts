@@ -302,6 +302,7 @@ export module CribbageRoutes {
                 var gameOver:boolean = this.currentGame.playCard(player, card);
                 response.data.text =
                     `${player} played ${card.toString()}.
+                    The count is ${this.currentGame.count}.
                     The cards in play are ${this.currentGame.sequence.toString()}.
                     You're up, ${this.currentGame.nextPlayerInSequence.name}.`;
                 if (gameOver) {

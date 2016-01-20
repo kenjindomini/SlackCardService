@@ -81,7 +81,7 @@ var Sequence = (function () {
     Sequence.prototype.toString = function () {
         var ret = '';
         for (var ix = 0; ix < this.cards.countItems(); ix++) {
-            ret += (this.cards.itemAt(ix).value + ', ');
+            ret += (this.cards.itemAt(ix).toString() + ', ');
         }
         ret = ret.slice(0, ret.length - 2);
         return ret;

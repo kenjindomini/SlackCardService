@@ -311,7 +311,7 @@ var CribbageRoutes;
                 var card = cards[0];
                 var gameOver = this.currentGame.playCard(player, card);
                 response.data.text =
-                    player + " played " + card.toString() + ".\n                    The cards in play are " + this.currentGame.sequence.toString() + ".\n                    You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
+                    player + " played " + card.toString() + ".\n                    The count is " + this.currentGame.count + ".\n                    The cards in play are " + this.currentGame.sequence.toString() + ".\n                    You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
                 if (gameOver) {
                     var winners = "";
                     for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
