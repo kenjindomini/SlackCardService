@@ -333,6 +333,7 @@ export module CribbageRoutes {
             Router.sendResponse(response, res);
             if (response.status == 200) {
                 response.data.text = `${player} threw to the kitty`;
+                response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
             }
         }
