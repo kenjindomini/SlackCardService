@@ -429,7 +429,7 @@ var CribbageRoutes;
                     }
                     played = card_game_2.removeLastTwoChars(played);
                     response.data.text =
-                        "You threw " + played + ".\n                        Your cards are " + this.currentGame.getPlayerHand(player);
+                        "You threw " + played + ".\n                    Your cards are " + this.currentGame.getPlayerHand(player);
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
