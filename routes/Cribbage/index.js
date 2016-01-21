@@ -110,6 +110,7 @@ var CribbageRoutes;
                 request.post(url).json(responseData);
             }
             catch (e) {
+                console.log("Exception caught in sendDelayedResponse: " + e);
             }
         };
         Router.getPlayerName = function (req) {
@@ -369,6 +370,9 @@ var CribbageRoutes;
                 response.data.text = player + " threw to the kitty";
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
+                if (this.currentGame.isReady()) {
+                    Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, "The game is ready to begin. Play a card " + this.currentGame.nextPlayerInSequence + "."), Router.getResponseUrl(req));
+                }
             }
         };
         Router.prototype.go = function (req, res) {

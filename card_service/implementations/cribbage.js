@@ -88,6 +88,9 @@ var Cribbage = (function (_super) {
             }
         }
     };
+    Cribbage.prototype.isReady = function () {
+        return (this.kitty ? (this.kitty.countItems() == 4) : false);
+    };
     Cribbage.prototype.begin = function () {
         this.initializeGame();
         this.cutForDealer();

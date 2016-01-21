@@ -122,6 +122,7 @@ export module CribbageRoutes {
          * @param req {Request}
          * @param route
          * @returns {boolean}
+         * SB TODO: Refactor into middleware
          */
         private static verifyRequest(req:Request, route:Routes):boolean {
             var verified = false;
