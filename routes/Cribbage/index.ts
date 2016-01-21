@@ -40,6 +40,36 @@ export module CribbageRoutes {
         in_channel = <any>"in_channel"
     }
 
+    class CribbageAttachmentField {
+        constructor(
+            public title: string = "", // Shown as a bold heading above the value text. It cannot contain markup and will be escaped for you.
+            public value: string = "", // The text value of the field. It may contain standard message markup and must be escaped as normal. May be multi-line.
+            public short: string ="" // An optional flag indicating whether the value is short enough to be displayed side-by-side with other values.
+        ){
+        }
+    }
+
+    /**
+     * https://api.slack.com/docs/attachments
+     */
+    class CribbageResponseAttachment {
+        constructor(
+            public fallback: string = "", // Required plain-text summary of the attachment
+            public color: string = "", // An optional value that can either be one of good, warning, danger, or any hex color code
+            public pretext: string = "", // Optional text that appears above the attachment block
+            public author_name: string = "", // Small text used to display the author's name.
+            public author_link: string = "", // A valid URL that will hyperlink the author_name text mentioned above. Will only work if author_name is present.
+            public author_icon: string = "", // A valid URL that displays a small 16x16px image to the left of the author_name text. Will only work if author_name is present.
+            public title: string = "", // The title is displayed as larger, bold text near the top of a message attachment
+            public title_link: string = "", // By passing a valid URL in the title_link parameter (optional), the title text will be hyperlinked.
+            public text: string = "", // This is the main text in a message attachment, and can contain standard message markup
+            public fields: Array<CribbageAttachmentField> = [], // Fields are defined as an array, and hashes contained within it will be displayed in a table inside the message attachment.
+            public image_url: string = "", // A valid URL to an image file that will be displayed inside a message attachment. We currently support the following formats: GIF, JPEG, PNG, and BMP.
+            public thumb_url: string = "" // A valid URL to an image file that will be displayed as a thumbnail on the right side of a message attachment. We currently support the following formats: GIF, JPEG, PNG, and BMP.
+        ){
+        }
+    }
+
     export class CribbageResponseData {
         constructor(
             public response_type: SlackResponseType = SlackResponseType.ephemeral,
@@ -312,7 +342,7 @@ export module CribbageRoutes {
                     if (cards.length == 0)
                         throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
                     var card = cards[0];
-                    var gameOver:boolean = this.currentGame.playCard(player, card);
+                    var gameOver:boolean = this.currentGame.playCard(player, card).gameOver;
                     response.data.text =
                         `${player} played the ${card.toString()}.
                     The count is at ${this.currentGame.count}.

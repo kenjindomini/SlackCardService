@@ -50,6 +50,46 @@ var CribbageRoutes;
         SlackResponseType[SlackResponseType["ephemeral"] = "ephemeral"] = "ephemeral";
         SlackResponseType[SlackResponseType["in_channel"] = "in_channel"] = "in_channel";
     })(SlackResponseType || (SlackResponseType = {}));
+    var CribbageAttachmentField = (function () {
+        function CribbageAttachmentField(title, value, short) {
+            if (title === void 0) { title = ""; }
+            if (value === void 0) { value = ""; }
+            if (short === void 0) { short = ""; }
+            this.title = title;
+            this.value = value;
+            this.short = short;
+        }
+        return CribbageAttachmentField;
+    })();
+    var CribbageResponseAttachment = (function () {
+        function CribbageResponseAttachment(fallback, color, pretext, author_name, author_link, author_icon, title, title_link, text, fields, image_url, thumb_url) {
+            if (fallback === void 0) { fallback = ""; }
+            if (color === void 0) { color = ""; }
+            if (pretext === void 0) { pretext = ""; }
+            if (author_name === void 0) { author_name = ""; }
+            if (author_link === void 0) { author_link = ""; }
+            if (author_icon === void 0) { author_icon = ""; }
+            if (title === void 0) { title = ""; }
+            if (title_link === void 0) { title_link = ""; }
+            if (text === void 0) { text = ""; }
+            if (fields === void 0) { fields = []; }
+            if (image_url === void 0) { image_url = ""; }
+            if (thumb_url === void 0) { thumb_url = ""; }
+            this.fallback = fallback;
+            this.color = color;
+            this.pretext = pretext;
+            this.author_name = author_name;
+            this.author_link = author_link;
+            this.author_icon = author_icon;
+            this.title = title;
+            this.title_link = title_link;
+            this.text = text;
+            this.fields = fields;
+            this.image_url = image_url;
+            this.thumb_url = thumb_url;
+        }
+        return CribbageResponseAttachment;
+    })();
     var CribbageResponseData = (function () {
         function CribbageResponseData(response_type, text, attachments) {
             if (response_type === void 0) { response_type = SlackResponseType.ephemeral; }
@@ -324,7 +364,7 @@ var CribbageRoutes;
                     if (cards.length == 0)
                         throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
                     var card = cards[0];
-                    var gameOver = this.currentGame.playCard(player, card);
+                    var gameOver = this.currentGame.playCard(player, card).gameOver;
                     response.data.text =
                         player + " played the " + card.toString() + ".\n                    The count is at " + this.currentGame.count + ".\n                    The cards in play are: " + this.currentGame.sequence.toString() + ".\n                    You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
                     if (gameOver) {

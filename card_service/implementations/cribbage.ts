@@ -192,7 +192,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             player.hand.playCard(player.hand.itemAt(player.hand.indexOfItem(cards.itemAt(ix))));
         }
         // Add the cards to the kitty
-        var card = null;
+        var card:Card = null;
         for (var index = 0; index < cards.countItems(); index++) {
             card = cards.itemAt(index);
             this.kitty.takeCard(card);

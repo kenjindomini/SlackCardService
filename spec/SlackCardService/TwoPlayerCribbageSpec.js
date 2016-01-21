@@ -120,7 +120,7 @@ describe("Test a Cribbage game between two players", function () {
             expect(game.kitty.size()).toEqual(4);
         });
         it("doesn't let a player play a card they don't have", function () {
-            expect(function () { game.playCard(playerTwo.name, tenOfClubs); }).toThrow(cribbage_1.CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD);
+            expect(function () { game.playCard(playerTwo.name, tenOfClubs); }).toThrow(cribbage_1.CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD + " the " + tenOfClubs.toString() + "!");
         });
         it("ensures players play in order", function () {
             expect(function () { game.playCard(playerOne.name, sevenOfSpades); }).toThrow(cribbage_1.CribbageErrorStrings.FMT_NOT_NEXT_PLAYER + playerTwo.name);
