@@ -355,6 +355,7 @@ var CribbageRoutes;
         Router.prototype.playCard = function (req, res) {
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(200, "...", SlackResponseType.in_channel);
+            var gameOver = false;
             if (!Router.verifyRequest(req, Routes.playCard)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
@@ -364,7 +365,7 @@ var CribbageRoutes;
                     if (cards.length == 0)
                         throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
                     var card = cards[0];
-                    var gameOver = this.currentGame.playCard(player, card).gameOver;
+                    gameOver = this.currentGame.playCard(player, card).gameOver;
                     response.data.text =
                         player + " played the " + card.toString() + ".\n                    The count is at " + this.currentGame.count + ".\n                    The cards in play are: " + this.currentGame.sequence.toString() + ".\n                    You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
                     if (gameOver) {
@@ -381,6 +382,9 @@ var CribbageRoutes;
                 }
             }
             Router.sendResponse(response, res);
+            if (response.status == 200 && !gameOver) {
+                Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.ephemeral, "Your cards are " + this.currentGame.getPlayerHand(Router.getPlayerName(req))), Router.getResponseUrl(req));
+            }
         };
         Router.prototype.throwCard = function (req, res) {
             var player = Router.getPlayerName(req);

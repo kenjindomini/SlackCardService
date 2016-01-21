@@ -334,6 +334,7 @@ export module CribbageRoutes {
         playCard(req:Request, res:Response) {
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(200, "...", SlackResponseType.in_channel);
+            var gameOver:boolean = false;
             if (!Router.verifyRequest(req, Routes.playCard)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
@@ -343,7 +344,7 @@ export module CribbageRoutes {
                     if (cards.length == 0)
                         throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
                     var card = cards[0];
-                    var gameOver:boolean = this.currentGame.playCard(player, card).gameOver;
+                    gameOver = this.currentGame.playCard(player, card).gameOver;
                     response.data.text =
                         `${player} played the ${card.toString()}.
                     The count is at ${this.currentGame.count}.
@@ -364,6 +365,16 @@ export module CribbageRoutes {
                 }
             }
             Router.sendResponse(response, res);
+            if (response.status == 200 && !gameOver) {
+                // Tell the player what cards they have
+                Router.sendDelayedResponse(
+                    new CribbageResponseData(
+                        SlackResponseType.ephemeral,
+                        `Your cards are ${this.currentGame.getPlayerHand(Router.getPlayerName(req))}`
+                    ),
+                    Router.getResponseUrl(req)
+                );
+            }
         }
 
         throwCard(req:Request, res:Response) {
