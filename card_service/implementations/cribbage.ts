@@ -501,6 +501,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * - deal the cards
      */
     private deal():void {
+        this.count = 0;
         this.sequence.removeAll();
         this.resetHands();
         this.shuffle();

@@ -357,6 +357,7 @@ var Cribbage = (function (_super) {
         }
     };
     Cribbage.prototype.deal = function () {
+        this.count = 0;
         this.sequence.removeAll();
         this.resetHands();
         this.shuffle();
