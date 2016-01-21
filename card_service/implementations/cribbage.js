@@ -185,6 +185,9 @@ var Cribbage = (function (_super) {
             if (!player.playCard(card)) {
                 throw CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD + " the " + card.toString() + "!";
             }
+            if (player.hand.size() == 0) {
+                this.playersInPlay.removeItem(player);
+            }
             this.count += cardValue;
             var points = this.sequence.addCard(card);
             if (points > 0) {
@@ -195,8 +198,8 @@ var Cribbage = (function (_super) {
                     break;
                 }
             }
-            var sequenceOver = (this.count == 31);
-            if (this.count == 15 || sequenceOver) {
+            var is31 = (this.count == 31);
+            if (this.count == 15 || is31) {
                 points += 2;
                 if (team.addPoints(player, 2)) {
                     this.winningTeam = team;
@@ -204,7 +207,7 @@ var Cribbage = (function (_super) {
                     response.message = "Game over!";
                     break;
                 }
-                if (sequenceOver) {
+                if (is31) {
                     this.count = 0;
                     response.message = player.name + " scored " + points + " points.";
                 }
@@ -213,7 +216,17 @@ var Cribbage = (function (_super) {
                 this.roundOverResetState();
                 response.message += " " + this.roundOverStr();
             }
-            this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
+            else if (is31 || this.playersInPlay.countItems() == 0) {
+                this.resetSequence(null);
+            }
+            else {
+                this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
+                if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
+                    do {
+                        this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
+                    } while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
+                }
+            }
             break;
         }
         return response;
@@ -246,12 +259,13 @@ var Cribbage = (function (_super) {
                 response.message += " " + this.roundOverStr();
             }
             else {
-                this.count = 0;
-                this.sequence.removeAll();
-                this.playersInPlay.addItems(this.players.items);
-                this.nextPlayerInSequence = this.nextPlayerInOrder(player);
+                this.resetSequence(player);
                 response.message += " The count is back at 0. You're up " + this.nextPlayerInSequence.name;
             }
+        }
+        else if (this.roundOver()) {
+            this.roundOverResetState();
+            response.message += " " + this.roundOverStr();
         }
         else if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
             do {
@@ -372,13 +386,9 @@ var Cribbage = (function (_super) {
         }
     };
     Cribbage.prototype.deal = function () {
-        this.count = 0;
         this.kitty.removeAll();
-        this.sequence.removeAll();
         this.resetHands();
         this.shuffle();
-        this.playersInPlay.removeAll();
-        this.playersInPlay.addItems(this.players.items);
         switch (this.numPlayers) {
             case 2:
                 this.dealForTwo();
@@ -397,6 +407,21 @@ var Cribbage = (function (_super) {
                 break;
             default:
                 throw CribbageErrorStrings.INVALID_NUMBER_OF_PLAYERS;
+        }
+        this.resetSequence(null);
+    };
+    Cribbage.prototype.resetSequence = function (player) {
+        this.count = 0;
+        this.sequence.removeAll();
+        this.playersInPlay.removeAll();
+        for (var ix = 0; ix < this.numPlayers; ix++) {
+            var cribPlayer = this.players.itemAt(ix);
+            if (cribPlayer.hand.size() > 0) {
+                this.playersInPlay.addItem(cribPlayer);
+            }
+        }
+        if (player != null) {
+            this.nextPlayerInSequence = this.nextPlayerInOrder(player);
         }
     };
     Cribbage.prototype.cutTheDeck = function () {
