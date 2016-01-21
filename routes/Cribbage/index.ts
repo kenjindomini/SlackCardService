@@ -419,7 +419,7 @@ export module CribbageRoutes {
                     played = removeLastTwoChars(played);
                     response.data.text =
                         `You threw ${played}.
-                    Your cards are ${this.currentGame.getPlayerHand(player)}`;
+                        Your cards are ${this.currentGame.getPlayerHand(player)}`;
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
@@ -437,7 +437,7 @@ export module CribbageRoutes {
                         Router.sendDelayedResponse(
                             new CribbageResponseData(
                                 SlackResponseType.in_channel,
-                                `The game is ready to begin, play a card ${nextPlayer}.`
+                                `The game is ready to begin. The cut card is ${this.currentGame.cut.toString()}. Play a card ${nextPlayer}.`
                             ),
                             Router.getResponseUrl(req)
                         );
