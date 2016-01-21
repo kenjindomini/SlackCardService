@@ -365,7 +365,9 @@ var CribbageRoutes;
                     if (cards.length == 0)
                         throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
                     var card = cards[0];
-                    gameOver = this.currentGame.playCard(player, card).gameOver;
+                    var cribRes = this.currentGame.playCard(player, card);
+                    gameOver = cribRes.gameOver;
+                    var responseText = cribRes.message;
                     response.data.text =
                         player + " played the " + card.toString() + ".\n                    The count is at " + this.currentGame.count + ".\n                    The cards in play are: " + this.currentGame.sequence.toString() + ".\n                    You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
                     if (gameOver) {
@@ -375,6 +377,9 @@ var CribbageRoutes;
                         }
                         winners = card_game_2.removeLastTwoChars(winners);
                         response.data.text = "Game over. Winners: " + winners;
+                    }
+                    else if (responseText.length > 0) {
+                        response.data.text = responseText + "\n                                              " + response.data.text;
                     }
                 }
                 catch (e) {

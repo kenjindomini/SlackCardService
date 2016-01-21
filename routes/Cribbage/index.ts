@@ -344,7 +344,9 @@ export module CribbageRoutes {
                     if (cards.length == 0)
                         throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
                     var card = cards[0];
-                    gameOver = this.currentGame.playCard(player, card).gameOver;
+                    var cribRes = this.currentGame.playCard(player, card);
+                    gameOver = cribRes.gameOver;
+                    var responseText = cribRes.message;
                     response.data.text =
                         `${player} played the ${card.toString()}.
                     The count is at ${this.currentGame.count}.
@@ -358,6 +360,11 @@ export module CribbageRoutes {
                         // Remove last two chars
                         winners = removeLastTwoChars(winners);
                         response.data.text = `Game over. Winners: ${winners}`;
+                    }
+                    else if (responseText.length > 0) {
+                        // Prepend cribbage's response
+                        response.data.text = `${responseText}
+                                              ${response.data.text}`
                     }
                 }
                 catch (e) {

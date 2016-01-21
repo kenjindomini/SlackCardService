@@ -249,6 +249,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 if (team.addPoints(player, points)) {
                     this.winningTeam = team;
                     response.gameOver = true;
+                    response.message = "Game over!";
                     break;
                 }
             }

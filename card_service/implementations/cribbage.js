@@ -187,6 +187,7 @@ var Cribbage = (function (_super) {
                 if (team.addPoints(player, points)) {
                     this.winningTeam = team;
                     response.gameOver = true;
+                    response.message = "Game over!";
                     break;
                 }
             }
