@@ -414,7 +414,9 @@ export module CribbageRoutes {
                         played += `${cards[ix].toString()}, `;
                     }
                     played = removeLastTwoChars(played);
-                    response.data.text = `You threw ${played}. Your cards are ${this.currentGame.getPlayerHand(player)}`;
+                    response.data.text =
+                        `You threw ${played}.
+                        Your cards are ${this.currentGame.getPlayerHand(player)}`;
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
