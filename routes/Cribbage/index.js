@@ -456,7 +456,10 @@ var CribbageRoutes;
             }
             else {
                 try {
-                    this.currentGame.go(player);
+                    var cribResponse = this.currentGame.go(player);
+                    if (cribResponse.message.length > 0) {
+                        response.data.text += "\n                        " + cribResponse.message;
+                    }
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
