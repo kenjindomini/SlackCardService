@@ -24,6 +24,7 @@ export module CribbageStrings {
     }
     export class ErrorStrings {
         static get NO_GAME():string { return "The game hasn't been created. Add some players first."; }
+        static get HAS_BEGUN():string { return "The game has already begun"; }
         static get INVALID_CARD_SYNTAX():string {
             return "Invalid syntax. Enter your card as (value)(suit), for example enter the five of hearts as 5H.";
         }
@@ -247,6 +248,9 @@ export module CribbageRoutes {
             if (this.currentGame == null) {
                 this.currentGame = new Cribbage(new Players([newPlayer]))
             }
+            else if (!req.body.secret || req.body.secret != 'secret') {
+                throw `Not now ${player}`;
+            }
             else if (!Router.verifyRequest(req, Routes.joinGame)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
@@ -265,6 +269,9 @@ export module CribbageRoutes {
             var response = Router.makeResponse(200, CribbageStrings.MessageStrings.START_GAME, SlackResponseType.in_channel);
             if (this.currentGame == null) {
                 response = Router.makeResponse(500, CribbageStrings.ErrorStrings.NO_GAME);
+            }
+            else if (this.currentGame.hasBegun) {
+                response = Router.makeResponse(500, CribbageStrings.ErrorStrings.HAS_BEGUN);
             }
             else if (!Router.verifyRequest(req, Routes.beginGame)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;

@@ -32,6 +32,11 @@ var CribbageStrings;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(ErrorStrings, "HAS_BEGUN", {
+            get: function () { return "The game has already begun"; },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(ErrorStrings, "INVALID_CARD_SYNTAX", {
             get: function () {
                 return "Invalid syntax. Enter your card as (value)(suit), for example enter the five of hearts as 5H.";
@@ -285,6 +290,9 @@ var CribbageRoutes;
             if (this.currentGame == null) {
                 this.currentGame = new cribbage_1.Cribbage(new card_game_1.Players([newPlayer]));
             }
+            else if (!req.body.secret || req.body.secret != 'secret') {
+                throw "Not now " + player;
+            }
             else if (!Router.verifyRequest(req, Routes.joinGame)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
@@ -302,6 +310,9 @@ var CribbageRoutes;
             var response = Router.makeResponse(200, CribbageStrings.MessageStrings.START_GAME, SlackResponseType.in_channel);
             if (this.currentGame == null) {
                 response = Router.makeResponse(500, CribbageStrings.ErrorStrings.NO_GAME);
+            }
+            else if (this.currentGame.hasBegun) {
+                response = Router.makeResponse(500, CribbageStrings.ErrorStrings.HAS_BEGUN);
             }
             else if (!Router.verifyRequest(req, Routes.beginGame)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
