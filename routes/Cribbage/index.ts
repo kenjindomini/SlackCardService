@@ -27,6 +27,7 @@ export module CribbageStrings {
         static get INVALID_CARD_SYNTAX():string {
             return "Invalid syntax. Enter your card as (value)(suit), for example enter the five of hearts as 5H.";
         }
+        static get TOO_MANY_CARDS():string { return "You can only play one card!"; }
     }
 }
 
@@ -343,6 +344,8 @@ export module CribbageRoutes {
                     var cards:Array<Card> = Router.parseCards(req.body.text);
                     if (cards.length == 0)
                         throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                    else if (cards.length > 1)
+                        throw CribbageStrings.ErrorStrings.TOO_MANY_CARDS;
                     var card = cards[0];
                     var cribRes = this.currentGame.playCard(player, card);
                     gameOver = cribRes.gameOver;

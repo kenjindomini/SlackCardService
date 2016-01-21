@@ -39,6 +39,11 @@ var CribbageStrings;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(ErrorStrings, "TOO_MANY_CARDS", {
+            get: function () { return "You can only play one card!"; },
+            enumerable: true,
+            configurable: true
+        });
         return ErrorStrings;
     })();
     CribbageStrings.ErrorStrings = ErrorStrings;
@@ -364,6 +369,8 @@ var CribbageRoutes;
                     var cards = Router.parseCards(req.body.text);
                     if (cards.length == 0)
                         throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                    else if (cards.length > 1)
+                        throw CribbageStrings.ErrorStrings.TOO_MANY_CARDS;
                     var card = cards[0];
                     var cribRes = this.currentGame.playCard(player, card);
                     gameOver = cribRes.gameOver;
