@@ -48,7 +48,6 @@ export module CribbageRoutes {
         ){
         }
     }
-
     /**
      * https://api.slack.com/docs/attachments
      */
@@ -74,7 +73,7 @@ export module CribbageRoutes {
         constructor(
             public response_type: SlackResponseType = SlackResponseType.ephemeral,
             public text: string = "",
-            public attachments: Array<string> = []
+            public attachments: Array<CribbageResponseAttachment> = []
         ) {
         }
     }
@@ -121,7 +120,7 @@ export module CribbageRoutes {
             status:number=200,
             text:string="",
             response_type:SlackResponseType=SlackResponseType.ephemeral,
-            attachments:Array<string>=[]
+            attachments:Array<CribbageResponseAttachment>=[]
         ): CribbageResponse {
             return new CribbageResponse(status, new CribbageResponseData(response_type, text, attachments));
         }
@@ -270,7 +269,7 @@ export module CribbageRoutes {
             else {
                 try {
                     this.currentGame.begin();
-                    response.data.attachments.push(`${this.currentGame.describe()}`);
+                    response.data.attachments.push(new CribbageResponseAttachment(`${this.currentGame.describe()}`));
                 }
                 catch (e) {
                     // SB TODO: Elaborate on what went wrong
