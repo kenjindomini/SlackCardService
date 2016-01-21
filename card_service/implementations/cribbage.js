@@ -443,14 +443,18 @@ var Cribbage = (function (_super) {
         this.nextPlayerInSequence = this.nextPlayerInOrder(this.dealer);
     };
     Cribbage.prototype.nextPlayerInOrder = function (player) {
-        var index = this.players.indexOfItem(player);
-        if ((index + 1) >= this.numPlayers) {
-            index = 0;
-        }
-        else {
-            index++;
-        }
-        return this.players.itemAt(index);
+        var nextPlayer = null;
+        do {
+            var index = this.players.indexOfItem(player);
+            if ((index + 1) >= this.numPlayers) {
+                index = 0;
+            }
+            else {
+                index++;
+            }
+            nextPlayer = this.players.itemAt(index);
+        } while (this.playersInPlay.indexOfItem(nextPlayer) != -1 && !nextPlayer.equalsOther(player));
+        return nextPlayer;
     };
     Cribbage.prototype.findTeam = function (player) {
         var team = null;

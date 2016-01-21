@@ -631,14 +631,20 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * @returns {CribbagePlayer} the next player to play
      */
     private nextPlayerInOrder(player: CribbagePlayer):CribbagePlayer {
-        var index = this.players.indexOfItem(player);
-        if ((index + 1) >= this.numPlayers) {
-            index = 0;
+        var nextPlayer:CribbagePlayer = null;
+        do {
+            var index = this.players.indexOfItem(player);
+            if ((index + 1) >= this.numPlayers) {
+                index = 0;
+            }
+            else {
+                index++;
+            }
+            nextPlayer = this.players.itemAt(index);
         }
-        else {
-            index++;
-        }
-        return this.players.itemAt(index);
+        // Loop until the next player in play is found or until it reaches back to the original player
+        while (this.playersInPlay.indexOfItem(nextPlayer) != -1 && !nextPlayer.equalsOther(player));
+        return nextPlayer;
     }
 
     /**
