@@ -257,9 +257,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 }
             }
             if (this.roundOver()) {
-                this.countPoints();
-                this.setNextDealer();
-                this.deal();
+                this.roundOverResetState();
                 response.message += ` ${this.roundOverStr()}`;
             }
             this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
@@ -304,9 +302,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 response.message += " Game Over!";
             }
             else if (this.roundOver()) {
-                this.countPoints();
-                this.setNextDealer();
-                this.deal();
+                this.roundOverResetState();
                 response.message += ` ${this.roundOverStr()}`;
             }
             else {
@@ -418,11 +414,24 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         return player;
     }
 
+    /**
+     * Format a string to return to the channel when the round is over
+     * @returns {string}
+     */
     private roundOverStr():string {
         return `Round over.
                 The cards have been shuffled and dealt.
                 Throw to the kitty!
                 ${this.describe()}`;
+    }
+
+    /**
+     * Function to reset the state of the game when the round is over
+     */
+    private roundOverResetState():void {
+        this.countPoints();
+        this.setNextDealer();
+        this.deal();
     }
 
     /**
@@ -502,6 +511,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      */
     private deal():void {
         this.count = 0;
+        this.kitty.removeAll();
         this.sequence.removeAll();
         this.resetHands();
         this.shuffle();
