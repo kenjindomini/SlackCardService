@@ -213,7 +213,6 @@ var Cribbage = (function (_super) {
                 response.message += " " + this.roundOverStr();
             }
             else if (is31) {
-                response.message = player.name + " scored " + points + " points.";
                 this.resetSequence(player);
             }
             else if (this.playersInPlay.countItems() == 0) {
