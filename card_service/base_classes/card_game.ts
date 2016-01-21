@@ -102,7 +102,7 @@ export class Sequence {
         for (var ix = 0; ix < this.cards.countItems(); ix++) {
             ret += (this.cards.itemAt(ix).toString() + ', ');
         }
-        removeLastTwoChars(ret);
+        ret = removeLastTwoChars(ret);
         return ret;
     }
     static isSequentialAscending(array: Array<number>) {

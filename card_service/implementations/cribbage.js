@@ -268,7 +268,7 @@ var Cribbage = (function (_super) {
             for (var ix = 0; ix < player.numCards(); ix++) {
                 hand += player.hand.itemAt(ix).toString() + ", ";
             }
-            card_game_1.removeLastTwoChars(hand);
+            hand = card_game_1.removeLastTwoChars(hand);
             console.log(playerName + " has hand " + hand);
         }
         else {

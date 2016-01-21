@@ -226,7 +226,7 @@ describe("Test a Cribbage game between two players", function() {
                 }
                 if (text.length > 0) {
                     // Remove the last comma + space
-                    removeLastTwoChars(text);
+                    text = removeLastTwoChars(text);
                 }
                 return text;
             }

@@ -373,7 +373,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             for (var ix = 0; ix < player.numCards(); ix++) {
                 hand += `${player.hand.itemAt(ix).toString()}, `;
             }
-            removeLastTwoChars(hand);
+            hand = removeLastTwoChars(hand);
             console.log(`${playerName} has hand ${hand}`);
         }
         else {
