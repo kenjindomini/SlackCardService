@@ -278,12 +278,12 @@ describe("Test a Cribbage game between two players", function() {
                 new CribbageHand([threeOfSpades, fiveOfHearts, eightOfSpades, queenOfSpades, kingOfSpades, kingOfClubs]);
             game.dealer = playerOne;
             game.nextPlayerInSequence = playerTwo;
-            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([tenOfClubs, queenOfHearts]));
-            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([kingOfSpades, kingOfClubs]));
             game.cut = queenOfClubs;
             game.playersInPlay.addItems(game.players.items);
         });
         it("sets the next player correctly", function() {
+            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([tenOfClubs, queenOfHearts]));
+            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([kingOfSpades, kingOfClubs]));
             game.playCard(playerTwo.name, threeOfSpades);
             game.playCard(playerOne.name, eightOfClubs);
             game.playCard(playerTwo.name, queenOfSpades);
@@ -293,6 +293,15 @@ describe("Test a Cribbage game between two players", function() {
             expect(function() { game.playCard(playerOne.name, aceOfClubs); })
                 .not
                 .toThrow(`${CribbageErrorStrings.FMT_NOT_NEXT_PLAYER} + ${game.nextPlayerInSequence.name}`);
+        });
+        it("sets the next player correctly after one scores 31", function() {
+            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([twoOfDiamonds, sixOfClubs]));
+            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([threeOfSpades, eightOfSpades]));
+            game.playCard(playerTwo.name, queenOfSpades);
+            game.playCard(playerOne.name, queenOfHearts);
+            game.playCard(playerTwo.name, kingOfSpades);
+            game.playCard(playerOne.name, aceOfClubs);
+            expect(game.nextPlayerInSequence.equalsOther(playerTwo)).toBe(true);
         });
     });
     describe("Test the run-of-play", function() {
