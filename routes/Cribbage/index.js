@@ -410,7 +410,7 @@ var CribbageRoutes;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
                 if (this.currentGame.isReady()) {
                     setTimeout(function () {
-                        Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, "The game is ready to begin."), Router.getResponseUrl(req));
+                        Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, "The game is ready to begin, play a card " + this.currentGame.nextPlayerInSequence.name + "."), Router.getResponseUrl(req));
                     }, 1000);
                 }
             }
