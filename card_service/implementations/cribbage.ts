@@ -29,7 +29,7 @@ export class CribbageErrorStrings {
     static KITTY_NOT_READY: string = "The kitty still needs people to throw to it";
     static EXCEEDS_31: string = "Exceeds 31";
     static FMT_NOT_NEXT_PLAYER: string = "The next player is ";
-    static PLAYER_DOESNT_HAVE_CARD: string = "You don't have that card!";
+    static FMT_PLAYER_DOESNT_HAVE_CARD: string = "You don't have ";
     static PLAYER_DOES_NOT_EXIST: string = "You're not part of the game!";
     static PLAYER_ALREADY_IN_GAME: string = "You're already in the game";
     static PLAYER_CAN_PLAY: string = "You have a card you can still play";
@@ -144,7 +144,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * @param playerName
      * @param cards
      * @throws CribbageErrorStrings.PLAYER_DOES_NOT_EXIST if the player isn't part of the game
-     * @throws CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD if the player doesn't have the cards
+     * @throws CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD if the player doesn't have the cards
      * @throws CribbageErrorStrings.INVALID_NUM_CARDS_THROWN_TO_KITTY if the player throws the wrong number of cards
      * @throws CribbageErrorStrings.INVALID_THROWER if the player cannot legally throw to the kitty
      */
@@ -155,8 +155,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         // Check that the player has the cards they're trying to throw
         var numThrown = cards.countItems();
         for (var ix = 0; ix < numThrown; ix++) {
-            if (player.hand.indexOfItem(cards.itemAt(ix)) == -1) {
-                throw CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD;
+            var card = cards.itemAt(ix);
+            if (player.hand.indexOfItem(card) == -1) {
+                throw `${CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD} the ${card.toString()}!`;
             }
         }
         // Check that the right number of cards were thrown
@@ -211,7 +212,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * @throws CribbageErrorStrings.KITTY_NOT_READY if there are not enough cards in the kitty to begin play
      * @throws CribbageErrorStrings.FMT_NOT_NEXT_PLAYER if the next player to play is not the one trying to play a card
      * @throws CribbageErrorStrings.EXCEEDS_31 if the player plays a card that makes the count exceed 31
-     * @throws CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD if the player doesn't have the card they're trying to play
+     * @throws CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD if the player doesn't have the card they're trying to play
      */
     playCard(playerName: string, card: Card):CribbageReturn {
         var response = new CribbageReturn();
@@ -231,7 +232,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 throw CribbageErrorStrings.EXCEEDS_31;
             }
             if (!player.playCard(card)) {
-                throw CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD;
+                throw `${CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD} the ${card.toString()}!`;
             }
             this.count += cardValue;
             var points = this.sequence.addCard(card);

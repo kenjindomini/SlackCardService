@@ -24,7 +24,7 @@ var CribbageErrorStrings = (function () {
     CribbageErrorStrings.KITTY_NOT_READY = "The kitty still needs people to throw to it";
     CribbageErrorStrings.EXCEEDS_31 = "Exceeds 31";
     CribbageErrorStrings.FMT_NOT_NEXT_PLAYER = "The next player is ";
-    CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD = "You don't have that card!";
+    CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD = "You don't have ";
     CribbageErrorStrings.PLAYER_DOES_NOT_EXIST = "You're not part of the game!";
     CribbageErrorStrings.PLAYER_ALREADY_IN_GAME = "You're already in the game";
     CribbageErrorStrings.PLAYER_CAN_PLAY = "You have a card you can still play";
@@ -112,8 +112,9 @@ var Cribbage = (function (_super) {
             throw CribbageErrorStrings.PLAYER_DOES_NOT_EXIST;
         var numThrown = cards.countItems();
         for (var ix = 0; ix < numThrown; ix++) {
-            if (player.hand.indexOfItem(cards.itemAt(ix)) == -1) {
-                throw CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD;
+            var card = cards.itemAt(ix);
+            if (player.hand.indexOfItem(card) == -1) {
+                throw CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD + " the " + card.toString() + "!";
             }
         }
         switch (this.numPlayers) {
@@ -170,7 +171,7 @@ var Cribbage = (function (_super) {
                 throw CribbageErrorStrings.EXCEEDS_31;
             }
             if (!player.playCard(card)) {
-                throw CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD;
+                throw CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD + " the " + card.toString() + "!";
             }
             this.count += cardValue;
             var points = this.sequence.addCard(card);
