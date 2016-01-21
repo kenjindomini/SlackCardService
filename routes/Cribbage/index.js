@@ -379,7 +379,12 @@ var CribbageRoutes;
                         response.data.text = "Game over. Winners: " + winners;
                     }
                     else if (responseText.length > 0) {
-                        response.data.text = responseText + "\n                                              " + response.data.text;
+                        if (responseText.indexOf("round over") != -1) {
+                            response.data.text = responseText;
+                        }
+                        else {
+                            response.data.text = responseText + "\n                                              " + response.data.text;
+                        }
                     }
                 }
                 catch (e) {

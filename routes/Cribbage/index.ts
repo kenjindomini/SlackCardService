@@ -362,9 +362,15 @@ export module CribbageRoutes {
                         response.data.text = `Game over. Winners: ${winners}`;
                     }
                     else if (responseText.length > 0) {
-                        // Prepend cribbage's response
-                        response.data.text = `${responseText}
+                        if (responseText.indexOf("round over") != -1) {
+                            // The round is over, use the responseText string
+                            response.data.text = responseText;
+                        }
+                        else {
+                            // Prepend cribbage game's response
+                            response.data.text = `${responseText}
                                               ${response.data.text}`
+                        }
                     }
                 }
                 catch (e) {
