@@ -34,6 +34,7 @@ export class CribbageErrorStrings {
     static PLAYER_ALREADY_IN_GAME: string = "You're already in the game";
     static PLAYER_CAN_PLAY: string = "You have a card you can still play";
     static PLAYER_NOT_IN_PLAY: string = "You've already said \"go\"";
+    static GAME_HAS_ALREADY_BEGUN: string = "The game has already begun!";
 }
 
 export class CribbageGameDescription {
@@ -67,6 +68,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
     sequence: Sequence;
     numPlayers: number;
     winningTeam: CribbageTeam;
+    hasBegun: boolean;
 
     constructor(players: Players<CribbagePlayer>) {
         super(players, null, "Cribbage", new StandardDeck());
@@ -75,6 +77,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         this.kitty = new CribbageHand([]);
         this.playersInPlay = new ItemCollection<CribbagePlayer>([]);
         this.sequence = new Sequence();
+        this.hasBegun = false;
     }
 
     /**
@@ -133,9 +136,15 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * - deal the cards
      */
     begin():void {
-        this.initializeGame();
-        this.cutForDealer();
-        this.deal();
+        if (this.hasBegun) {
+            throw CribbageErrorStrings.GAME_HAS_ALREADY_BEGUN;
+        }
+        else {
+            this.initializeGame();
+            this.cutForDealer();
+            this.deal();
+            this.hasBegun = true;
+        }
     }
 
     /**

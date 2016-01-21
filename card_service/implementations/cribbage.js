@@ -29,6 +29,7 @@ var CribbageErrorStrings = (function () {
     CribbageErrorStrings.PLAYER_ALREADY_IN_GAME = "You're already in the game";
     CribbageErrorStrings.PLAYER_CAN_PLAY = "You have a card you can still play";
     CribbageErrorStrings.PLAYER_NOT_IN_PLAY = "You've already said \"go\"";
+    CribbageErrorStrings.GAME_HAS_ALREADY_BEGUN = "The game has already begun!";
     return CribbageErrorStrings;
 })();
 exports.CribbageErrorStrings = CribbageErrorStrings;
@@ -64,6 +65,7 @@ var Cribbage = (function (_super) {
         this.kitty = new cribbage_hand_1.CribbageHand([]);
         this.playersInPlay = new item_collection_1.ItemCollection([]);
         this.sequence = new card_game_1.Sequence();
+        this.hasBegun = false;
     }
     Cribbage.prototype.initializeGame = function () {
         this.numPlayers = this.players.countItems();
@@ -102,9 +104,15 @@ var Cribbage = (function (_super) {
         return (this.kitty ? (this.kitty.countItems() == 4) : false);
     };
     Cribbage.prototype.begin = function () {
-        this.initializeGame();
-        this.cutForDealer();
-        this.deal();
+        if (this.hasBegun) {
+            throw CribbageErrorStrings.GAME_HAS_ALREADY_BEGUN;
+        }
+        else {
+            this.initializeGame();
+            this.cutForDealer();
+            this.deal();
+            this.hasBegun = true;
+        }
     };
     Cribbage.prototype.giveToKitty = function (playerName, cards) {
         var player = this.findPlayer(playerName);
