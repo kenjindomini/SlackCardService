@@ -356,10 +356,11 @@ export module CribbageRoutes {
                     var cribRes = this.currentGame.playCard(player, card);
                     gameOver = cribRes.gameOver;
                     var responseText = cribRes.message;
-                    response.data.text = `${player} played the ${card.toString()}.
-                    The count is at ${this.currentGame.count}.
-                    The cards in play are: ${this.currentGame.sequence.toString()}.
-                    You're up, ${this.currentGame.nextPlayerInSequence.name}.`;
+                    response.data.text =
+                        `${player} played the ${card.toString()}.
+                        The count is at ${this.currentGame.count}.
+                        The cards in play are: ${this.currentGame.sequence.toString()}.
+                        You're up, ${this.currentGame.nextPlayerInSequence.name}.`;
                     if (gameOver) {
                         var winners = "";
                         for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
