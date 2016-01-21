@@ -153,6 +153,7 @@ var Cribbage = (function (_super) {
         }
         if (this.kitty.size() == 4) {
             this.cutTheDeck();
+            this.begin();
         }
     };
     Cribbage.prototype.playCard = function (playerName, card) {
