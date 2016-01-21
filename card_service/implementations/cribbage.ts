@@ -33,7 +33,7 @@ export class CribbageErrorStrings {
     static PLAYER_DOES_NOT_EXIST: string = "You're not part of the game!";
     static PLAYER_ALREADY_IN_GAME: string = "You're already in the game";
     static PLAYER_CAN_PLAY: string = "You have a card you can still play";
-    static PLAYER_NOT_IN_PLAY: string = "You've already said \"go\"";"
+    static PLAYER_NOT_IN_PLAY: string = "You've already said \"go\"";
 }
 
 export class CribbageGameDescription {
@@ -45,6 +45,14 @@ export class CribbageGameDescription {
                 public scores: string,
                 public players: Array<string>
     ){
+    }
+}
+
+/**
+ * Class that will be the return value for route-responding messages
+ */
+export class CribbageReturn {
+    constructor(public gameOver:boolean=false, public message:string="") {
     }
 }
 
@@ -205,7 +213,8 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * @throws CribbageErrorStrings.EXCEEDS_31 if the player plays a card that makes the count exceed 31
      * @throws CribbageErrorStrings.PLAYER_DOESNT_HAVE_CARD if the player doesn't have the card they're trying to play
      */
-    playCard(playerName: string, card: Card):boolean {
+    playCard(playerName: string, card: Card):CribbageReturn {
+        var response = new CribbageReturn();
         // Make sure everyone has thrown to the kitty
         if (this.kitty.size() != 4) {
             throw CribbageErrorStrings.KITTY_NOT_READY;
@@ -215,7 +224,6 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         if (!player.equalsOther(this.nextPlayerInSequence)) {
             throw CribbageErrorStrings.FMT_NOT_NEXT_PLAYER + this.nextPlayerInSequence.name;
         }
-        var gameOver = false;
         while (true) {
             var team = this.teams.findTeam(player);
             var cardValue = CribbageHand.getCardValue(card.value);
@@ -230,30 +238,34 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             if (points > 0) {
                 if (team.addPoints(player, points)) {
                     this.winningTeam = team;
-                    gameOver = true;
+                    response.gameOver = true;
                     break;
                 }
             }
             var sequenceOver = (this.count == 31);
             if (this.count == 15 || sequenceOver) {
+                points += 2;
                 if (team.addPoints(player, 2)) {
                     this.winningTeam = team;
-                    gameOver = true;
+                    response.gameOver = true;
+                    response.message = "Game over!";
                     break;
                 }
                 if (sequenceOver) {
                     this.count = 0;
+                    response.message = `${player.name} scored ${points} points.`;
                 }
             }
             if (this.roundOver()) {
                 this.countPoints();
                 this.setNextDealer();
                 this.deal();
+                response.message += ` ${this.roundOverStr()}`;
             }
             this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
             break;
         }
-        return gameOver;
+        return response;
     }
 
     /**
@@ -265,7 +277,8 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * @throws CribbageErrorStrings.PLAYER_DOES_NOT_EXIST if the player is not part of the current game
      * @throws CribbageErrorStrings.PLAYER_CAN_PLAY if the player has a card that they can still play
      */
-    go(playerName: string):boolean {
+    go(playerName: string):CribbageReturn {
+        var response = new CribbageReturn();
         var player = this.findPlayer(playerName);
         if (player == null) {
             throw CribbageErrorStrings.PLAYER_DOES_NOT_EXIST;
@@ -283,15 +296,18 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         if (this.playersInPlay.countItems() == 0) {
             // No more players in play, give the player a point for a go
             var team = this.findTeam(player);
+            response.message = `${playerName} gets a point for a go.`;
             if (team.addPoints(player, 1)) {
                 // Game over
                 this.winningTeam = team;
-                return true;
+                response.gameOver = true;
+                response.message += " Game Over!";
             }
-            if (this.roundOver()) {
+            else if (this.roundOver()) {
                 this.countPoints();
                 this.setNextDealer();
                 this.deal();
+                response.message += ` ${this.roundOverStr()}`;
             }
             else {
                 // Start the sequence over again, with the person after the one that got the go
@@ -299,6 +315,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 this.sequence.removeAll();
                 this.playersInPlay.addItems(this.players.items);
                 this.nextPlayerInSequence = this.nextPlayerInOrder(player);
+                response.message += ` The count is back at 0. You're up ${this.nextPlayerInSequence.name}`;
             }
         }
         else if (this.nextPlayerInSequence.equalsOther(player)) {
@@ -308,7 +325,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             }
             while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
         }
-        return false;
+        return response;
     }
 
     /**
@@ -370,6 +387,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         var player = this.findPlayer(playerName);
         if (player != null) {
             console.log(`Found ${playerName}, now iterate the cards in their hand`);
+            player.hand.sortCards();
             for (var ix = 0; ix < player.numCards(); ix++) {
                 hand += `${player.hand.itemAt(ix).toString()}, `;
             }
@@ -398,6 +416,13 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             }
         }
         return player;
+    }
+
+    private roundOverStr():string {
+        return `Round over.
+                The cards have been shuffled and dealt.
+                Throw to the kitty!
+                ${this.describe()}`;
     }
 
     /**
