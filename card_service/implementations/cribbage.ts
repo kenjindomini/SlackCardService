@@ -25,6 +25,7 @@ enum Mode {
 export class CribbageErrorStrings {
     static INVALID_NUMBER_OF_PLAYERS: string = "Invalid number of players";
     static INVALID_NUM_CARDS_THROWN_TO_KITTY: string = "Invalid number of cards given to the kitty";
+    static DUPLICATE_CARD_THROWN_TO_KITTY: string = "You must throw two UNIQUE cards to the kitty";
     static INVALID_THROWER: string = "You aren't allowed to throw any cards!";
     static KITTY_NOT_READY: string = "The kitty still needs people to throw to it";
     static EXCEEDS_31: string = "Exceeds 31";
@@ -174,6 +175,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             case 2:
                 if (numThrown != 2) {
                     throw CribbageErrorStrings.INVALID_NUM_CARDS_THROWN_TO_KITTY;
+                }
+                else if (cards.itemAt(0).equalsOther(cards.itemAt(1))) {
+                    throw CribbageErrorStrings.DUPLICATE_CARD_THROWN_TO_KITTY;
                 }
                 break;
             case 3:
@@ -325,7 +329,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 response.message += ` The count is back at 0. You're up ${this.nextPlayerInSequence.name}`;
             }
         }
-        else if (this.nextPlayerInSequence.equalsOther(player)) {
+        else if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
             // The next player in the sequence can no longer play, set the next one
             do {
                 this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
@@ -626,25 +630,19 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
     }
 
     /**
-     * Determine the next player to play a card
-     * @param player the player who just played a card
-     * @returns {CribbagePlayer} the next player to play
+     * Find the next player in order
+     * @param {CribbagePlayer} player the current player
+     * @returns {CribbagePlayer} the next player
      */
     private nextPlayerInOrder(player: CribbagePlayer):CribbagePlayer {
-        var nextPlayer:CribbagePlayer = null;
-        do {
-            var index = this.players.indexOfItem(player);
-            if ((index + 1) >= this.numPlayers) {
-                index = 0;
-            }
-            else {
-                index++;
-            }
-            nextPlayer = this.players.itemAt(index);
+        var index = this.players.indexOfItem(player);
+        if ((index + 1) >= this.numPlayers) {
+            index = 0;
         }
-        // Loop until the next player in play is found or until it reaches back to the original player
-        while (this.playersInPlay.indexOfItem(nextPlayer) != -1 && !nextPlayer.equalsOther(player));
-        return nextPlayer;
+        else {
+            index++;
+        }
+        return this.players.itemAt(index);
     }
 
     /**

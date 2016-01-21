@@ -151,11 +151,13 @@ var CribbageRoutes;
             res.status(response.status).header("content-type", "application/json").json(response.data);
         };
         Router.sendDelayedResponse = function (responseData, url) {
-            try {
-                request.post(url).json(responseData);
-            }
-            catch (e) {
-                console.log("Exception caught in sendDelayedResponse: " + e);
+            if (url && url.length > 0) {
+                try {
+                    request.post(url).json(responseData);
+                }
+                catch (e) {
+                    console.log("Exception caught in sendDelayedResponse: " + e);
+                }
             }
         };
         Router.getPlayerName = function (req) {

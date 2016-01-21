@@ -24,6 +24,9 @@ export class BasePlayer implements PlayerActions, IItem {
         return this.hand.size();
     }
     equalsOther(player: BasePlayer) {
-        return (this.name == player.name);
+        var equals = false;
+        if (player)
+            equals = (this.name == player.name);
+        return equals;
     }
 }

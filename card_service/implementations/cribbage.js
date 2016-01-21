@@ -20,6 +20,7 @@ var CribbageErrorStrings = (function () {
     }
     CribbageErrorStrings.INVALID_NUMBER_OF_PLAYERS = "Invalid number of players";
     CribbageErrorStrings.INVALID_NUM_CARDS_THROWN_TO_KITTY = "Invalid number of cards given to the kitty";
+    CribbageErrorStrings.DUPLICATE_CARD_THROWN_TO_KITTY = "You must throw two UNIQUE cards to the kitty";
     CribbageErrorStrings.INVALID_THROWER = "You aren't allowed to throw any cards!";
     CribbageErrorStrings.KITTY_NOT_READY = "The kitty still needs people to throw to it";
     CribbageErrorStrings.EXCEEDS_31 = "Exceeds 31";
@@ -129,6 +130,9 @@ var Cribbage = (function (_super) {
             case 2:
                 if (numThrown != 2) {
                     throw CribbageErrorStrings.INVALID_NUM_CARDS_THROWN_TO_KITTY;
+                }
+                else if (cards.itemAt(0).equalsOther(cards.itemAt(1))) {
+                    throw CribbageErrorStrings.DUPLICATE_CARD_THROWN_TO_KITTY;
                 }
                 break;
             case 3:
@@ -249,7 +253,7 @@ var Cribbage = (function (_super) {
                 response.message += " The count is back at 0. You're up " + this.nextPlayerInSequence.name;
             }
         }
-        else if (this.nextPlayerInSequence.equalsOther(player)) {
+        else if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
             do {
                 this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
             } while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
@@ -443,18 +447,14 @@ var Cribbage = (function (_super) {
         this.nextPlayerInSequence = this.nextPlayerInOrder(this.dealer);
     };
     Cribbage.prototype.nextPlayerInOrder = function (player) {
-        var nextPlayer = null;
-        do {
-            var index = this.players.indexOfItem(player);
-            if ((index + 1) >= this.numPlayers) {
-                index = 0;
-            }
-            else {
-                index++;
-            }
-            nextPlayer = this.players.itemAt(index);
-        } while (this.playersInPlay.indexOfItem(nextPlayer) != -1 && !nextPlayer.equalsOther(player));
-        return nextPlayer;
+        var index = this.players.indexOfItem(player);
+        if ((index + 1) >= this.numPlayers) {
+            index = 0;
+        }
+        else {
+            index++;
+        }
+        return this.players.itemAt(index);
     };
     Cribbage.prototype.findTeam = function (player) {
         var team = null;

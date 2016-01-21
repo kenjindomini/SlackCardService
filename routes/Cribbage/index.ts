@@ -131,11 +131,13 @@ export module CribbageRoutes {
         }
 
         private static sendDelayedResponse(responseData:CribbageResponseData, url:string):void {
-            try {
-                request.post(url).json(responseData);
-            }
-            catch (e) {
-                console.log(`Exception caught in sendDelayedResponse: ${e}`);
+            if (url && url.length > 0) {
+                try {
+                    request.post(url).json(responseData);
+                }
+                catch (e) {
+                    console.log(`Exception caught in sendDelayedResponse: ${e}`);
+                }
             }
         }
 

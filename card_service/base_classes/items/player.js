@@ -11,7 +11,10 @@ var BasePlayer = (function () {
         return this.hand.size();
     };
     BasePlayer.prototype.equalsOther = function (player) {
-        return (this.name == player.name);
+        var equals = false;
+        if (player)
+            equals = (this.name == player.name);
+        return equals;
     };
     return BasePlayer;
 })();

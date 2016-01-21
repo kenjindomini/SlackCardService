@@ -101,6 +101,14 @@ describe("Test a Cribbage game between two players", function () {
     it("waits for the kitty to be full before letting players play", function () {
         expect(function () { game.playCard(playerTwo.name); }).toThrow(cribbage_1.CribbageErrorStrings.KITTY_NOT_READY);
     });
+    it("doesn't let a player throw the same card twice", function () {
+        game.cutForDealer();
+        game.deal();
+        var firstPlayer = game.players.itemAt(0);
+        var firstCard = playerOne.hand.itemAt(0);
+        expect(function () { game.giveToKitty(firstPlayer.name, new item_collection_1.ItemCollection([firstCard, firstCard])); })
+            .toThrow(cribbage_1.CribbageErrorStrings.DUPLICATE_CARD_THROWN_TO_KITTY);
+    });
     var sevenOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Seven), sevenOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Seven), eightOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Eight), eightOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Eight), nineOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Nine), tenOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Ten), nineOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Nine), tenOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Ten), jackOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Jack), queenOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Queen), kingOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.King), kingOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.King);
     describe("Test with fixed hands, starting at 0 points", function () {
         beforeEach(function () {
@@ -121,9 +129,6 @@ describe("Test a Cribbage game between two players", function () {
         });
         it("doesn't let a player play a card they don't have", function () {
             expect(function () { game.playCard(playerTwo.name, tenOfClubs); }).toThrow(cribbage_1.CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD + " the " + tenOfClubs.toString() + "!");
-        });
-        it("doesn't let a player throw the same card twice", function () {
-            expect(function () { }).toThrow("");
         });
         it("ensures players play in order", function () {
             expect(function () { game.playCard(playerOne.name, sevenOfSpades); }).toThrow(cribbage_1.CribbageErrorStrings.FMT_NOT_NEXT_PLAYER + playerTwo.name);
@@ -186,6 +191,32 @@ describe("Test a Cribbage game between two players", function () {
             expect(game.getTeam(0).countPoints()).toEqual(4 + 6 + 8);
             expect(game.getTeam(1).countPoints()).toEqual(3 + 6);
             expect(game.dealer.equalsOther(playerTwo)).toBe(true);
+        });
+    });
+    describe("Test player playing cards after other player says 'go'", function () {
+        var aceOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Ace), twoOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Two), sixOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Six), eightOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Eight), tenOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Ten), queenOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Queen), threeOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Three), fiveOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Five), eightOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Eight), queenOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Queen), kingOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.King), kingOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.King), queenOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Queen);
+        beforeEach(function () {
+            playerOne.hand =
+                new cribbage_hand_1.CribbageHand([aceOfClubs, twoOfDiamonds, sixOfClubs, eightOfClubs, tenOfClubs, queenOfHearts]);
+            playerTwo.hand =
+                new cribbage_hand_1.CribbageHand([threeOfSpades, fiveOfHearts, eightOfSpades, queenOfSpades, kingOfSpades, kingOfClubs]);
+            game.dealer = playerOne;
+            game.nextPlayerInSequence = playerTwo;
+            game.giveToKitty(playerOne.name, new item_collection_1.ItemCollection([tenOfClubs, queenOfHearts]));
+            game.giveToKitty(playerTwo.name, new item_collection_1.ItemCollection([kingOfSpades, kingOfClubs]));
+            game.cut = queenOfClubs;
+            game.playersInPlay.addItems(game.players.items);
+        });
+        it("sets the next player correctly", function () {
+            game.playCard(playerTwo.name, threeOfSpades);
+            game.playCard(playerOne.name, eightOfClubs);
+            game.playCard(playerTwo.name, queenOfSpades);
+            game.playCard(playerOne.name, sixOfClubs);
+            game.go(playerTwo.name);
+            game.playCard(playerOne.name, twoOfDiamonds);
+            expect(function () { game.playCard(playerOne.name, aceOfClubs); })
+                .not
+                .toThrow(cribbage_1.CribbageErrorStrings.FMT_NOT_NEXT_PLAYER + " + " + game.nextPlayerInSequence.name);
         });
     });
     describe("Test the run-of-play", function () {
