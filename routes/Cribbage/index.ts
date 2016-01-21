@@ -105,6 +105,7 @@ export module CribbageRoutes {
                 request.post(url).json(responseData);
             }
             catch (e) {
+                console.log(`Exception caught in sendDelayedResponse: ${e}`);
             }
         }
 
@@ -361,6 +362,16 @@ export module CribbageRoutes {
                 response.data.text = `${player} threw to the kitty`;
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
+                if (this.currentGame.isReady()) {
+                    // Let the players know it's time to begin the game
+                    Router.sendDelayedResponse(
+                        new CribbageResponseData(
+                            SlackResponseType.in_channel,
+                            `The game is ready to begin. Play a card ${this.currentGame.nextPlayerInSequence}.`
+                        ),
+                        Router.getResponseUrl(req)
+                    );
+                }
             }
         }
 

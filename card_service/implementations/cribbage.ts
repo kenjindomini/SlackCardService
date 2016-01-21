@@ -111,6 +111,14 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
     }
 
     /**
+     * Tells if the game is ready to begin
+     * @returns {boolean} true if the game is ready to begin
+     */
+    isReady():boolean {
+        return (this.kitty ? (this.kitty.countItems() == 4) : false);
+    }
+
+    /**
      * Begin the game.
      * - initialize the game
      * - cut for dealer
