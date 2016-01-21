@@ -356,8 +356,7 @@ export module CribbageRoutes {
                     var cribRes = this.currentGame.playCard(player, card);
                     gameOver = cribRes.gameOver;
                     var responseText = cribRes.message;
-                    response.data.text =
-                        `${player} played the ${card.toString()}.
+                    response.data.text = `${player} played the ${card.toString()}.
                     The count is at ${this.currentGame.count}.
                     The cards in play are: ${this.currentGame.sequence.toString()}.
                     You're up, ${this.currentGame.nextPlayerInSequence.name}.`;
