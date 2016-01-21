@@ -269,7 +269,9 @@ export module CribbageRoutes {
             else {
                 try {
                     this.currentGame.begin();
-                    response.data.attachments.push(new CribbageResponseAttachment(`${this.currentGame.describe()}`));
+                    response.data.attachments.push(
+                        new CribbageResponseAttachment(`${this.currentGame.describe()}`, "#666", "", "", "", "", "", "", `${this.currentGame.describe()}`)
+                    );
                 }
                 catch (e) {
                     // SB TODO: Elaborate on what went wrong

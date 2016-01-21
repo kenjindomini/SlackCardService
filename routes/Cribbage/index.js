@@ -302,7 +302,7 @@ var CribbageRoutes;
             else {
                 try {
                     this.currentGame.begin();
-                    response.data.attachments.push(new CribbageResponseAttachment("" + this.currentGame.describe()));
+                    response.data.attachments.push(new CribbageResponseAttachment("" + this.currentGame.describe(), "#666", "", "", "", "", "", "", "" + this.currentGame.describe()));
                 }
                 catch (e) {
                     response = Router.makeResponse(500, "Cannot start the game, an error has occurred: " + e);
