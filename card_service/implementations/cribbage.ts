@@ -454,9 +454,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      */
     private roundOverStr():string {
         return `Round over.
-                The cards have been shuffled and dealt.
-                Throw to the kitty!
-                ${this.describe()}`;
+        The cards have been shuffled and dealt.
+        Throw to the kitty!
+        ${this.describe()}`;
     }
 
     /**
