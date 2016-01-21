@@ -208,6 +208,9 @@ var Cribbage = (function (_super) {
                     break;
                 }
             }
+            if (points > 0) {
+                response.message = player.name + " scored " + points + " points.";
+            }
             if (this.roundOver()) {
                 this.roundOverResetState();
                 response.message += " " + this.roundOverStr();
