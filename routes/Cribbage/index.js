@@ -262,9 +262,7 @@ var CribbageRoutes;
             else {
                 try {
                     this.currentGame.begin();
-                    response.data.attachments.push([
-                        ""
-                    ]);
+                    response.data.attachments.push("" + this.currentGame.describe());
                 }
                 catch (e) {
                     response = Router.makeResponse(500, "Cannot start the game, an error has occurred: " + e);

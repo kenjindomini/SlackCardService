@@ -240,9 +240,7 @@ export module CribbageRoutes {
             else {
                 try {
                     this.currentGame.begin();
-                    response.data.attachments.push([
-                        ""
-                    ]);
+                    response.data.attachments.push(`${this.currentGame.describe()}`);
                 }
                 catch (e) {
                     // SB TODO: Elaborate on what went wrong
