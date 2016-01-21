@@ -200,7 +200,6 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         if (this.kitty.size() == 4) {
             // Cut the deck and allow play to begin
             this.cutTheDeck();
-            this.begin();
         }
     }
 

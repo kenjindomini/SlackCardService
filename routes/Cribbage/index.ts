@@ -397,7 +397,7 @@ export module CribbageRoutes {
                         Router.sendDelayedResponse(
                             new CribbageResponseData(
                                 SlackResponseType.in_channel,
-                                `The game is ready to begin. Play a card ${this.currentGame.nextPlayerInSequence.name}.`
+                                "The game is ready to begin."
                             ),
                             Router.getResponseUrl(req)
                         );
