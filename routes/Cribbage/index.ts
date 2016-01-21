@@ -364,14 +364,16 @@ export module CribbageRoutes {
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
                 if (this.currentGame.isReady()) {
-                    // Let the players know it's time to begin the game
-                    Router.sendDelayedResponse(
-                        new CribbageResponseData(
-                            SlackResponseType.in_channel,
-                            `The game is ready to begin. Play a card ${this.currentGame.nextPlayerInSequence.name}.`
-                        ),
-                        Router.getResponseUrl(req)
-                    );
+                    setTimeout(function() {
+                        // Let the players know it's time to begin the game
+                        Router.sendDelayedResponse(
+                            new CribbageResponseData(
+                                SlackResponseType.in_channel,
+                                `The game is ready to begin. Play a card ${this.currentGame.nextPlayerInSequence.name}.`
+                            ),
+                            Router.getResponseUrl(req)
+                        );
+                    }, 1000);
                 }
             }
         }
