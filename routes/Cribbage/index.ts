@@ -248,9 +248,6 @@ export module CribbageRoutes {
             if (this.currentGame == null) {
                 this.currentGame = new Cribbage(new Players([newPlayer]))
             }
-            else if (!req.body.secret || req.body.secret != 'secret') {
-                throw `Not now ${player}`;
-            }
             else if (!Router.verifyRequest(req, Routes.joinGame)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
