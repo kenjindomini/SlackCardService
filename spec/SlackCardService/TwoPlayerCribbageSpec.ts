@@ -24,6 +24,7 @@ describe("Test a Cribbage game between two players", function() {
         aceOfDiamonds = new BaseCard(Suit.Diamonds, Value.Ace),
         aceOfClubs = new BaseCard(Suit.Clubs, Value.Ace),
         twoOfDiamonds = new BaseCard(Suit.Diamonds, Value.Two),
+        twoOfClubs = new BaseCard(Suit.Clubs, Value.Two),
         threeOfSpades = new BaseCard(Suit.Spades, Value.Three),
         fourOfHearts = new BaseCard(Suit.Hearts, Value.Four),
         fourOfSpades = new BaseCard(Suit.Spades, Value.Four),
@@ -50,6 +51,7 @@ describe("Test a Cribbage game between two players", function() {
         tenOfClubs = new BaseCard(Suit.Clubs, Value.Ten),
         tenOfDiamonds = new BaseCard(Suit.Diamonds, Value.Ten),
         jackOfSpades = new BaseCard(Suit.Spades, Value.Jack),
+        jackOfHearts = new BaseCard(Suit.Hearts, Value.Jack),
         queenOfClubs = new BaseCard(Suit.Clubs, Value.Queen),
         queenOfHearts = new BaseCard(Suit.Hearts, Value.Queen),
         queenOfSpades = new BaseCard(Suit.Spades, Value.Queen),
@@ -302,6 +304,29 @@ describe("Test a Cribbage game between two players", function() {
             game.playCard(playerTwo.name, kingOfSpades);
             game.playCard(playerOne.name, aceOfClubs);
             expect(game.nextPlayerInSequence.equalsOther(playerTwo)).toBe(true);
+        });
+        it("sets the next player correctly after a go", function() {
+            playerOne.hand =
+                new CribbageHand([twoOfClubs, threeOfSpades, fiveOfClubs, sixOfClubs, sevenOfClubs, sevenOfDiamonds]);
+            playerTwo.hand =
+                new CribbageHand([twoOfDiamonds, eightOfClubs, eightOfDiamonds, jackOfSpades, jackOfHearts, queenOfHearts]);
+            game.dealer = playerOne;
+            game.nextPlayerInSequence = playerTwo;
+            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([twoOfClubs, threeOfSpades]));
+            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([twoOfDiamonds, queenOfHearts]));
+            game.playCard(playerTwo.name, eightOfClubs);
+            game.playCard(playerOne.name, sevenOfClubs);
+            game.playCard(playerTwo.name, eightOfDiamonds);
+            game.playCard(playerOne.name, sixOfClubs);
+            game.go(playerTwo.name);
+            game.go(playerOne.name);
+            expect(game.nextPlayerInSequence.equalsOther(playerTwo)).toBe(true);
+            game.playCard(playerTwo.name, jackOfSpades);
+            game.playCard(playerOne.name, fiveOfClubs);
+            game.playCard(playerTwo.name, jackOfHearts);
+            game.go(playerOne.name);
+            // Player two is out of cards and player one has one card left, expect them to be the next player to play
+            expect(game.nextPlayerInSequence.equalsOther(playerOne)).toBe(true);
         });
     });
     describe("Test the run-of-play", function() {

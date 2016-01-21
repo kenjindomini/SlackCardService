@@ -262,6 +262,11 @@ var Cribbage = (function (_super) {
             }
             else {
                 this.resetSequence(player);
+                if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
+                    do {
+                        this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
+                    } while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
+                }
                 response.message += " The count is back at 0. You're up " + this.nextPlayerInSequence.name;
             }
         }

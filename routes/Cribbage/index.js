@@ -360,6 +360,9 @@ var CribbageRoutes;
             else {
                 try {
                     response.data.text = this.currentGame.getPlayerHand(Router.getPlayerName(req));
+                    if (response.data.text.length == 0) {
+                        response.data.text = "You played all your cards!";
+                    }
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
