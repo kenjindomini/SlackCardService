@@ -33,11 +33,13 @@ export class CribbageErrorStrings {
     static PLAYER_DOES_NOT_EXIST: string = "You're not part of the game!";
     static PLAYER_ALREADY_IN_GAME: string = "You're already in the game";
     static PLAYER_CAN_PLAY: string = "You have a card you can still play";
+    static PLAYER_NOT_IN_PLAY: string = "You've already said \"go\"";"
 }
 
 export class CribbageGameDescription {
     constructor(public dealer: string,
                 public nextPlayer: string,
+                public cutCard: string,
                 public count: number,
                 public sequence: string,
                 public scores: string,
@@ -263,7 +265,13 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         if (player.canPlay(this.count)) {
             throw CribbageErrorStrings.PLAYER_CAN_PLAY;
         }
-        this.playersInPlay.removeItem(player);
+        else if (this.playersInPlay.indexOfItem(player) == -1) {
+            throw CribbageErrorStrings.PLAYER_NOT_IN_PLAY;
+        }
+        else {
+            // The go is valid, remove the player from play
+            this.playersInPlay.removeItem(player);
+        }
         if (this.playersInPlay.countItems() == 0) {
             // No more players in play, give the player a point for a go
             var team = this.findTeam(player);
@@ -334,6 +342,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         return JSON.stringify(new CribbageGameDescription(
             (this.dealer ? this.dealer.name : ""),
             (this.nextPlayerInSequence ? this.nextPlayerInSequence.name : ""),
+            (this.cut ? this.cut.toString() : ""),
             this.count,
             this.sequence.toString(),
             scores,

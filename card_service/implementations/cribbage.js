@@ -28,13 +28,15 @@ var CribbageErrorStrings = (function () {
     CribbageErrorStrings.PLAYER_DOES_NOT_EXIST = "You're not part of the game!";
     CribbageErrorStrings.PLAYER_ALREADY_IN_GAME = "You're already in the game";
     CribbageErrorStrings.PLAYER_CAN_PLAY = "You have a card you can still play";
+    CribbageErrorStrings.PLAYER_NOT_IN_PLAY = "You've already said \"go\"";
     return CribbageErrorStrings;
 })();
 exports.CribbageErrorStrings = CribbageErrorStrings;
 var CribbageGameDescription = (function () {
-    function CribbageGameDescription(dealer, nextPlayer, count, sequence, scores, players) {
+    function CribbageGameDescription(dealer, nextPlayer, cutCard, count, sequence, scores, players) {
         this.dealer = dealer;
         this.nextPlayer = nextPlayer;
+        this.cutCard = cutCard;
         this.count = count;
         this.sequence = sequence;
         this.scores = scores;
@@ -195,7 +197,12 @@ var Cribbage = (function (_super) {
         if (player.canPlay(this.count)) {
             throw CribbageErrorStrings.PLAYER_CAN_PLAY;
         }
-        this.playersInPlay.removeItem(player);
+        else if (this.playersInPlay.indexOfItem(player) == -1) {
+            throw CribbageErrorStrings.PLAYER_NOT_IN_PLAY;
+        }
+        else {
+            this.playersInPlay.removeItem(player);
+        }
         if (this.playersInPlay.countItems() == 0) {
             var team = this.findTeam(player);
             if (team.addPoints(player, 1)) {
@@ -247,7 +254,7 @@ var Cribbage = (function (_super) {
         for (var jx = 0; jx < this.players.countItems(); jx++) {
             players.push(this.players.itemAt(jx).name);
         }
-        return JSON.stringify(new CribbageGameDescription((this.dealer ? this.dealer.name : ""), (this.nextPlayerInSequence ? this.nextPlayerInSequence.name : ""), this.count, this.sequence.toString(), scores, players));
+        return JSON.stringify(new CribbageGameDescription((this.dealer ? this.dealer.name : ""), (this.nextPlayerInSequence ? this.nextPlayerInSequence.name : ""), (this.cut ? this.cut.toString() : ""), this.count, this.sequence.toString(), scores, players));
     };
     Cribbage.prototype.getPlayerHand = function (playerName) {
         var hand = "";
