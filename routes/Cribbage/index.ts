@@ -378,7 +378,7 @@ export module CribbageRoutes {
                     else if (responseText.length > 0) {
                         if (responseText.indexOf("round over") != -1) {
                             // The round is over, use the responseText string
-                            response.data.text = `
+                            response.data.text += `
                             ${responseText}`;
                         }
                         else {

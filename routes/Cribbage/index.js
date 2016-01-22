@@ -403,7 +403,7 @@ var CribbageRoutes;
                     }
                     else if (responseText.length > 0) {
                         if (responseText.indexOf("round over") != -1) {
-                            response.data.text = "\n                            " + responseText;
+                            response.data.text += "\n                            " + responseText;
                         }
                         else {
                             response.data.text = player + " played the " + card.toString() + ".\n                            " + responseText;
