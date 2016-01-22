@@ -63,6 +63,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
     kitty: CribbageHand;
     mode: Mode;
     dealer: CribbagePlayer;
+    lastPlayerToPlay: CribbagePlayer;
     nextPlayerInSequence: CribbagePlayer;
     playersInPlay: ItemCollection<CribbagePlayer>;
     count: number;
@@ -73,7 +74,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
 
     constructor(players: Players<CribbagePlayer>) {
         super(players, null, "Cribbage", new StandardDeck());
-        this.cut = this.dealer = this.nextPlayerInSequence = this.sequence = this.winningTeam = null;
+        this.cut = this.dealer = this.lastPlayerToPlay = this.nextPlayerInSequence = this.sequence = this.winningTeam = null;
         this.count = 0;
         this.kitty = new CribbageHand([]);
         this.playersInPlay = new ItemCollection<CribbagePlayer>([]);
@@ -247,6 +248,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             if (!player.playCard(card)) {
                 throw `${CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD} the ${card.toString()}!`;
             }
+            this.lastPlayerToPlay = player;
             if (player.hand.size() == 0) {
                 // The player played their last card, remove them from the round of play
                 this.playersInPlay.removeItem(player);
@@ -293,6 +295,8 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 // Reset the sequence and set the next player
                 this.resetSequence(null);
                 this.setNextPlayerInSequence(player);
+                response.message += `
+                ${this.roundOverStr()}`;
             }
             else {
                 this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
@@ -332,10 +336,10 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             this.playersInPlay.removeItem(player);
         }
         if (this.playersInPlay.countItems() == 0) {
-            // No more players in play, give the player a point for a go
-            var team = this.findTeam(player);
-            response.message = `${playerName} gets a point for a go.`;
-            if (team.addPoints(player, 1)) {
+            // No more players in play, the last player to play a point for a go
+            var team = this.findTeam(this.lastPlayerToPlay);
+            response.message = `${this.lastPlayerToPlay.name} gets a point for a go.`;
+            if (team.addPoints(this.lastPlayerToPlay, 1)) {
                 // Game over
                 this.winningTeam = team;
                 response.gameOver = true;
@@ -474,6 +478,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         var scores = "";
         scores = this.countPoints().message;
         this.cut = null;
+        this.lastPlayerToPlay = null;
         this.setNextDealer();
         this.deal();
         return scores;
@@ -622,6 +627,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      */
     private resetSequence(player:CribbagePlayer):void {
         this.count = 0;
+        this.lastPlayerToPlay = null;
         this.sequence.removeAll();
         this.playersInPlay.removeAll();
         // Add back the players who have cards in their hands
