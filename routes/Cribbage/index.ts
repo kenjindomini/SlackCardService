@@ -363,7 +363,6 @@ export module CribbageRoutes {
                     var responseText = cribRes.message;
                     response.data.text =
                         `${player} played the ${card.toString()}.
-                        ${cribRes.message}.
                         The count is at ${this.currentGame.count}.
                         The cards in play are: ${this.currentGame.sequence.toString()}.
                         You're up, ${this.currentGame.nextPlayerInSequence.name}.`;
@@ -379,7 +378,8 @@ export module CribbageRoutes {
                     else if (responseText.length > 0) {
                         if (responseText.indexOf("round over") != -1) {
                             // The round is over, use the responseText string
-                            response.data.text = responseText;
+                            response.data.text = `
+                            ${responseText}`;
                         }
                         else {
                             // Prepend cribbage game's response
