@@ -307,7 +307,8 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 this.setNextPlayerInSequence(player);
             }
             if (points > 0) {
-                response.message = `${player.name} scored ${points} points.`;
+                response.message += `
+                ${player.name} scored ${points} points.`;
             }
             break;
         }

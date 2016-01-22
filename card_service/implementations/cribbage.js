@@ -237,7 +237,7 @@ var Cribbage = (function (_super) {
                 this.setNextPlayerInSequence(player);
             }
             if (points > 0) {
-                response.message = player.name + " scored " + points + " points.";
+                response.message += "\n                " + player.name + " scored " + points + " points.";
             }
             break;
         }
