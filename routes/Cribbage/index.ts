@@ -399,7 +399,7 @@ export module CribbageRoutes {
                 if (!hasHand)
                     theirHand = "You have no more cards!";
                 else
-                    theirHand = `Your cards are ${theirHand}`;
+                    theirHand = `Your remaining cards are ${theirHand}`;
                 Router.sendDelayedResponse(
                     new CribbageResponseData(
                         SlackResponseType.ephemeral,
