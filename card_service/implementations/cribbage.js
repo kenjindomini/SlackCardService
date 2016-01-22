@@ -344,7 +344,7 @@ var Cribbage = (function (_super) {
         return player;
     };
     Cribbage.prototype.roundOverStr = function () {
-        return "Round over.\n        The cards have been shuffled and dealt.\n        Throw to the kitty!\n        " + JSON.stringify(this.describe());
+        return "Round over.\n        The cards have been shuffled and dealt.\n        Throw to the kitty!\n        " + this.describe();
     };
     Cribbage.prototype.roundOverResetState = function () {
         var scores = "";
@@ -366,7 +366,7 @@ var Cribbage = (function (_super) {
         return done;
     };
     Cribbage.prototype.countPoints = function () {
-        var ret = new CribbageReturn();
+        var ret = new CribbageReturn(false, "The cut card is the " + this.cut);
         var firstPlayer = this.nextPlayerInOrder(this.dealer);
         var countingPlayer = firstPlayer;
         do {

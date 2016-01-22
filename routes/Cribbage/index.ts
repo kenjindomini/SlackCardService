@@ -383,8 +383,8 @@ export module CribbageRoutes {
                         }
                         else {
                             // Prepend cribbage game's response
-                            response.data.text = `${responseText}
-                                              ${response.data.text}`
+                            response.data.text = `${response.data.text}
+                            ${responseText}`
                         }
                     }
                 }
