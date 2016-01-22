@@ -271,11 +271,15 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                     break;
                 }
             }
-            if (points > 0) {
-                response.message = `${player.name} scored ${points} points.`;
-            }
             if (this.roundOver()) {
                 this.roundOverResetState();
+                points++;
+                if (team.addPoints(player, 1)) {
+                    this.winningTeam = team;
+                    response.gameOver = true;
+                    response.message = "Game over!";
+                    break;
+                }
                 response.message += ` ${this.roundOverStr()}`;
             }
             else if (is31) {
@@ -291,6 +295,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             else {
                 this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
                 this.setNextPlayerInSequence(player);
+            }
+            if (points > 0) {
+                response.message = `${player.name} scored ${points} points.`;
             }
             break;
         }

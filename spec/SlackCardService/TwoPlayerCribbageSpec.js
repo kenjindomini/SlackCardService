@@ -211,7 +211,7 @@ describe("Test a Cribbage game between two players", function () {
             expect(game.nextPlayerInSequence.equalsOther(playerTwo)).toBe(true);
             game.playCard(playerTwo.name, queenOfHearts);
             game.playCard(playerOne.name, sevenOfSpades);
-            expect(game.getTeam(0).countPoints()).toEqual(4 + 6 + 8);
+            expect(game.getTeam(0).countPoints()).toEqual(4 + 6 + 8 + 1);
             expect(game.getTeam(1).countPoints()).toEqual(3 + 6);
             expect(game.dealer.equalsOther(playerTwo)).toBe(true);
         });
