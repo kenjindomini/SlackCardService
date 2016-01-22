@@ -420,6 +420,7 @@ var CribbageRoutes;
             }
         };
         Router.prototype.throwCard = function (req, res) {
+            var _this = this;
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(200, "...");
             if (!Router.verifyRequest(req, Routes.throwCard)) {
@@ -446,10 +447,9 @@ var CribbageRoutes;
                 response.data.text = player + " threw to the kitty";
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
-                var nextPlayer = this.currentGame.nextPlayerInSequence.name;
                 if (this.currentGame.isReady()) {
                     setTimeout(function () {
-                        Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, "The game is ready to begin. The cut card is " + this.currentGame.cut.toString() + ". Play a card " + nextPlayer + "."), Router.getResponseUrl(req));
+                        Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, "The game is ready to begin.\n                                The cut card is " + _this.currentGame.cut.toString() + ".\n                                Play a card " + _this.currentGame.nextPlayerInSequence.name + "."), Router.getResponseUrl(req));
                     }, 1000);
                 }
             }
