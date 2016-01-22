@@ -131,14 +131,16 @@ export module CribbageRoutes {
             res.status(response.status).header("content-type", "application/json").json(response.data);
         }
 
-        private static sendDelayedResponse(responseData:CribbageResponseData, url:string):void {
+        private static sendDelayedResponse(responseData:CribbageResponseData, url:string, delay:number=0):void {
             if (url && url.length > 0) {
-                try {
-                    request.post(url).json(responseData);
-                }
-                catch (e) {
-                    console.log(`Exception caught in sendDelayedResponse: ${e}`);
-                }
+                setTimeout(() => {
+                    try {
+                        request.post(url).json(responseData);
+                    }
+                    catch (e) {
+                        console.log(`Exception caught in sendDelayedResponse: ${e}`);
+                    }
+                }, delay);
             }
         }
 
@@ -437,18 +439,17 @@ export module CribbageRoutes {
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
                 if (this.currentGame.isReady()) {
-                    setTimeout(() => {
-                        // Let the players know it's time to begin the game
-                        Router.sendDelayedResponse(
-                            new CribbageResponseData(
-                                SlackResponseType.in_channel,
-                                `The game is ready to begin.
-                                The cut card is the ${this.currentGame.cut.toString()}.
-                                Play a card ${this.currentGame.nextPlayerInSequence.name}.`
-                            ),
-                            Router.getResponseUrl(req)
-                        );
-                    }, 1000);
+                    // Let the players know it's time to begin the game
+                    Router.sendDelayedResponse(
+                        new CribbageResponseData(
+                            SlackResponseType.in_channel,
+                            `The game is ready to begin.
+                            The cut card is the ${this.currentGame.cut.toString()}.
+                            Play a card ${this.currentGame.nextPlayerInSequence.name}.`
+                        ),
+                        Router.getResponseUrl(req),
+                        1000
+                    );
                 }
             }
         }
