@@ -393,12 +393,15 @@ export module CribbageRoutes {
             if (response.status == 200 && !gameOver) {
                 // Tell the player what cards they have
                 var theirHand = this.currentGame.getPlayerHand(Router.getPlayerName(req));
-                if (theirHand.length == 0)
+                var hasHand = (theirHand.length > 0);
+                if (!hasHand)
                     theirHand = "You have no more cards!";
+                else
+                    theirHand = `Your cards are ${theirHand}`;
                 Router.sendDelayedResponse(
                     new CribbageResponseData(
                         SlackResponseType.ephemeral,
-                        `Your cards are ${theirHand}`
+                        theirHand
                     ),
                     Router.getResponseUrl(req)
                 );
@@ -440,7 +443,7 @@ export module CribbageRoutes {
                             new CribbageResponseData(
                                 SlackResponseType.in_channel,
                                 `The game is ready to begin.
-                                The cut card is ${this.currentGame.cut.toString()}.
+                                The cut card is the ${this.currentGame.cut.toString()}.
                                 Play a card ${this.currentGame.nextPlayerInSequence.name}.`
                             ),
                             Router.getResponseUrl(req)

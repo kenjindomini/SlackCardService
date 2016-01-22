@@ -414,9 +414,12 @@ var CribbageRoutes;
             Router.sendResponse(response, res);
             if (response.status == 200 && !gameOver) {
                 var theirHand = this.currentGame.getPlayerHand(Router.getPlayerName(req));
-                if (theirHand.length == 0)
+                var hasHand = (theirHand.length > 0);
+                if (!hasHand)
                     theirHand = "You have no more cards!";
-                Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.ephemeral, "Your cards are " + theirHand), Router.getResponseUrl(req));
+                else
+                    theirHand = "Your cards are " + theirHand;
+                Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.ephemeral, theirHand), Router.getResponseUrl(req));
             }
         };
         Router.prototype.throwCard = function (req, res) {
@@ -449,7 +452,7 @@ var CribbageRoutes;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
                 if (this.currentGame.isReady()) {
                     setTimeout(function () {
-                        Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, "The game is ready to begin.\n                                The cut card is " + _this.currentGame.cut.toString() + ".\n                                Play a card " + _this.currentGame.nextPlayerInSequence.name + "."), Router.getResponseUrl(req));
+                        Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, "The game is ready to begin.\n                                The cut card is the " + _this.currentGame.cut.toString() + ".\n                                Play a card " + _this.currentGame.nextPlayerInSequence.name + "."), Router.getResponseUrl(req));
                     }, 1000);
                 }
             }
