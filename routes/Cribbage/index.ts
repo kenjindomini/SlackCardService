@@ -383,7 +383,7 @@ export module CribbageRoutes {
                         }
                         else {
                             // Prepend cribbage game's response
-                            response.data.text = `${response.data.text}
+                            response.data.text = `${player} played the ${card.toString()}.
                             ${responseText}`
                         }
                     }
