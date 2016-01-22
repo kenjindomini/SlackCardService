@@ -431,7 +431,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
     private printHand(hand:CribbageHand):string {
         var handStr = "";
         hand.sortCards();
-        for (var ix = 0; ix < player.numCards(); ix++) {
+        for (var ix = 0; ix < hand.size(); ix++) {
             handStr += `${hand.itemAt(ix).toString()}, `;
         }
         return removeLastTwoChars(handStr);

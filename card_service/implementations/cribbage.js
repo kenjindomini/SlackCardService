@@ -321,7 +321,7 @@ var Cribbage = (function (_super) {
     Cribbage.prototype.printHand = function (hand) {
         var handStr = "";
         hand.sortCards();
-        for (var ix = 0; ix < player.numCards(); ix++) {
+        for (var ix = 0; ix < hand.size(); ix++) {
             handStr += hand.itemAt(ix).toString() + ", ";
         }
         return card_game_1.removeLastTwoChars(handStr);
