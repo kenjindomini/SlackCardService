@@ -465,6 +465,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * Function to reset the state of the game when the round is over
      */
     private roundOverResetState():void {
+        this.cut = null;
         this.countPoints();
         this.setNextDealer();
         this.deal();

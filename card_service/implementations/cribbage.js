@@ -342,6 +342,7 @@ var Cribbage = (function (_super) {
         return "Round over.\n        The cards have been shuffled and dealt.\n        Throw to the kitty!\n        " + this.describe();
     };
     Cribbage.prototype.roundOverResetState = function () {
+        this.cut = null;
         this.countPoints();
         this.setNextDealer();
         this.deal();
