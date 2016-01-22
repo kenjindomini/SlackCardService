@@ -406,7 +406,7 @@ var CribbageRoutes;
                             response.data.text = "" + responseText;
                         }
                         else {
-                            response.data.text += "\n                            " + responseText;
+                            response.data.text = responseText + "\n                            " + response.data.text;
                         }
                     }
                 }
