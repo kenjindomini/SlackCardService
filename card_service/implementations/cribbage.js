@@ -344,7 +344,7 @@ var Cribbage = (function (_super) {
         return player;
     };
     Cribbage.prototype.roundOverStr = function () {
-        return "Round over.\n        The cards have been shuffled and dealt.\n        Throw to the kitty!\n        " + this.describe();
+        return "Round over.\n        The cards have been shuffled and dealt.\n        Throw to the kitty!\n        " + JSON.stringify(this.describe());
     };
     Cribbage.prototype.roundOverResetState = function () {
         var scores = "";

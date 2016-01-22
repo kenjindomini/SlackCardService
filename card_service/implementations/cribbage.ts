@@ -472,7 +472,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         return `Round over.
         The cards have been shuffled and dealt.
         Throw to the kitty!
-        ${this.describe()}`;
+        ${JSON.stringify(this.describe())}`;
     }
 
     /**
