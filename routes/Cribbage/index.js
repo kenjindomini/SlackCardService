@@ -422,7 +422,7 @@ var CribbageRoutes;
                     theirHand = "You have no more cards!";
                 else
                     theirHand = "Your cards are " + theirHand;
-                Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.ephemeral, theirHand), Router.getResponseUrl(req));
+                Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.ephemeral, theirHand), Router.getResponseUrl(req), 1000);
             }
         };
         Router.prototype.throwCard = function (req, res) {

@@ -405,7 +405,8 @@ export module CribbageRoutes {
                         SlackResponseType.ephemeral,
                         theirHand
                     ),
-                    Router.getResponseUrl(req)
+                    Router.getResponseUrl(req),
+                    1000
                 );
             }
         }
