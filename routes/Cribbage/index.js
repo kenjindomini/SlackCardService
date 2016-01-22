@@ -155,14 +155,17 @@ var CribbageRoutes;
         Router.sendResponse = function (response, res) {
             res.status(response.status).header("content-type", "application/json").json(response.data);
         };
-        Router.sendDelayedResponse = function (responseData, url) {
+        Router.sendDelayedResponse = function (responseData, url, delay) {
+            if (delay === void 0) { delay = 0; }
             if (url && url.length > 0) {
-                try {
-                    request.post(url).json(responseData);
-                }
-                catch (e) {
-                    console.log("Exception caught in sendDelayedResponse: " + e);
-                }
+                setTimeout(function () {
+                    try {
+                        request.post(url).json(responseData);
+                    }
+                    catch (e) {
+                        console.log("Exception caught in sendDelayedResponse: " + e);
+                    }
+                }, delay);
             }
         };
         Router.getPlayerName = function (req) {
@@ -414,9 +417,12 @@ var CribbageRoutes;
             Router.sendResponse(response, res);
             if (response.status == 200 && !gameOver) {
                 var theirHand = this.currentGame.getPlayerHand(Router.getPlayerName(req));
-                if (theirHand.length == 0)
+                var hasHand = (theirHand.length > 0);
+                if (!hasHand)
                     theirHand = "You have no more cards!";
-                Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.ephemeral, "Your cards are " + theirHand), Router.getResponseUrl(req));
+                else
+                    theirHand = "Your remaining cards are " + theirHand;
+                Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.ephemeral, theirHand), Router.getResponseUrl(req), 1000);
             }
         };
         Router.prototype.throwCard = function (req, res) {
@@ -446,11 +452,8 @@ var CribbageRoutes;
                 response.data.text = player + " threw to the kitty";
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
-                var nextPlayer = this.currentGame.nextPlayerInSequence.name;
                 if (this.currentGame.isReady()) {
-                    setTimeout(function () {
-                        Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, "The game is ready to begin. The cut card is " + this.currentGame.cut.toString() + ". Play a card " + nextPlayer + "."), Router.getResponseUrl(req));
-                    }, 1000);
+                    Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, "The game is ready to begin.\n                            The cut card is the " + this.currentGame.cut.toString() + ".\n                            Play a card " + this.currentGame.nextPlayerInSequence.name + "."), Router.getResponseUrl(req), 1000);
                 }
             }
         };

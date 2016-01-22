@@ -208,26 +208,31 @@ var Cribbage = (function (_super) {
                     break;
                 }
             }
-            if (points > 0) {
-                response.message = player.name + " scored " + points + " points.";
-            }
             if (this.roundOver()) {
-                this.roundOverResetState();
-                response.message += " " + this.roundOverStr();
+                response.message += "\n                " + this.roundOverResetState();
+                points++;
+                if (team.addPoints(player, 1)) {
+                    this.winningTeam = team;
+                    response.gameOver = true;
+                    response.message = "Game over!";
+                    break;
+                }
+                response.message += "\n                 " + this.roundOverStr();
             }
             else if (is31) {
                 this.resetSequence(player);
+                this.setNextPlayerInSequence(player);
             }
             else if (this.playersInPlay.countItems() == 0) {
                 this.resetSequence(null);
+                this.setNextPlayerInSequence(player);
             }
             else {
                 this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
-                if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
-                    do {
-                        this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
-                    } while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
-                }
+                this.setNextPlayerInSequence(player);
+            }
+            if (points > 0) {
+                response.message = player.name + " scored " + points + " points.";
             }
             break;
         }
@@ -254,7 +259,7 @@ var Cribbage = (function (_super) {
             if (team.addPoints(player, 1)) {
                 this.winningTeam = team;
                 response.gameOver = true;
-                response.message += " Game Over!";
+                response.message += "\nGame Over!";
             }
             else if (this.roundOver()) {
                 this.roundOverResetState();
@@ -262,22 +267,12 @@ var Cribbage = (function (_super) {
             }
             else {
                 this.resetSequence(player);
-                if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
-                    do {
-                        this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
-                    } while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
-                }
-                response.message += " The count is back at 0. You're up " + this.nextPlayerInSequence.name;
+                this.setNextPlayerInSequence(player);
+                response.message += "\n                The count is back at 0.\n                You're up " + this.nextPlayerInSequence.name;
             }
         }
-        else if (this.roundOver()) {
-            this.roundOverResetState();
-            response.message += " " + this.roundOverStr();
-        }
-        else if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
-            do {
-                this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
-            } while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
+        else {
+            this.setNextPlayerInSequence(player);
         }
         return response;
     };
@@ -315,17 +310,21 @@ var Cribbage = (function (_super) {
         var player = this.findPlayer(playerName);
         if (player != null) {
             console.log("Found " + playerName + ", now iterate the cards in their hand");
-            player.hand.sortCards();
-            for (var ix = 0; ix < player.numCards(); ix++) {
-                hand += player.hand.itemAt(ix).toString() + ", ";
-            }
-            hand = card_game_1.removeLastTwoChars(hand);
+            hand = this.printHand(player.hand);
             console.log(playerName + " has hand " + hand);
         }
         else {
             throw CribbageErrorStrings.PLAYER_DOES_NOT_EXIST;
         }
         return hand;
+    };
+    Cribbage.prototype.printHand = function (hand) {
+        var handStr = "";
+        hand.sortCards();
+        for (var ix = 0; ix < hand.size(); ix++) {
+            handStr += hand.itemAt(ix).toString() + ", ";
+        }
+        return card_game_1.removeLastTwoChars(handStr);
     };
     Cribbage.prototype.findPlayer = function (playerName) {
         var player = null;
@@ -343,9 +342,12 @@ var Cribbage = (function (_super) {
         return "Round over.\n        The cards have been shuffled and dealt.\n        Throw to the kitty!\n        " + this.describe();
     };
     Cribbage.prototype.roundOverResetState = function () {
-        this.countPoints();
+        var scores = "";
+        scores = this.countPoints().message;
+        this.cut = null;
         this.setNextDealer();
         this.deal();
+        return scores;
     };
     Cribbage.prototype.roundOver = function () {
         var done = true;
@@ -358,23 +360,30 @@ var Cribbage = (function (_super) {
         return done;
     };
     Cribbage.prototype.countPoints = function () {
+        var ret = new CribbageReturn();
         var firstPlayer = this.nextPlayerInOrder(this.dealer);
         var countingPlayer = firstPlayer;
         do {
             var team = this.findTeam(countingPlayer);
-            if (team.addPoints(countingPlayer, countingPlayer.countPoints(this.cut))) {
+            var points = countingPlayer.countPoints(this.cut);
+            if (team.addPoints(countingPlayer, points)) {
                 this.winningTeam = team;
-                return true;
+                ret.gameOver = true;
+                break;
             }
+            ret.message += "\n            " + countingPlayer.name + " has hand " + this.printHand(countingPlayer.hand) + " and scored " + points + " points.";
             if (this.dealer.equalsOther(countingPlayer)) {
-                if (team.addPoints(countingPlayer, this.kitty.countPoints(this.cut, true))) {
+                points = this.kitty.countPoints(this.cut, true);
+                if (team.addPoints(countingPlayer, points)) {
                     this.winningTeam = team;
-                    return true;
+                    ret.gameOver = true;
+                    break;
                 }
+                ret.message += "\n                The kitty is " + this.printHand(this.kitty) + " and scores " + points + " points.";
             }
             countingPlayer = this.nextPlayerInOrder(countingPlayer);
         } while (!countingPlayer.equalsOther(firstPlayer));
-        return false;
+        return ret;
     };
     Cribbage.prototype.cutForDealer = function () {
         var lowest = null;
@@ -416,6 +425,20 @@ var Cribbage = (function (_super) {
                 throw CribbageErrorStrings.INVALID_NUMBER_OF_PLAYERS;
         }
         this.resetSequence(null);
+    };
+    Cribbage.prototype.setNextPlayerInSequence = function (player) {
+        if (player != null) {
+            if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
+                do {
+                    this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
+                } while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
+            }
+        }
+        else if (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
+            do {
+                this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
+            } while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
+        }
     };
     Cribbage.prototype.resetSequence = function (player) {
         this.count = 0;

@@ -211,7 +211,7 @@ describe("Test a Cribbage game between two players", function () {
             expect(game.nextPlayerInSequence.equalsOther(playerTwo)).toBe(true);
             game.playCard(playerTwo.name, queenOfHearts);
             game.playCard(playerOne.name, sevenOfSpades);
-            expect(game.getTeam(0).countPoints()).toEqual(4 + 6 + 8);
+            expect(game.getTeam(0).countPoints()).toEqual(4 + 6 + 8 + 1);
             expect(game.getTeam(1).countPoints()).toEqual(3 + 6);
             expect(game.dealer.equalsOther(playerTwo)).toBe(true);
         });
@@ -239,6 +239,22 @@ describe("Test a Cribbage game between two players", function () {
             expect(function () { game.playCard(playerOne.name, aceOfClubs); })
                 .not
                 .toThrow(cribbage_1.CribbageErrorStrings.FMT_NOT_NEXT_PLAYER + " + " + game.nextPlayerInSequence.name);
+        });
+        it("sets the next player correctly when a player gets a go and has no more cards but the opponent does", function () {
+            game.giveToKitty(playerOne.name, new item_collection_1.ItemCollection([tenOfClubs, queenOfHearts]));
+            game.giveToKitty(playerTwo.name, new item_collection_1.ItemCollection([threeOfSpades, fiveOfHearts]));
+            playerOne.hand.removeItem(sixOfClubs);
+            playerOne.hand.removeItem(eightOfClubs);
+            playerOne.hand.addItems([aceOfDiamonds, twoOfClubs]);
+            game.playCard(playerTwo.name, eightOfSpades);
+            game.playCard(playerOne.name, twoOfDiamonds);
+            game.playCard(playerTwo.name, queenOfSpades);
+            game.playCard(playerOne.name, twoOfClubs);
+            game.go(playerTwo.name);
+            game.playCard(playerOne.name, aceOfDiamonds);
+            game.playCard(playerOne.name, aceOfClubs);
+            expect(game.count).toEqual(0);
+            expect(game.nextPlayerInSequence.equalsOther(playerTwo)).toBe(true);
         });
         it("sets the next player correctly after one scores 31", function () {
             game.giveToKitty(playerOne.name, new item_collection_1.ItemCollection([twoOfDiamonds, sixOfClubs]));
