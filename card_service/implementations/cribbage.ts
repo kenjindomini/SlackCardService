@@ -280,7 +280,8 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             if (this.roundOver()) {
                 response.message += `
                 ${this.roundOverResetState()}`;
-                points++;
+                if (!is31)
+                    points++;
                 if (team.addPoints(player, 1)) {
                     this.winningTeam = team;
                     response.gameOver = true;

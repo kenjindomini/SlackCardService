@@ -214,7 +214,8 @@ var Cribbage = (function (_super) {
             }
             if (this.roundOver()) {
                 response.message += "\n                " + this.roundOverResetState();
-                points++;
+                if (!is31)
+                    points++;
                 if (team.addPoints(player, 1)) {
                     this.winningTeam = team;
                     response.gameOver = true;
