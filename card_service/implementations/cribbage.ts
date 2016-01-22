@@ -272,7 +272,8 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 }
             }
             if (this.roundOver()) {
-                this.roundOverResetState();
+                response.message += `
+                ${this.roundOverResetState()}`;
                 points++;
                 if (team.addPoints(player, 1)) {
                     this.winningTeam = team;
@@ -280,7 +281,8 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                     response.message = "Game over!";
                     break;
                 }
-                response.message += ` ${this.roundOverStr()}`;
+                response.message += `
+                 ${this.roundOverStr()}`;
             }
             else if (is31) {
                 // Reset the sequence
@@ -337,7 +339,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 // Game over
                 this.winningTeam = team;
                 response.gameOver = true;
-                response.message += " Game Over!";
+                response.message += "\nGame Over!";
             }
             else if (this.roundOver()) {
                 this.roundOverResetState();
@@ -347,7 +349,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 // Start the sequence over again, with the person after the one that got the go
                 this.resetSequence(player);
                 this.setNextPlayerInSequence(player);
-                response.message += ` The count is back at 0. You're up ${this.nextPlayerInSequence.name}`;
+                response.message += `
+                The count is back at 0.
+                You're up ${this.nextPlayerInSequence.name}`;
             }
         }
         else {
@@ -415,17 +419,22 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         var player = this.findPlayer(playerName);
         if (player != null) {
             console.log(`Found ${playerName}, now iterate the cards in their hand`);
-            player.hand.sortCards();
-            for (var ix = 0; ix < player.numCards(); ix++) {
-                hand += `${player.hand.itemAt(ix).toString()}, `;
-            }
-            hand = removeLastTwoChars(hand);
+            hand = this.printHand(player.hand);
             console.log(`${playerName} has hand ${hand}`);
         }
         else {
             throw CribbageErrorStrings.PLAYER_DOES_NOT_EXIST;
         }
         return hand;
+    }
+
+    private printHand(hand:CribbageHand):string {
+        var handStr = "";
+        hand.sortCards();
+        for (var ix = 0; ix < player.numCards(); ix++) {
+            handStr += `${hand.itemAt(ix).toString()}, `;
+        }
+        return removeLastTwoChars(handStr);
     }
 
     /**
@@ -495,20 +504,26 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         var countingPlayer = firstPlayer;
         do {
             var team = this.findTeam(countingPlayer);
-            if (team.addPoints(countingPlayer, countingPlayer.countPoints(this.cut))) {
+            var points = countingPlayer.countPoints(this.cut);
+            if (team.addPoints(countingPlayer, points)) {
                 // Game over
                 this.winningTeam = team;
                 ret.gameOver = true;
                 break;
             }
+            ret.message += `
+            ${countingPlayer.name} has hand ${this.printHand(countingPlayer.hand)} and scored ${points} points.`;
             if (this.dealer.equalsOther(countingPlayer)) {
                 // Add the kitty up
-                if (team.addPoints(countingPlayer, this.kitty.countPoints(this.cut, true))) {
+                points = this.kitty.countPoints(this.cut, true);
+                if (team.addPoints(countingPlayer, points)) {
                     // Game over
                     this.winningTeam = team;
                     ret.gameOver = true;
                     break;
                 }
+                ret.message += `
+                The kitty is ${this.printHand(this.kitty)} and scores ${points} points.`;
             }
             countingPlayer = this.nextPlayerInOrder(countingPlayer);
         }

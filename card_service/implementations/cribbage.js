@@ -209,7 +209,7 @@ var Cribbage = (function (_super) {
                 }
             }
             if (this.roundOver()) {
-                this.roundOverResetState();
+                response.message += "\n                " + this.roundOverResetState();
                 points++;
                 if (team.addPoints(player, 1)) {
                     this.winningTeam = team;
@@ -217,7 +217,7 @@ var Cribbage = (function (_super) {
                     response.message = "Game over!";
                     break;
                 }
-                response.message += " " + this.roundOverStr();
+                response.message += "\n                 " + this.roundOverStr();
             }
             else if (is31) {
                 this.resetSequence(player);
@@ -259,7 +259,7 @@ var Cribbage = (function (_super) {
             if (team.addPoints(player, 1)) {
                 this.winningTeam = team;
                 response.gameOver = true;
-                response.message += " Game Over!";
+                response.message += "\nGame Over!";
             }
             else if (this.roundOver()) {
                 this.roundOverResetState();
@@ -268,7 +268,7 @@ var Cribbage = (function (_super) {
             else {
                 this.resetSequence(player);
                 this.setNextPlayerInSequence(player);
-                response.message += " The count is back at 0. You're up " + this.nextPlayerInSequence.name;
+                response.message += "\n                The count is back at 0.\n                You're up " + this.nextPlayerInSequence.name;
             }
         }
         else {
@@ -310,17 +310,21 @@ var Cribbage = (function (_super) {
         var player = this.findPlayer(playerName);
         if (player != null) {
             console.log("Found " + playerName + ", now iterate the cards in their hand");
-            player.hand.sortCards();
-            for (var ix = 0; ix < player.numCards(); ix++) {
-                hand += player.hand.itemAt(ix).toString() + ", ";
-            }
-            hand = card_game_1.removeLastTwoChars(hand);
+            hand = this.printHand(player.hand);
             console.log(playerName + " has hand " + hand);
         }
         else {
             throw CribbageErrorStrings.PLAYER_DOES_NOT_EXIST;
         }
         return hand;
+    };
+    Cribbage.prototype.printHand = function (hand) {
+        var handStr = "";
+        hand.sortCards();
+        for (var ix = 0; ix < player.numCards(); ix++) {
+            handStr += hand.itemAt(ix).toString() + ", ";
+        }
+        return card_game_1.removeLastTwoChars(handStr);
     };
     Cribbage.prototype.findPlayer = function (playerName) {
         var player = null;
@@ -361,17 +365,21 @@ var Cribbage = (function (_super) {
         var countingPlayer = firstPlayer;
         do {
             var team = this.findTeam(countingPlayer);
-            if (team.addPoints(countingPlayer, countingPlayer.countPoints(this.cut))) {
+            var points = countingPlayer.countPoints(this.cut);
+            if (team.addPoints(countingPlayer, points)) {
                 this.winningTeam = team;
                 ret.gameOver = true;
                 break;
             }
+            ret.message += "\n            " + countingPlayer.name + " has hand " + this.printHand(countingPlayer.hand) + " and scored " + points + " points.";
             if (this.dealer.equalsOther(countingPlayer)) {
-                if (team.addPoints(countingPlayer, this.kitty.countPoints(this.cut, true))) {
+                points = this.kitty.countPoints(this.cut, true);
+                if (team.addPoints(countingPlayer, points)) {
                     this.winningTeam = team;
                     ret.gameOver = true;
                     break;
                 }
+                ret.message += "\n                The kitty is " + this.printHand(this.kitty) + " and scores " + points + " points.";
             }
             countingPlayer = this.nextPlayerInOrder(countingPlayer);
         } while (!countingPlayer.equalsOther(firstPlayer));
