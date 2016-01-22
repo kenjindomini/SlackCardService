@@ -463,12 +463,15 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
 
     /**
      * Function to reset the state of the game when the round is over
+     * @returns {string} the list of players hands and their scores
      */
-    private roundOverResetState():void {
+    private roundOverResetState():string {
+        var scores = "";
+        scores = this.countPoints().message;
         this.cut = null;
-        this.countPoints();
         this.setNextDealer();
         this.deal();
+        return scores;
     }
 
     /**
@@ -488,9 +491,10 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
 
     /**
      * Sum up the points for each team
-     * @returns {boolean} true = game over
+     * @returns {CribbageReturn}
      */
-    private countPoints():boolean {
+    private countPoints():CribbageReturn {
+        var ret = new CribbageReturn();
         var firstPlayer = this.nextPlayerInOrder(this.dealer);
         var countingPlayer = firstPlayer;
         do {
@@ -498,20 +502,22 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             if (team.addPoints(countingPlayer, countingPlayer.countPoints(this.cut))) {
                 // Game over
                 this.winningTeam = team;
-                return true;
+                ret.gameOver = true;
+                break;
             }
             if (this.dealer.equalsOther(countingPlayer)) {
                 // Add the kitty up
                 if (team.addPoints(countingPlayer, this.kitty.countPoints(this.cut, true))) {
                     // Game over
                     this.winningTeam = team;
-                    return true;
+                    ret.gameOver = true;
+                    break;
                 }
             }
             countingPlayer = this.nextPlayerInOrder(countingPlayer);
         }
         while (!countingPlayer.equalsOther(firstPlayer));
-        return false;
+        return ret;
     }
 
     /**

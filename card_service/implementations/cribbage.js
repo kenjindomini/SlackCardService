@@ -342,10 +342,12 @@ var Cribbage = (function (_super) {
         return "Round over.\n        The cards have been shuffled and dealt.\n        Throw to the kitty!\n        " + this.describe();
     };
     Cribbage.prototype.roundOverResetState = function () {
+        var scores = "";
+        scores = this.countPoints().message;
         this.cut = null;
-        this.countPoints();
         this.setNextDealer();
         this.deal();
+        return scores;
     };
     Cribbage.prototype.roundOver = function () {
         var done = true;
@@ -358,23 +360,26 @@ var Cribbage = (function (_super) {
         return done;
     };
     Cribbage.prototype.countPoints = function () {
+        var ret = new CribbageReturn();
         var firstPlayer = this.nextPlayerInOrder(this.dealer);
         var countingPlayer = firstPlayer;
         do {
             var team = this.findTeam(countingPlayer);
             if (team.addPoints(countingPlayer, countingPlayer.countPoints(this.cut))) {
                 this.winningTeam = team;
-                return true;
+                ret.gameOver = true;
+                break;
             }
             if (this.dealer.equalsOther(countingPlayer)) {
                 if (team.addPoints(countingPlayer, this.kitty.countPoints(this.cut, true))) {
                     this.winningTeam = team;
-                    return true;
+                    ret.gameOver = true;
+                    break;
                 }
             }
             countingPlayer = this.nextPlayerInOrder(countingPlayer);
         } while (!countingPlayer.equalsOther(firstPlayer));
-        return false;
+        return ret;
     };
     Cribbage.prototype.cutForDealer = function () {
         var lowest = null;
