@@ -281,20 +281,16 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             else if (is31) {
                 // Reset the sequence
                 this.resetSequence(player);
+                this.setNextPlayerInSequence(player);
             }
             else if (this.playersInPlay.countItems() == 0) {
-                // Reset the sequence
+                // Reset the sequence and set the next player
                 this.resetSequence(null);
+                this.setNextPlayerInSequence(player);
             }
             else {
                 this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
-                if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
-                    // The next player in the sequence can no longer play, set the next one
-                    do {
-                        this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
-                    }
-                    while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
-                }
+                this.setNextPlayerInSequence(player);
             }
             break;
         }
@@ -343,13 +339,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             else {
                 // Start the sequence over again, with the person after the one that got the go
                 this.resetSequence(player);
-                if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
-                    // The next player in the sequence can no longer play, set the next one
-                    do {
-                        this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
-                    }
-                    while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
-                }
+                this.setNextPlayerInSequence(player);
                 response.message += ` The count is back at 0. You're up ${this.nextPlayerInSequence.name}`;
             }
         }
@@ -357,12 +347,8 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             this.roundOverResetState();
             response.message += ` ${this.roundOverStr()}`;
         }
-        else if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
-            // The next player in the sequence can no longer play, set the next one
-            do {
-                this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
-            }
-            while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
+        else {
+            this.setNextPlayerInSequence(player);
         }
         return response;
     }
@@ -576,6 +562,32 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 throw CribbageErrorStrings.INVALID_NUMBER_OF_PLAYERS;
         }
         this.resetSequence(null);
+    }
+
+    /**
+     * Set the next player to play a card. If a player is given, then the game's next player to play a card will be
+     * the next player after the given player.
+     * @param {CribbagePlayer} player if given, then set the next player to be the next one after this given player,
+     * otherwise just set the next player as the next valid one in sequence.
+     * @returns {any}
+     */
+    private setNextPlayerInSequence(player:CribbagePlayer):void {
+        if (player != null) {
+            if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
+                // The next player in the sequence can no longer play, set the next one
+                do {
+                    this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
+                }
+                while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
+            }
+        }
+        else if (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
+                // The next player in the sequence can no longer play, set the next one
+                do {
+                    this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
+                }
+                while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
+        }
     }
 
     /**

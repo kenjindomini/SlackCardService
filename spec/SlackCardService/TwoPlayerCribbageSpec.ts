@@ -296,6 +296,22 @@ describe("Test a Cribbage game between two players", function() {
                 .not
                 .toThrow(`${CribbageErrorStrings.FMT_NOT_NEXT_PLAYER} + ${game.nextPlayerInSequence.name}`);
         });
+        it("sets the next player correctly when a player gets a go and has no more cards but the opponent does", function() {
+            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([tenOfClubs, queenOfHearts]));
+            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([threeOfSpades, fiveOfHearts]));
+            playerOne.hand.removeItem(sixOfClubs);
+            playerOne.hand.removeItem(eightOfClubs);
+            playerOne.hand.addItems([aceOfDiamonds, twoOfClubs]);
+            game.playCard(playerTwo.name, eightOfSpades);
+            game.playCard(playerOne.name, twoOfDiamonds);
+            game.playCard(playerTwo.name, queenOfSpades);
+            game.playCard(playerOne.name, twoOfClubs);
+            game.go(playerTwo.name);
+            game.playCard(playerOne.name, aceOfDiamonds);
+            game.playCard(playerOne.name, aceOfClubs);
+            expect(game.count).toEqual(0); // The round should restart because there will be no players left in play
+            expect(game.nextPlayerInSequence.equalsOther(playerTwo)).toBe(true);
+        });
         it("sets the next player correctly after one scores 31", function() {
             game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([twoOfDiamonds, sixOfClubs]));
             game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([threeOfSpades, eightOfSpades]));

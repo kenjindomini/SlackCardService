@@ -217,17 +217,15 @@ var Cribbage = (function (_super) {
             }
             else if (is31) {
                 this.resetSequence(player);
+                this.setNextPlayerInSequence(player);
             }
             else if (this.playersInPlay.countItems() == 0) {
                 this.resetSequence(null);
+                this.setNextPlayerInSequence(player);
             }
             else {
                 this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
-                if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
-                    do {
-                        this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
-                    } while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
-                }
+                this.setNextPlayerInSequence(player);
             }
             break;
         }
@@ -262,11 +260,7 @@ var Cribbage = (function (_super) {
             }
             else {
                 this.resetSequence(player);
-                if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
-                    do {
-                        this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
-                    } while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
-                }
+                this.setNextPlayerInSequence(player);
                 response.message += " The count is back at 0. You're up " + this.nextPlayerInSequence.name;
             }
         }
@@ -274,10 +268,8 @@ var Cribbage = (function (_super) {
             this.roundOverResetState();
             response.message += " " + this.roundOverStr();
         }
-        else if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
-            do {
-                this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
-            } while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
+        else {
+            this.setNextPlayerInSequence(player);
         }
         return response;
     };
@@ -416,6 +408,20 @@ var Cribbage = (function (_super) {
                 throw CribbageErrorStrings.INVALID_NUMBER_OF_PLAYERS;
         }
         this.resetSequence(null);
+    };
+    Cribbage.prototype.setNextPlayerInSequence = function (player) {
+        if (player != null) {
+            if (this.nextPlayerInSequence.equalsOther(player) || this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
+                do {
+                    this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
+                } while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
+            }
+        }
+        else if (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1) {
+            do {
+                this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
+            } while (this.playersInPlay.indexOfItem(this.nextPlayerInSequence) == -1);
+        }
     };
     Cribbage.prototype.resetSequence = function (player) {
         this.count = 0;
