@@ -350,10 +350,6 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 response.message += ` The count is back at 0. You're up ${this.nextPlayerInSequence.name}`;
             }
         }
-        else if (this.roundOver()) {
-            this.roundOverResetState();
-            response.message += ` ${this.roundOverStr()}`;
-        }
         else {
             this.setNextPlayerInSequence(player);
         }
