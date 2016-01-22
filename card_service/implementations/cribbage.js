@@ -61,7 +61,7 @@ var Cribbage = (function (_super) {
     __extends(Cribbage, _super);
     function Cribbage(players) {
         _super.call(this, players, null, "Cribbage", new standard_deck_1.StandardDeck());
-        this.cut = this.dealer = this.nextPlayerInSequence = this.sequence = this.winningTeam = null;
+        this.cut = this.dealer = this.lastPlayerToPlay = this.nextPlayerInSequence = this.sequence = this.winningTeam = null;
         this.count = 0;
         this.kitty = new cribbage_hand_1.CribbageHand([]);
         this.playersInPlay = new item_collection_1.ItemCollection([]);
@@ -185,6 +185,7 @@ var Cribbage = (function (_super) {
             if (!player.playCard(card)) {
                 throw CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD + " the " + card.toString() + "!";
             }
+            this.lastPlayerToPlay = player;
             if (player.hand.size() == 0) {
                 this.playersInPlay.removeItem(player);
             }
@@ -226,6 +227,7 @@ var Cribbage = (function (_super) {
             else if (this.playersInPlay.countItems() == 0) {
                 this.resetSequence(null);
                 this.setNextPlayerInSequence(player);
+                response.message += "\n                " + this.roundOverStr();
             }
             else {
                 this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
@@ -254,9 +256,9 @@ var Cribbage = (function (_super) {
             this.playersInPlay.removeItem(player);
         }
         if (this.playersInPlay.countItems() == 0) {
-            var team = this.findTeam(player);
-            response.message = playerName + " gets a point for a go.";
-            if (team.addPoints(player, 1)) {
+            var team = this.findTeam(this.lastPlayerToPlay);
+            response.message = this.lastPlayerToPlay.name + " gets a point for a go.";
+            if (team.addPoints(this.lastPlayerToPlay, 1)) {
                 this.winningTeam = team;
                 response.gameOver = true;
                 response.message += "\nGame Over!";
@@ -345,6 +347,7 @@ var Cribbage = (function (_super) {
         var scores = "";
         scores = this.countPoints().message;
         this.cut = null;
+        this.lastPlayerToPlay = null;
         this.setNextDealer();
         this.deal();
         return scores;
@@ -442,6 +445,7 @@ var Cribbage = (function (_super) {
     };
     Cribbage.prototype.resetSequence = function (player) {
         this.count = 0;
+        this.lastPlayerToPlay = null;
         this.sequence.removeAll();
         this.playersInPlay.removeAll();
         for (var ix = 0; ix < this.numPlayers; ix++) {

@@ -296,6 +296,23 @@ describe("Test a Cribbage game between two players", function() {
                 .not
                 .toThrow(`${CribbageErrorStrings.FMT_NOT_NEXT_PLAYER} + ${game.nextPlayerInSequence.name}`);
         });
+        it("gives the correct player the point", function() {
+            game.dealer = playerTwo;
+            game.nextPlayerInSequence = playerOne;
+            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([tenOfClubs, queenOfHearts]));
+            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([kingOfSpades, kingOfClubs]));
+            playerOne.hand.removeItem(eightOfClubs);
+            playerOne.hand.addItems([aceOfDiamonds]);
+            game.playCard(playerOne.name, aceOfClubs);
+            game.playCard(playerTwo.name, eightOfSpades);
+            game.playCard(playerOne.name, aceOfDiamonds);
+            game.playCard(playerTwo.name, fiveOfHearts);
+            game.playCard(playerOne.name, sixOfClubs);
+            game.playCard(playerTwo.name, threeOfSpades);
+            game.playCard(playerOne.name, twoOfDiamonds);
+            game.go(playerTwo.name);
+            expect(game.getTeam(0).countPoints()).toEqual(1); // One point for the go
+        });
         it("sets the next player correctly when a player gets a go and has no more cards but the opponent does", function() {
             game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([tenOfClubs, queenOfHearts]));
             game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([threeOfSpades, fiveOfHearts]));
