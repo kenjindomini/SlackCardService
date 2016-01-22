@@ -406,7 +406,7 @@ var CribbageRoutes;
                             response.data.text = "" + responseText;
                         }
                         else {
-                            response.data.text = player + " played the " + card.toString() + ".\n                            " + responseText;
+                            response.data.text += "\n                            " + responseText;
                         }
                     }
                 }
