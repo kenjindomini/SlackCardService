@@ -132,6 +132,19 @@ describe("Test a Cribbage game between two players", function () {
         expect(game.playersInPlay.indexOfItem(playerTwo)).toBe(0);
         expect(game.count).toEqual(0);
     });
+    describe("Test various counting scenarios", function () {
+        it("counts correctly", function () {
+            playerOne.hand =
+                new cribbage_hand_1.CribbageHand([aceOfClubs, fourOfHearts, eightOfClubs, eightOfHearts, nineOfDiamonds, tenOfClubs]);
+            playerTwo.hand =
+                new cribbage_hand_1.CribbageHand([aceOfDiamonds, aceOfSpades, sixOfSpades, tenOfDiamonds, kingOfClubs, kingOfHearts]);
+            game.giveToKitty(playerOne.name, new item_collection_1.ItemCollection([nineOfDiamonds, tenOfClubs]));
+            game.giveToKitty(playerTwo.name, new item_collection_1.ItemCollection([kingOfClubs, kingOfHearts]));
+            game.cut = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Queen);
+            expect(playerOne.countPoints(game.cut)).toEqual(4);
+            expect(playerTwo.countPoints(game.cut)).toEqual(6);
+        });
+    });
     describe("Test with fixed hands, starting at 0 points", function () {
         beforeEach(function () {
             playerOne.hand =

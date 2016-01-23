@@ -392,7 +392,7 @@ var CribbageRoutes;
                     gameOver = cribRes.gameOver;
                     var responseText = cribRes.message;
                     response.data.text =
-                        player + " played the " + card.toString() + ".\n                        " + cribRes.message + ".\n                        The count is at " + this.currentGame.count + ".\n                        The cards in play are: " + this.currentGame.sequence.toString() + ".\n                        You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
+                        player + " played the " + card.toString() + ".\n                        The count is at " + this.currentGame.count + ".\n                        The cards in play are: " + this.currentGame.sequence.toString() + ".\n                        You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
                     if (gameOver) {
                         var winners = "";
                         for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
@@ -403,10 +403,10 @@ var CribbageRoutes;
                     }
                     else if (responseText.length > 0) {
                         if (responseText.indexOf("round over") != -1) {
-                            response.data.text = responseText;
+                            response.data.text = "" + responseText;
                         }
                         else {
-                            response.data.text = responseText + "\n                                              " + response.data.text;
+                            response.data.text = responseText + "\n                            " + response.data.text;
                         }
                     }
                 }

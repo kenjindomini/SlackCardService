@@ -23,6 +23,7 @@ var CribbageErrorStrings = (function () {
     CribbageErrorStrings.DUPLICATE_CARD_THROWN_TO_KITTY = "You must throw two UNIQUE cards to the kitty";
     CribbageErrorStrings.INVALID_THROWER = "You aren't allowed to throw any cards!";
     CribbageErrorStrings.KITTY_NOT_READY = "The kitty still needs people to throw to it";
+    CribbageErrorStrings.KITTY_IS_READY = "The kitty already has all the cards it needs.";
     CribbageErrorStrings.EXCEEDS_31 = "Exceeds 31";
     CribbageErrorStrings.FMT_NOT_NEXT_PLAYER = "The next player is ";
     CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD = "You don't have ";
@@ -119,6 +120,8 @@ var Cribbage = (function (_super) {
         var player = this.findPlayer(playerName);
         if (!player)
             throw CribbageErrorStrings.PLAYER_DOES_NOT_EXIST;
+        if (this.kitty.size() == 4)
+            throw CribbageErrorStrings.KITTY_IS_READY;
         var numThrown = cards.countItems();
         for (var ix = 0; ix < numThrown; ix++) {
             var card = cards.itemAt(ix);
@@ -211,7 +214,8 @@ var Cribbage = (function (_super) {
             }
             if (this.roundOver()) {
                 response.message += "\n                " + this.roundOverResetState();
-                points++;
+                if (!is31)
+                    points++;
                 if (team.addPoints(player, 1)) {
                     this.winningTeam = team;
                     response.gameOver = true;
@@ -234,7 +238,7 @@ var Cribbage = (function (_super) {
                 this.setNextPlayerInSequence(player);
             }
             if (points > 0) {
-                response.message = player.name + " scored " + points + " points.";
+                response.message = player.name + " scored " + points + " points.\n                " + response.message;
             }
             break;
         }
@@ -363,7 +367,7 @@ var Cribbage = (function (_super) {
         return done;
     };
     Cribbage.prototype.countPoints = function () {
-        var ret = new CribbageReturn();
+        var ret = new CribbageReturn(false, "The cut card is the " + this.cut);
         var firstPlayer = this.nextPlayerInOrder(this.dealer);
         var countingPlayer = firstPlayer;
         do {

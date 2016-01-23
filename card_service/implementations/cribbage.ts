@@ -28,6 +28,7 @@ export class CribbageErrorStrings {
     static DUPLICATE_CARD_THROWN_TO_KITTY: string = "You must throw two UNIQUE cards to the kitty";
     static INVALID_THROWER: string = "You aren't allowed to throw any cards!";
     static KITTY_NOT_READY: string = "The kitty still needs people to throw to it";
+    static KITTY_IS_READY: string = "The kitty already has all the cards it needs.";
     static EXCEEDS_31: string = "Exceeds 31";
     static FMT_NOT_NEXT_PLAYER: string = "The next player is ";
     static FMT_PLAYER_DOESNT_HAVE_CARD: string = "You don't have ";
@@ -163,6 +164,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         var player = this.findPlayer(playerName);
         if (!player)
             throw CribbageErrorStrings.PLAYER_DOES_NOT_EXIST;
+        // Check that the kitty is not already full
+        if (this.kitty.size() == 4)
+            throw CribbageErrorStrings.KITTY_IS_READY;
         // Check that the player has the cards they're trying to throw
         var numThrown = cards.countItems();
         for (var ix = 0; ix < numThrown; ix++) {
@@ -276,7 +280,8 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             if (this.roundOver()) {
                 response.message += `
                 ${this.roundOverResetState()}`;
-                points++;
+                if (!is31)
+                    points++;
                 if (team.addPoints(player, 1)) {
                     this.winningTeam = team;
                     response.gameOver = true;
@@ -303,7 +308,8 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 this.setNextPlayerInSequence(player);
             }
             if (points > 0) {
-                response.message = `${player.name} scored ${points} points.`;
+                response.message = `${player.name} scored ${points} points.
+                ${response.message}`;
             }
             break;
         }
@@ -504,7 +510,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * @returns {CribbageReturn}
      */
     private countPoints():CribbageReturn {
-        var ret = new CribbageReturn();
+        var ret = new CribbageReturn(false, `The cut card is the ${this.cut}`);
         var firstPlayer = this.nextPlayerInOrder(this.dealer);
         var countingPlayer = firstPlayer;
         do {
