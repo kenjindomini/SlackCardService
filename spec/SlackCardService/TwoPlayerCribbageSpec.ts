@@ -182,7 +182,19 @@ describe("Test a Cribbage game between two players", function() {
         expect(game.playersInPlay.indexOfItem(playerTwo)).toBe(0); // nobody should be left
         expect(game.count).toEqual(0); // expect the game to have reset the sequence
     });
-
+    describe("Test various counting scenarios", function() {
+        it("counts correctly", function() {
+            playerOne.hand =
+                new CribbageHand([aceOfClubs, fourOfHearts, eightOfClubs, eightOfHearts, nineOfDiamonds, tenOfClubs]);
+            playerTwo.hand =
+                new CribbageHand([aceOfDiamonds, aceOfSpades, sixOfSpades, tenOfDiamonds, kingOfClubs, kingOfHearts]);
+            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([nineOfDiamonds, tenOfClubs]));
+            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([kingOfClubs, kingOfHearts]));
+            game.cut = new BaseCard(Suit.Spades, Value.Queen);
+            expect(playerOne.countPoints(game.cut)).toEqual(4); // 15 for two points and a pair makes four points
+            expect(playerTwo.countPoints(game.cut)).toEqual(6); // 15 for four points and a pair makes six points
+        });
+    });
     describe("Test with fixed hands, starting at 0 points", function() {
         beforeEach(function () {
             playerOne.hand =
