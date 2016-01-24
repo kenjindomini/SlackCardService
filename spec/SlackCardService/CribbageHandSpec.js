@@ -34,6 +34,10 @@ describe("Test a Cribbage game between two players", function () {
             var hand = new cribbage_hand_1.CribbageHand([twoOfClubs, threeOfSpades, threeOfHearts, jackOfSpades]);
             expect(hand.countPoints(jackOfHearts, false)).toEqual(12);
         });
+        it("counts correctly", function () {
+            var hand = new cribbage_hand_1.CribbageHand([twoOfClubs, threeOfSpades, threeOfHearts, jackOfSpades]);
+            expect(hand.countPoints(queenOfSpades, false)).toEqual(11);
+        });
     });
 });
 //# sourceMappingURL=CribbageHandSpec.js.map
