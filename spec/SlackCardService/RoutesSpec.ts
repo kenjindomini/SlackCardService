@@ -1,4 +1,5 @@
-import {CribbageRoutes, CribbageStrings} from "../../routes/Cribbage";
+import {CribbageStrings} from "../../card_service/implementations/cribbage";
+import {CribbageRoutes} from "../../routes/Cribbage";
 import {BaseCard as Card, Suit, Value} from "../../card_service/base_classes/items/card";
 import Router = CribbageRoutes.Router;
 

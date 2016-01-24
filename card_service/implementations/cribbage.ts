@@ -21,21 +21,35 @@ enum Mode {
     Team
 }
 
-export class CribbageErrorStrings {
-    static get INVALID_NUMBER_OF_PLAYERS(): string { return "Invalid number of players"; }
-    static get INVALID_NUM_CARDS_THROWN_TO_KITTY(): string { return "Invalid number of cards given to the kitty"; }
-    static get DUPLICATE_CARD_THROWN_TO_KITTY(): string { return "You must throw two UNIQUE cards to the kitty"; }
-    static get INVALID_THROWER(): string { return "You aren't allowed to throw any cards!"; }
-    static get KITTY_NOT_READY(): string { return "The kitty still needs people to throw to it"; }
-    static get KITTY_IS_READY(): string { return "The kitty already has all the cards it needs."; }
-    static get EXCEEDS_31(): string { return "Exceeds 31"; }
-    static get FMT_NOT_NEXT_PLAYER(): string { return "The next player is "; }
-    static get FMT_PLAYER_DOESNT_HAVE_CARD(): string { return "You don't have "; }
-    static get PLAYER_DOES_NOT_EXIST(): string { return "You're not part of the game!"; }
-    static get PLAYER_ALREADY_IN_GAME(): string { return "You're already in the game"; }
-    static get PLAYER_CAN_PLAY(): string { return "You have a card you can still play"; }
-    static get PLAYER_NOT_IN_PLAY(): string { return "You've already said \"go\""; }
-    static get GAME_HAS_ALREADY_BEGUN(): string { return "The game has already begun!"; }
+// Generic messages
+export module CribbageStrings {
+    export class MessageStrings {
+        static get START_GAME():string { return "The game is afoot, throw your cards to the crib."; }
+        static get GAME_RESET():string { return "The game was reset"; }
+        static get GAME_OVER(): string { return "Game over!"; }
+    }
+    export class ErrorStrings {
+        static get NO_GAME():string { return "The game hasn't been created. Add some players first."; }
+        static get HAS_BEGUN():string { return "The game has already begun"; }
+        static get INVALID_CARD_SYNTAX():string {
+            return "Invalid syntax. Enter your card as (value)(suit), for example enter the five of hearts as 5H.";
+        }
+        static get TOO_MANY_CARDS():string { return "You can only play one card!"; }
+        static get INVALID_NUMBER_OF_PLAYERS():string { return "Invalid number of players"; }
+        static get INVALID_NUM_CARDS_THROWN_TO_KITTY():string { return "Invalid number of cards given to the kitty"; }
+        static get DUPLICATE_CARD_THROWN_TO_KITTY():string { return "You must throw two UNIQUE cards to the kitty"; }
+        static get INVALID_THROWER():string { return "You aren't allowed to throw any cards!"; }
+        static get KITTY_NOT_READY():string { return "The kitty still needs people to throw to it"; }
+        static get KITTY_IS_READY():string { return "The kitty already has all the cards it needs."; }
+        static get EXCEEDS_31():string { return "Exceeds 31"; }
+        static get FMT_NOT_NEXT_PLAYER():string { return "The next player is "; }
+        static get FMT_PLAYER_DOESNT_HAVE_CARD():string { return "You don't have "; }
+        static get PLAYER_DOES_NOT_EXIST():string { return "You're not part of the game!"; }
+        static get PLAYER_ALREADY_IN_GAME():string { return "You're already in the game"; }
+        static get PLAYER_CAN_PLAY():string { return "You have a card you can still play"; }
+        static get PLAYER_NOT_IN_PLAY():string { return "You've already said \"go\""; }
+        static get GAME_HAS_ALREADY_BEGUN():string { return "The game has already begun!"; }
+    }
 }
 
 export class CribbageGameDescription {
@@ -58,6 +72,8 @@ export class CribbageReturn {
     }
 }
 
+import MessageStrings = CribbageStrings.MessageStrings;
+import ErrorStrings = CribbageStrings.ErrorStrings;
 export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
     cut: Card;
     kitty: CribbageHand;
@@ -86,12 +102,12 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * Initialize the game.
      * - Set the game mode (team or free for all)
      * - Create the teams
-     * @throws CribbageErrorStrings.INVALID_NUMBER_OF_PLAYERS if there are too few or too many players
+     * @throws ErrorStrings.INVALID_NUMBER_OF_PLAYERS if there are too few or too many players
      */
     private initializeGame(): void {
         this.numPlayers = this.players.countItems();
         if (this.numPlayers < 2 || this.numPlayers > 6)
-            throw CribbageErrorStrings.INVALID_NUMBER_OF_PLAYERS;
+            throw ErrorStrings.INVALID_NUMBER_OF_PLAYERS;
         this.mode = (this.numPlayers == 4 || this.numPlayers == 6 ? Mode.Team : Mode.FFA);
         if (this.mode == Mode.Team) {
             if (this.numPlayers == 4) {
@@ -139,7 +155,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      */
     begin():void {
         if (this.hasBegun) {
-            throw CribbageErrorStrings.GAME_HAS_ALREADY_BEGUN;
+            throw ErrorStrings.GAME_HAS_ALREADY_BEGUN;
         }
         else {
             this.initializeGame();
@@ -154,34 +170,35 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * many cards the player should be throwing into the kitty.
      * @param playerName
      * @param cards
-     * @throws CribbageErrorStrings.PLAYER_DOES_NOT_EXIST if the player isn't part of the game
-     * @throws CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD if the player doesn't have the cards
-     * @throws CribbageErrorStrings.INVALID_NUM_CARDS_THROWN_TO_KITTY if the player throws the wrong number of cards
-     * @throws CribbageErrorStrings.INVALID_THROWER if the player cannot legally throw to the kitty
+     * @throws ErrorStrings.PLAYER_DOES_NOT_EXIST if the player isn't part of the game
+     * @throws ErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD if the player doesn't have the cards
+     * @throws ErrorStrings.INVALID_NUM_CARDS_THROWN_TO_KITTY if the player throws the wrong number of cards
+     * @throws ErrorStrings.INVALID_THROWER if the player cannot legally throw to the kitty
      */
-    giveToKitty(playerName: string, cards: ItemCollection<Card>): void {
+    giveToKitty(playerName: string, cards: ItemCollection<Card>):CribbageReturn {
+        var response = new CribbageReturn();
         var player = this.findPlayer(playerName);
         if (!player)
-            throw CribbageErrorStrings.PLAYER_DOES_NOT_EXIST;
+            throw ErrorStrings.PLAYER_DOES_NOT_EXIST;
         // Check that the kitty is not already full
         if (this.kitty.size() == 4)
-            throw CribbageErrorStrings.KITTY_IS_READY;
+            throw ErrorStrings.KITTY_IS_READY;
         // Check that the player has the cards they're trying to throw
         var numThrown = cards.countItems();
         for (var ix = 0; ix < numThrown; ix++) {
             var card = cards.itemAt(ix);
             if (player.hand.indexOfItem(card) == -1) {
-                throw `${CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD} the ${card.toString()}!`;
+                throw `${ErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD} the ${card.toString()}!`;
             }
         }
         // Check that the right number of cards were thrown
         switch (this.numPlayers) {
             case 2:
                 if (numThrown != 2) {
-                    throw CribbageErrorStrings.INVALID_NUM_CARDS_THROWN_TO_KITTY;
+                    throw ErrorStrings.INVALID_NUM_CARDS_THROWN_TO_KITTY;
                 }
                 else if (cards.itemAt(0).equalsOther(cards.itemAt(1))) {
-                    throw CribbageErrorStrings.DUPLICATE_CARD_THROWN_TO_KITTY;
+                    throw ErrorStrings.DUPLICATE_CARD_THROWN_TO_KITTY;
                 }
                 break;
             case 3:
@@ -189,16 +206,16 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             case 5:
             case 6:
                 if (numThrown != 1) {
-                    throw CribbageErrorStrings.INVALID_NUM_CARDS_THROWN_TO_KITTY;
+                    throw ErrorStrings.INVALID_NUM_CARDS_THROWN_TO_KITTY;
                 }
                 else if (this.numPlayers == 5 && player.equalsOther(this.dealer)) {
-                        throw CribbageErrorStrings.INVALID_THROWER;
+                        throw ErrorStrings.INVALID_THROWER;
                 }
                 else if (this.numPlayers == 6) {
                     var team = this.findTeam(player);
                     for (var ix = 0; ix < team.countPlayers(); ix++) {
                         if (team.playerAt(ix).equalsOther(this.dealer)) {
-                            throw CribbageErrorStrings.INVALID_THROWER;
+                            throw ErrorStrings.INVALID_THROWER;
                         }
                     }
                 }
@@ -219,9 +236,13 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             this.cutTheDeck();
             if (this.cut.value == Value.Jack) {
                 // Give the dealer 2 points
-                this.findTeam(this.dealer).addPoints(this.dealer, 2);
+                if (this.findTeam(this.dealer).addPoints(this.dealer, 2)) {
+                    // Game over
+                    response = this.setGameOver(team);
+                }
             }
         }
+        return response;
     }
 
     /**
@@ -230,30 +251,30 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * @param playerName
      * @param card
      * @returns {boolean} true if it's game over
-     * @throws CribbageErrorStrings.KITTY_NOT_READY if there are not enough cards in the kitty to begin play
-     * @throws CribbageErrorStrings.FMT_NOT_NEXT_PLAYER if the next player to play is not the one trying to play a card
-     * @throws CribbageErrorStrings.EXCEEDS_31 if the player plays a card that makes the count exceed 31
-     * @throws CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD if the player doesn't have the card they're trying to play
+     * @throws ErrorStrings.KITTY_NOT_READY if there are not enough cards in the kitty to begin play
+     * @throws ErrorStrings.FMT_NOT_NEXT_PLAYER if the next player to play is not the one trying to play a card
+     * @throws ErrorStrings.EXCEEDS_31 if the player plays a card that makes the count exceed 31
+     * @throws ErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD if the player doesn't have the card they're trying to play
      */
     playCard(playerName: string, card: Card):CribbageReturn {
         var response = new CribbageReturn();
         // Make sure everyone has thrown to the kitty
         if (this.kitty.size() != 4) {
-            throw CribbageErrorStrings.KITTY_NOT_READY;
+            throw ErrorStrings.KITTY_NOT_READY;
         }
         // Find the player
         var player = this.findPlayer(playerName);
         if (!player.equalsOther(this.nextPlayerInSequence)) {
-            throw CribbageErrorStrings.FMT_NOT_NEXT_PLAYER + this.nextPlayerInSequence.name;
+            throw ErrorStrings.FMT_NOT_NEXT_PLAYER + this.nextPlayerInSequence.name;
         }
         while (true) {
             var team = this.teams.findTeam(player);
             var cardValue = CribbageHand.getCardValue(card);
             if ((this.count + cardValue) > 31) {
-                throw CribbageErrorStrings.EXCEEDS_31;
+                throw ErrorStrings.EXCEEDS_31;
             }
             if (!player.playCard(card)) {
-                throw `${CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD} the ${card.toString()}!`;
+                throw `${ErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD} the ${card.toString()}!`;
             }
             this.lastPlayerToPlay = player;
             if (player.hand.size() == 0) {
@@ -264,9 +285,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             var points = this.sequence.addCard(card);
             if (points > 0) {
                 if (team.addPoints(player, points)) {
-                    this.winningTeam = team;
-                    response.gameOver = true;
-                    response.message = "Game over!";
+                    response = this.setGameOver(team);
                     break;
                 }
             }
@@ -274,9 +293,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             if (this.count == 15 || is31) {
                 points += 2;
                 if (team.addPoints(player, 2)) {
-                    this.winningTeam = team;
-                    response.gameOver = true;
-                    response.message = "Game over!";
+                    response = this.setGameOver(team);
                     break;
                 }
             }
@@ -285,9 +302,8 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 response.message = `${player.name} gets a point for a go.`;
                 if (team.addPoints(player, 1)) {
                     // Game over
-                    this.winningTeam = team;
-                    response.gameOver = true;
-                    response.message += "\nGame Over!";
+                    response = this.setGameOver(team);
+                    break;
                 }
                 else {
                     response.message += `
@@ -295,13 +311,12 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                     if (!is31)
                         points++;
                     if (team.addPoints(player, 1)) {
-                        this.winningTeam = team;
-                        response.gameOver = true;
-                        response.message = "\nGame over!";
+                        response = this.setGameOver(team);
                         break;
                     }
                     response.message += `
                  ${this.roundOverStr()}`;
+                    break;
                 }
             }
             else if (is31) {
@@ -335,20 +350,20 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * deal the cards, and start over again.
      * @param playerName the player who said "go"
      * @returns {boolean} true if it's game over, false if the game is not over
-     * @throws CribbageErrorStrings.PLAYER_DOES_NOT_EXIST if the player is not part of the current game
-     * @throws CribbageErrorStrings.PLAYER_CAN_PLAY if the player has a card that they can still play
+     * @throws ErrorStrings.PLAYER_DOES_NOT_EXIST if the player is not part of the current game
+     * @throws ErrorStrings.PLAYER_CAN_PLAY if the player has a card that they can still play
      */
     go(playerName: string):CribbageReturn {
         var response = new CribbageReturn();
         var player = this.findPlayer(playerName);
         if (player == null) {
-            throw CribbageErrorStrings.PLAYER_DOES_NOT_EXIST;
+            throw ErrorStrings.PLAYER_DOES_NOT_EXIST;
         }
         if (player.canPlay(this.count)) {
-            throw CribbageErrorStrings.PLAYER_CAN_PLAY;
+            throw ErrorStrings.PLAYER_CAN_PLAY;
         }
         else if (this.playersInPlay.indexOfItem(player) == -1) {
-            throw CribbageErrorStrings.PLAYER_NOT_IN_PLAY;
+            throw ErrorStrings.PLAYER_NOT_IN_PLAY;
         }
         else {
             // The go is valid, remove the player from play
@@ -360,9 +375,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             response.message = `${this.lastPlayerToPlay.name} gets a point for a go.`;
             if (team.addPoints(this.lastPlayerToPlay, 1)) {
                 // Game over
-                this.winningTeam = team;
-                response.gameOver = true;
-                response.message += "\nGame Over!";
+                response = this.setGameOver(team);
             }
             else if (this.roundOver()) {
                 this.roundOverResetState();
@@ -386,11 +399,11 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
     /**
      * Add a player to the current game
      * @param player the player to add
-     * @throws CribbageErrorStrings.PLAYER_ALREADY_IN_GAME if the player is already in the game
+     * @throws ErrorStrings.PLAYER_ALREADY_IN_GAME if the player is already in the game
      */
     addPlayer(player:CribbagePlayer):void {
         if (this.findPlayer(player.name)) {
-            throw CribbageErrorStrings.PLAYER_ALREADY_IN_GAME;
+            throw ErrorStrings.PLAYER_ALREADY_IN_GAME;
         }
         else {
             this.players.addPlayer(player);
@@ -434,7 +447,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * Find the given player and return their hand as a string
      * @param playerName
      * @returns {string} the string representation of the player's hand
-     * @throws CribbageErrorStrings.PLAYER_DOES_NOT_EXIST if the player does not exist
+     * @throws ErrorStrings.PLAYER_DOES_NOT_EXIST if the player does not exist
      */
     getPlayerHand(playerName: string):string {
         var hand = "";
@@ -446,9 +459,14 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             console.log(`${playerName} has hand ${hand}`);
         }
         else {
-            throw CribbageErrorStrings.PLAYER_DOES_NOT_EXIST;
+            throw ErrorStrings.PLAYER_DOES_NOT_EXIST;
         }
         return hand;
+    }
+
+    private setGameOver(winningTeam: CribbageTeam):CribbageReturn {
+        this.winningTeam = winningTeam;
+        return new CribbageReturn(true, MessageStrings.GAME_OVER);
     }
 
     private printHand(hand:CribbageHand):string {
@@ -531,8 +549,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             var points = countingPlayer.countPoints(this.cut);
             if (team.addPoints(countingPlayer, points)) {
                 // Game over
-                this.winningTeam = team;
-                ret.gameOver = true;
+                ret = this.setGameOver(team);
                 break;
             }
             ret.message += `
@@ -542,8 +559,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 points = this.kitty.countPoints(this.cut, true);
                 if (team.addPoints(countingPlayer, points)) {
                     // Game over
-                    this.winningTeam = team;
-                    ret.gameOver = true;
+                    ret = this.setGameOver(team);
                     break;
                 }
                 ret.message += `
@@ -608,7 +624,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 this.dealForSix();
                 break;
             default:
-                throw CribbageErrorStrings.INVALID_NUMBER_OF_PLAYERS;
+                throw ErrorStrings.INVALID_NUMBER_OF_PLAYERS;
         }
         this.resetSequence(null);
     }

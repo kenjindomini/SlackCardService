@@ -6,31 +6,14 @@
 
 import {Request, Response} from "express";
 import {CribbagePlayer} from "../../card_service/implementations/cribbage_player";
-import {Cribbage} from "../../card_service/implementations/cribbage";
+import {Cribbage, CribbageStrings} from "../../card_service/implementations/cribbage";
 import {CribbageHand} from "../../card_service/implementations/cribbage_hand";
 import {Players, Teams} from "../../card_service/base_classes/card_game";
 import {BaseCard as Card, Value, Suit} from "../../card_service/base_classes/items/card";
 import {ItemCollection} from "../../card_service/base_classes/collections/item_collection";
 import {removeLastTwoChars} from "../../card_service/base_classes/card_game";
-import MessageStrings = CribbageStrings.MessageStrings;
 
 var request = require("request");
-
-// Generic messages
-export module CribbageStrings {
-    export class MessageStrings {
-        static get START_GAME():string { return "The game is afoot, throw your cards to the crib."; }
-        static get GAME_RESET():string { return "The game was reset"; }
-    }
-    export class ErrorStrings {
-        static get NO_GAME():string { return "The game hasn't been created. Add some players first."; }
-        static get HAS_BEGUN():string { return "The game has already begun"; }
-        static get INVALID_CARD_SYNTAX():string {
-            return "Invalid syntax. Enter your card as (value)(suit), for example enter the five of hearts as 5H.";
-        }
-        static get TOO_MANY_CARDS():string { return "You can only play one card!"; }
-    }
-}
 
 export module CribbageRoutes {
 
