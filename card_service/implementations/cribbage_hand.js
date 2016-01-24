@@ -72,6 +72,7 @@ var CribbageHand = (function (_super) {
                 if (duplicates[subIx].value == dup.value) {
                     matches++;
                     duplicates.splice(subIx, 1);
+                    subIx--;
                 }
             }
             points += (matches == 1 ? 2 : matches == 2 ? 6 : 12);
