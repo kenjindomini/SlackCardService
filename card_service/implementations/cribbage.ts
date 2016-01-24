@@ -314,7 +314,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 this.resetSequence(null);
                 this.setNextPlayerInSequence(player);
                 response.message += `
-                ${this.roundOverStr()}`;
+                ${this.describe()}`;
             }
             else {
                 this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);

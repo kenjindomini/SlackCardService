@@ -8,7 +8,7 @@ var item_collection_1 = require("../../card_service/base_classes/collections/ite
 "use strict";
 describe("Test a Cribbage game between two players", function () {
     var game, playerOne, playerTwo;
-    var aceOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Ace), aceOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Ace), aceOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Ace), aceOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Ace), twoOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Two), twoOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Two), threeOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Three), threeOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Three), fourOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Four), fourOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Four), fourOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Four), fourOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Four), fiveOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Five), fiveOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Five), fiveOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Five), fiveOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Five), sixOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Six), sixOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Six), sixOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Six), sixOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Six), sevenOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Seven), sevenOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Seven), sevenOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Seven), sevenOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Seven), eightOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Eight), eightOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Eight), eightOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Eight), eightOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Eight), nineOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Nine), nineOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Nine), tenOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Ten), tenOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Ten), jackOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Jack), jackOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Jack), queenOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Queen), queenOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Queen), queenOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Queen), kingOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.King), kingOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.King), kingOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.King);
+    var aceOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Ace), aceOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Ace), aceOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Ace), aceOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Ace), twoOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Two), twoOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Two), threeOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Three), threeOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Three), threeOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Three), fourOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Four), fourOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Four), fourOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Four), fourOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Four), fiveOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Five), fiveOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Five), fiveOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Five), fiveOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Five), sixOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Six), sixOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Six), sixOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Six), sixOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Six), sevenOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Seven), sevenOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Seven), sevenOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Seven), sevenOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Seven), eightOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Eight), eightOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Eight), eightOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Eight), eightOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Eight), nineOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Nine), nineOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Nine), tenOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Ten), tenOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Ten), jackOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Jack), jackOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Jack), queenOfDiamonds = new card_1.BaseCard(card_1.Suit.Diamonds, card_1.Value.Queen), queenOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.Queen), queenOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.Queen), queenOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Queen), kingOfClubs = new card_1.BaseCard(card_1.Suit.Clubs, card_1.Value.King), kingOfHearts = new card_1.BaseCard(card_1.Suit.Hearts, card_1.Value.King), kingOfSpades = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.King);
     beforeEach(function () {
         playerOne = new cribbage_player_1.CribbagePlayer("Alice", new cribbage_hand_1.CribbageHand([]));
         playerTwo = new cribbage_player_1.CribbagePlayer("Bob", new cribbage_hand_1.CribbageHand([]));
@@ -181,6 +181,8 @@ describe("Test a Cribbage game between two players", function () {
     });
     describe("Test an entire round of play", function () {
         beforeEach(function () {
+        });
+        it("knows how to play one round", function () {
             playerOne.hand =
                 new cribbage_hand_1.CribbageHand([sevenOfSpades, sevenOfDiamonds, eightOfHearts, eightOfSpades, nineOfDiamonds, tenOfClubs]);
             playerTwo.hand =
@@ -191,8 +193,6 @@ describe("Test a Cribbage game between two players", function () {
             game.giveToKitty(playerTwo.name, new item_collection_1.ItemCollection([kingOfClubs, kingOfHearts]));
             game.cut = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.King);
             game.playersInPlay.addItems(game.players.items);
-        });
-        it("knows how to play one round", function () {
             game.playCard(playerTwo.name, nineOfHearts);
             game.playCard(playerOne.name, nineOfDiamonds);
             expect(game.getTeam(0).countPoints()).toEqual(2);
@@ -214,6 +214,28 @@ describe("Test a Cribbage game between two players", function () {
             expect(game.getTeam(0).countPoints()).toEqual(4 + 6 + 8 + 1);
             expect(game.getTeam(1).countPoints()).toEqual(3 + 6);
             expect(game.dealer.equalsOther(playerTwo)).toBe(true);
+        });
+        it("knows how to play one round", function () {
+            playerOne.hand =
+                new cribbage_hand_1.CribbageHand([aceOfClubs, aceOfHearts, twoOfDiamonds, nineOfDiamonds, tenOfClubs, queenOfDiamonds]);
+            playerTwo.hand =
+                new cribbage_hand_1.CribbageHand([threeOfClubs, fourOfSpades, sixOfSpades, sevenOfClubs, jackOfHearts, kingOfSpades]);
+            game.dealer = playerOne;
+            game.nextPlayerInSequence = playerTwo;
+            game.giveToKitty(playerOne.name, new item_collection_1.ItemCollection([nineOfDiamonds, tenOfClubs]));
+            game.giveToKitty(playerTwo.name, new item_collection_1.ItemCollection([jackOfHearts, kingOfSpades]));
+            game.cut = new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Two);
+            game.playersInPlay.addItems(game.players.items);
+            game.playCard(playerTwo.name, threeOfClubs);
+            game.playCard(playerOne.name, queenOfDiamonds);
+            game.playCard(playerTwo.name, sixOfSpades);
+            game.playCard(playerOne.name, twoOfDiamonds);
+            game.playCard(playerTwo.name, sevenOfClubs);
+            game.playCard(playerOne.name, aceOfHearts);
+            game.go(playerTwo.name);
+            spyOn(game, "roundOverResetState");
+            game.playCard(playerOne.name, aceOfClubs);
+            expect(game.roundOverResetState).not.toHaveBeenCalled();
         });
     });
     describe("Test player playing cards after other player says 'go'", function () {

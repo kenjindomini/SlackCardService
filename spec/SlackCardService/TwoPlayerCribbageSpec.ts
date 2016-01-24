@@ -25,6 +25,7 @@ describe("Test a Cribbage game between two players", function() {
         aceOfClubs = new BaseCard(Suit.Clubs, Value.Ace),
         twoOfDiamonds = new BaseCard(Suit.Diamonds, Value.Two),
         twoOfClubs = new BaseCard(Suit.Clubs, Value.Two),
+        threeOfClubs = new BaseCard(Suit.Clubs, Value.Three),
         threeOfSpades = new BaseCard(Suit.Spades, Value.Three),
         threeOfHearts = new BaseCard(Suit.Hearts, Value.Three),
         fourOfHearts = new BaseCard(Suit.Hearts, Value.Four),
@@ -53,6 +54,7 @@ describe("Test a Cribbage game between two players", function() {
         tenOfDiamonds = new BaseCard(Suit.Diamonds, Value.Ten),
         jackOfSpades = new BaseCard(Suit.Spades, Value.Jack),
         jackOfHearts = new BaseCard(Suit.Hearts, Value.Jack),
+        queenOfDiamonds = new BaseCard(Suit.Diamonds, Value.Queen),
         queenOfClubs = new BaseCard(Suit.Clubs, Value.Queen),
         queenOfHearts = new BaseCard(Suit.Hearts, Value.Queen),
         queenOfSpades = new BaseCard(Suit.Spades, Value.Queen),
@@ -232,6 +234,8 @@ describe("Test a Cribbage game between two players", function() {
     });
     describe("Test an entire round of play", function () {
         beforeEach(function () {
+        });
+        it("knows how to play one round", function () {
             playerOne.hand =
                 new CribbageHand([sevenOfSpades, sevenOfDiamonds, eightOfHearts, eightOfSpades, nineOfDiamonds, tenOfClubs]);
             playerTwo.hand =
@@ -242,8 +246,6 @@ describe("Test a Cribbage game between two players", function() {
             game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([kingOfClubs, kingOfHearts]));
             game.cut = new BaseCard(Suit.Spades, Value.King);
             game.playersInPlay.addItems(game.players.items);
-        });
-        it("knows how to play one round", function () {
             game.playCard(playerTwo.name, nineOfHearts);
             game.playCard(playerOne.name, nineOfDiamonds);
             expect(game.getTeam(0).countPoints()).toEqual(2); // Pair of nines
@@ -270,6 +272,28 @@ describe("Test a Cribbage game between two players", function() {
                 3 /* round of play */ + 6 /* their hand */
             );
             expect(game.dealer.equalsOther(playerTwo)).toBe(true);
+        });
+        it("knows how to play one round", function () {
+            playerOne.hand =
+                new CribbageHand([aceOfClubs, aceOfHearts, twoOfDiamonds, nineOfDiamonds, tenOfClubs, queenOfDiamonds]);
+            playerTwo.hand =
+                new CribbageHand([threeOfClubs, fourOfSpades, sixOfSpades, sevenOfClubs, jackOfHearts, kingOfSpades]);
+            game.dealer = playerOne;
+            game.nextPlayerInSequence = playerTwo;
+            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([nineOfDiamonds, tenOfClubs]));
+            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([jackOfHearts, kingOfSpades]));
+            game.cut = new BaseCard(Suit.Spades, Value.Two);
+            game.playersInPlay.addItems(game.players.items);
+            game.playCard(playerTwo.name, threeOfClubs);
+            game.playCard(playerOne.name, queenOfDiamonds);
+            game.playCard(playerTwo.name, sixOfSpades);
+            game.playCard(playerOne.name, twoOfDiamonds);
+            game.playCard(playerTwo.name, sevenOfClubs);
+            game.playCard(playerOne.name, aceOfHearts);
+            game.go(playerTwo.name);
+            spyOn(game, "roundOverResetState");
+            game.playCard(playerOne.name, aceOfClubs);
+            expect(game.roundOverResetState).not.toHaveBeenCalled();
         });
     });
     describe("Test player playing cards after other player says 'go'", function() {

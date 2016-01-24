@@ -299,7 +299,7 @@ var Cribbage = (function (_super) {
             else if (this.playersInPlay.countItems() == 0) {
                 this.resetSequence(null);
                 this.setNextPlayerInSequence(player);
-                response.message += "\n                " + this.roundOverStr();
+                response.message += "\n                " + this.describe();
             }
             else {
                 this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
