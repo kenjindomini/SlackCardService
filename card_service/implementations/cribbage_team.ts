@@ -34,7 +34,7 @@ export class CribbageTeam extends BaseTeam<CribbagePlayer> {
         if (index == -1) {
             throw CribbageTeamErrorStrings.PLAYER_NOT_ON_TEAM;
         }
-        this.items[index].addPoints(points);
+        this.itemAt(index).addPoints(points);
         return (this.countPoints() > 120);
     }
     hasPlayer(player: CribbagePlayer):boolean {

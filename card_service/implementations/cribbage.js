@@ -3,6 +3,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var card_1 = require("../base_classes/items/card");
 var card_game_1 = require("../base_classes/card_game");
 var item_collection_1 = require("../base_classes/collections/item_collection");
 var cribbage_hand_1 = require("./cribbage_hand");
@@ -224,6 +225,9 @@ var Cribbage = (function (_super) {
         }
         if (this.kitty.size() == 4) {
             this.cutTheDeck();
+            if (this.cut.value == card_1.Value.Jack) {
+                this.findTeam(this.dealer).addPoints(this.dealer, 2);
+            }
         }
     };
     Cribbage.prototype.playCard = function (playerName, card) {

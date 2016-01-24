@@ -29,7 +29,7 @@ var CribbageTeam = (function (_super) {
         if (index == -1) {
             throw CribbageTeamErrorStrings.PLAYER_NOT_ON_TEAM;
         }
-        this.items[index].addPoints(points);
+        this.itemAt(index).addPoints(points);
         return (this.countPoints() > 120);
     };
     CribbageTeam.prototype.hasPlayer = function (player) {

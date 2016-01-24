@@ -6,14 +6,13 @@
 /// <reference path="cribbage_team.ts" />
 /// <reference path="standard_deck.ts" />
 
-import {BaseCard as Card} from "../base_classes/items/card";
+import {BaseCard as Card, Value} from "../base_classes/items/card";
 import {BaseCardGame as CardGame, Players, Teams, Sequence, removeLastTwoChars} from "../base_classes/card_game";
 import {ItemCollection} from "../base_classes/collections/item_collection";
 import {CribbageHand} from "./cribbage_hand";
 import {CribbagePlayer} from "./cribbage_player";
 import {CribbageTeam} from "./cribbage_team";
 import {StandardDeck} from "./standard_deck";
-import {BaseCard} from "../base_classes/items/card";
 
 "use strict";
 
@@ -218,6 +217,10 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         if (this.kitty.size() == 4) {
             // Cut the deck and allow play to begin
             this.cutTheDeck();
+            if (this.cut.value == Value.Jack) {
+                // Give the dealer 2 points
+                this.findTeam(this.dealer).addPoints(this.dealer, 2);
+            }
         }
     }
 
@@ -669,7 +672,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * Draw a card from the deck
      * @returns {BaseCard}
      */
-    private draw():BaseCard {
+    private draw():Card {
         return this.deck.draw();
     }
 
