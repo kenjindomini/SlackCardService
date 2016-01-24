@@ -387,6 +387,9 @@ var CribbageRoutes;
                         throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
                     else if (cards.length > 1)
                         throw CribbageStrings.ErrorStrings.TOO_MANY_CARDS;
+                    else if (card.suit == undefined || card.value == undefined) {
+                        throw "Parsing the card failed without throwing, so I'm doing it now!";
+                    }
                     var card = cards[0];
                     var cribRes = this.currentGame.playCard(player, card);
                     gameOver = cribRes.gameOver;
