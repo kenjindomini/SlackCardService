@@ -26,6 +26,7 @@ describe("Test a Cribbage game between two players", function() {
         twoOfDiamonds = new BaseCard(Suit.Diamonds, Value.Two),
         twoOfClubs = new BaseCard(Suit.Clubs, Value.Two),
         threeOfSpades = new BaseCard(Suit.Spades, Value.Three),
+        threeOfHearts = new BaseCard(Suit.Hearts, Value.Three),
         fourOfHearts = new BaseCard(Suit.Hearts, Value.Four),
         fourOfSpades = new BaseCard(Suit.Spades, Value.Four),
         fourOfClubs = new BaseCard(Suit.Clubs, Value.Four),
@@ -182,19 +183,6 @@ describe("Test a Cribbage game between two players", function() {
         expect(game.playersInPlay.indexOfItem(playerTwo)).toBe(0); // nobody should be left
         expect(game.count).toEqual(0); // expect the game to have reset the sequence
     });
-    describe("Test various counting scenarios", function() {
-        it("counts correctly", function() {
-            playerOne.hand =
-                new CribbageHand([aceOfClubs, fourOfHearts, eightOfClubs, eightOfHearts, nineOfDiamonds, tenOfClubs]);
-            playerTwo.hand =
-                new CribbageHand([aceOfDiamonds, aceOfSpades, sixOfSpades, tenOfDiamonds, kingOfClubs, kingOfHearts]);
-            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([nineOfDiamonds, tenOfClubs]));
-            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([kingOfClubs, kingOfHearts]));
-            game.cut = new BaseCard(Suit.Spades, Value.Queen);
-            expect(playerOne.countPoints(game.cut)).toEqual(4); // 15 for two points and a pair makes four points
-            expect(playerTwo.countPoints(game.cut)).toEqual(6); // 15 for four points and a pair makes six points
-        });
-    });
     describe("Test with fixed hands, starting at 0 points", function() {
         beforeEach(function () {
             playerOne.hand =
@@ -205,7 +193,7 @@ describe("Test a Cribbage game between two players", function() {
             game.nextPlayerInSequence = playerTwo;
             game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([nineOfDiamonds, tenOfClubs]));
             game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([kingOfClubs, kingOfHearts]));
-            game.cut = new BaseCard(Suit.Spades, Value.King);
+            game.cut = kingOfSpades;
             game.playersInPlay.addItems(game.players.items);
         });
         it("takes cards from the players hands when they give to the kitty", function () {
@@ -396,13 +384,13 @@ describe("Test a Cribbage game between two players", function() {
             countPoints() {
                 return this.sequence.countPoints();
             }
-            static makeSequence(cards: Array<BaseCard>) {
+            static makeSequence(cards: Array<BaseCard>): Sequence {
                 var seq = new Sequence();
                 seq.addCards(cards);
                 return seq;
             }
-            static getAllPermutations(sequence: Sequence) {
-                var permutations = new Array<Array<BaseCard>>();
+            static getAllPermutations(sequence: Sequence): Array<Sequence> {
+                var permutations:Array<Array<BaseCard>> = [];
                 function permute(input: Array<BaseCard>, memo?: any) {
                     var cur, memo = memo || [];
                     for (var i = 0; i < input.length; i++) {

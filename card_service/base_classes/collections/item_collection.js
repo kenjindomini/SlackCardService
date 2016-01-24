@@ -3,6 +3,9 @@ var ItemCollection = (function () {
     function ItemCollection(items) {
         this.items = items;
     }
+    ItemCollection.prototype.deepCopy = function () {
+        return new ItemCollection(this.items.slice());
+    };
     ItemCollection.prototype.indexOfItem = function (item) {
         var index = -1;
         for (var ix = 0; ix < this.items.length; ix++) {
@@ -41,6 +44,23 @@ var ItemCollection = (function () {
             throw "Index out of bounds!";
         }
         return this.items[index];
+    };
+    ItemCollection.prototype.equalsOther = function (other) {
+        var equals = true;
+        for (var ix = 0; ix < this.items.length; ix++) {
+            var matched = false;
+            for (var jx = 0; jx < other.items.length; jx++) {
+                if (this.items[ix].equalsOther(other.items[jx])) {
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                equals = false;
+                break;
+            }
+        }
+        return equals;
     };
     return ItemCollection;
 })();

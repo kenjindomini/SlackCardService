@@ -4,6 +4,7 @@
 import {BaseHand} from "../base_classes/collections/hand";
 import {BaseCard as Card, Suit, Value} from "../base_classes/items/card";
 import {Sequence} from "../base_classes/card_game";
+import {ItemCollection} from "../base_classes/collections/item_collection";
 
 "use strict";
 
@@ -22,18 +23,18 @@ export class CribbageHand extends BaseHand {
     }
     countPoints(cutCard: Card, mustHaveFiveCardFlush: boolean) {
         var points = 0;
-        // Count 15s
         this.takeCard(cutCard);
-        points = (2 * this.countFifteens());
         // Count pairs
         points += this.countPairs();
+        // Count 15s
+        points += this.countFifteens(0, 0);
         // Count runs
         var runLength = this.countRuns();
         if (runLength.runLength >= 3) {
             points += (runLength.runLength * runLength.numRuns);
         }
         // Count the right jack
-        if (this.indexOfItem(new Card(Suit.Spades, Value.Jack)) != -1) {
+        if (cutCard.value != Value.Jack && this.indexOfItem(new Card(cutCard.suit, Value.Jack)) != -1) {
             points++;
         }
         // Count flush
@@ -43,17 +44,17 @@ export class CribbageHand extends BaseHand {
         }
         return points;
     }
-    static getCardValue(value: number) {
-        if (value > 10) {
+    static getCardValue(card: Card) {
+        if (card.value > 10) {
             return 10;
         }
         else {
-            return value;
+            return card.value;
         }
     }
-    private findDuplicates(hand: CribbageHand): Array<Card> {
+    private static findDuplicates(hand: CribbageHand): Array<Card> {
         hand.sortCards();
-        var duplicates = new Array<Card>();
+        var duplicates:Array<Card> = [];
         for (var index = hand.size() - 1; index >= 0; index--) {
             var card = hand.itemAt(index);
             for (var subIx = index-1; subIx >= 0; subIx--) {
@@ -67,9 +68,14 @@ export class CribbageHand extends BaseHand {
         }
         return duplicates;
     }
+
+    /**
+     * Count the points from pairs
+     * @returns {number} the number of points gained from the pairs
+     */
     private countPairs(): number {
         var hand = this.makeCopy();
-        var duplicates = this.findDuplicates(hand);
+        var duplicates = CribbageHand.findDuplicates(hand);
         var points = 0;
         for (var ix = 0; ix < duplicates.length; ix++) {
             var dup = duplicates[ix];
@@ -87,26 +93,24 @@ export class CribbageHand extends BaseHand {
     private countRuns(): RunLength {
         // Separate out the duplicates
         var hand = this.makeCopy();
-        var duplicates = this.findDuplicates(hand);
+        var duplicates = CribbageHand.findDuplicates(hand);
         // Check for a run - if there is, then see if the duplicates can be used for additional runs
         hand.sortCards();
-        var longestRun = new Array<Card>();
+        var longestRun:Array<Card> = [];
         (function findLongestRun(aHand: CribbageHand) {
             if (aHand.size() >= 3) {
                 aHand.sortCards();
                 var counter = 0;
                 var subLongestCards = [aHand.itemAt(counter++), aHand.itemAt(counter++), aHand.itemAt(counter++)];
                 var subLongest = [subLongestCards[0].value, subLongestCards[1].value, subLongestCards[2].value];
-                var isSequential = Sequence.isSequentialAscending(subLongest);
-                if (isSequential) {
-                    while (isSequential) {
-                        if (counter < aHand.size()) {
+                while (Sequence.isSequentialAscending(subLongest)) {
+                    if (counter < aHand.size()) {
+                        subLongest.push(aHand.itemAt(counter++).value);
+                        if (Sequence.isSequentialAscending(subLongest))
                             subLongestCards.push(aHand.itemAt(counter));
-                            subLongest.push(subLongestCards[counter++].value);
-                        }
-                        else {
-                            break;
-                        }
+                    }
+                    else {
+                        break;
                     }
                     if (subLongestCards.length > longestRun.length) {
                         longestRun = subLongestCards;
@@ -147,32 +151,22 @@ export class CribbageHand extends BaseHand {
         return Math.max.apply(Math, [hearts, spades, diamonds, clubs]);
     }
     private makeCopy(): CribbageHand {
-        var cards = new Array<Card>();
+        var cards:Array<Card> = [];
         for (var index = 0; index < this.size(); index++) {
             var card = this.itemAt(index);
             cards.push(new Card(card.suit, card.value));
         }
         return new CribbageHand(cards);
     }
-    private countFifteens(): number {
-        return this.countMatches(0, this.makeCopy());
-    }
-    private countMatches(value: number, hand: CribbageHand): number {
-        var matches = 0;
-        var match = (15-value);
-        hand.sortCards();
-        for (var index = hand.size()-1; index >= 0; index--) {
-            var card = hand.itemAt(index);
-            var cardValue = card.value;
-            if (cardValue == match) {
-                matches++;
-            }
+    private countFifteens(j: number, total: number): number {
+        var score = 0;
+        for (; j < 5; j++) {
+            var subtotal = (total + CribbageHand.getCardValue(this.itemAt(j)));
+            if (subtotal == 15)
+                score += 2;
+            else if (subtotal < 15)
+                score += this.countFifteens(j+1, subtotal);
         }
-        if (hand.size() > 1) {
-            var next = hand.itemAt(0);
-            hand.playCard(next);
-            matches += this.countMatches(next.value, hand);
-        }
-        return matches;
+        return score;
     }
 }

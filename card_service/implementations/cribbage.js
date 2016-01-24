@@ -18,20 +18,76 @@ var Mode;
 var CribbageErrorStrings = (function () {
     function CribbageErrorStrings() {
     }
-    CribbageErrorStrings.INVALID_NUMBER_OF_PLAYERS = "Invalid number of players";
-    CribbageErrorStrings.INVALID_NUM_CARDS_THROWN_TO_KITTY = "Invalid number of cards given to the kitty";
-    CribbageErrorStrings.DUPLICATE_CARD_THROWN_TO_KITTY = "You must throw two UNIQUE cards to the kitty";
-    CribbageErrorStrings.INVALID_THROWER = "You aren't allowed to throw any cards!";
-    CribbageErrorStrings.KITTY_NOT_READY = "The kitty still needs people to throw to it";
-    CribbageErrorStrings.KITTY_IS_READY = "The kitty already has all the cards it needs.";
-    CribbageErrorStrings.EXCEEDS_31 = "Exceeds 31";
-    CribbageErrorStrings.FMT_NOT_NEXT_PLAYER = "The next player is ";
-    CribbageErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD = "You don't have ";
-    CribbageErrorStrings.PLAYER_DOES_NOT_EXIST = "You're not part of the game!";
-    CribbageErrorStrings.PLAYER_ALREADY_IN_GAME = "You're already in the game";
-    CribbageErrorStrings.PLAYER_CAN_PLAY = "You have a card you can still play";
-    CribbageErrorStrings.PLAYER_NOT_IN_PLAY = "You've already said \"go\"";
-    CribbageErrorStrings.GAME_HAS_ALREADY_BEGUN = "The game has already begun!";
+    Object.defineProperty(CribbageErrorStrings, "INVALID_NUMBER_OF_PLAYERS", {
+        get: function () { return "Invalid number of players"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CribbageErrorStrings, "INVALID_NUM_CARDS_THROWN_TO_KITTY", {
+        get: function () { return "Invalid number of cards given to the kitty"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CribbageErrorStrings, "DUPLICATE_CARD_THROWN_TO_KITTY", {
+        get: function () { return "You must throw two UNIQUE cards to the kitty"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CribbageErrorStrings, "INVALID_THROWER", {
+        get: function () { return "You aren't allowed to throw any cards!"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CribbageErrorStrings, "KITTY_NOT_READY", {
+        get: function () { return "The kitty still needs people to throw to it"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CribbageErrorStrings, "KITTY_IS_READY", {
+        get: function () { return "The kitty already has all the cards it needs."; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CribbageErrorStrings, "EXCEEDS_31", {
+        get: function () { return "Exceeds 31"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CribbageErrorStrings, "FMT_NOT_NEXT_PLAYER", {
+        get: function () { return "The next player is "; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CribbageErrorStrings, "FMT_PLAYER_DOESNT_HAVE_CARD", {
+        get: function () { return "You don't have "; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CribbageErrorStrings, "PLAYER_DOES_NOT_EXIST", {
+        get: function () { return "You're not part of the game!"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CribbageErrorStrings, "PLAYER_ALREADY_IN_GAME", {
+        get: function () { return "You're already in the game"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CribbageErrorStrings, "PLAYER_CAN_PLAY", {
+        get: function () { return "You have a card you can still play"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CribbageErrorStrings, "PLAYER_NOT_IN_PLAY", {
+        get: function () { return "You've already said \"go\""; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CribbageErrorStrings, "GAME_HAS_ALREADY_BEGUN", {
+        get: function () { return "The game has already begun!"; },
+        enumerable: true,
+        configurable: true
+    });
     return CribbageErrorStrings;
 })();
 exports.CribbageErrorStrings = CribbageErrorStrings;
@@ -181,7 +237,7 @@ var Cribbage = (function (_super) {
         }
         while (true) {
             var team = this.teams.findTeam(player);
-            var cardValue = cribbage_hand_1.CribbageHand.getCardValue(card.value);
+            var cardValue = cribbage_hand_1.CribbageHand.getCardValue(card);
             if ((this.count + cardValue) > 31) {
                 throw CribbageErrorStrings.EXCEEDS_31;
             }
@@ -213,16 +269,24 @@ var Cribbage = (function (_super) {
                 }
             }
             if (this.roundOver()) {
-                response.message += "\n                " + this.roundOverResetState();
-                if (!is31)
-                    points++;
+                response.message = player.name + " gets a point for a go.";
                 if (team.addPoints(player, 1)) {
                     this.winningTeam = team;
                     response.gameOver = true;
-                    response.message = "Game over!";
-                    break;
+                    response.message += "\nGame Over!";
                 }
-                response.message += "\n                 " + this.roundOverStr();
+                else {
+                    response.message += "\n                " + this.roundOverResetState();
+                    if (!is31)
+                        points++;
+                    if (team.addPoints(player, 1)) {
+                        this.winningTeam = team;
+                        response.gameOver = true;
+                        response.message = "\nGame over!";
+                        break;
+                    }
+                    response.message += "\n                 " + this.roundOverStr();
+                }
             }
             else if (is31) {
                 this.resetSequence(player);

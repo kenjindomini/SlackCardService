@@ -23,20 +23,20 @@ enum Mode {
 }
 
 export class CribbageErrorStrings {
-    static INVALID_NUMBER_OF_PLAYERS: string = "Invalid number of players";
-    static INVALID_NUM_CARDS_THROWN_TO_KITTY: string = "Invalid number of cards given to the kitty";
-    static DUPLICATE_CARD_THROWN_TO_KITTY: string = "You must throw two UNIQUE cards to the kitty";
-    static INVALID_THROWER: string = "You aren't allowed to throw any cards!";
-    static KITTY_NOT_READY: string = "The kitty still needs people to throw to it";
-    static KITTY_IS_READY: string = "The kitty already has all the cards it needs.";
-    static EXCEEDS_31: string = "Exceeds 31";
-    static FMT_NOT_NEXT_PLAYER: string = "The next player is ";
-    static FMT_PLAYER_DOESNT_HAVE_CARD: string = "You don't have ";
-    static PLAYER_DOES_NOT_EXIST: string = "You're not part of the game!";
-    static PLAYER_ALREADY_IN_GAME: string = "You're already in the game";
-    static PLAYER_CAN_PLAY: string = "You have a card you can still play";
-    static PLAYER_NOT_IN_PLAY: string = "You've already said \"go\"";
-    static GAME_HAS_ALREADY_BEGUN: string = "The game has already begun!";
+    static get INVALID_NUMBER_OF_PLAYERS(): string { return "Invalid number of players"; }
+    static get INVALID_NUM_CARDS_THROWN_TO_KITTY(): string { return "Invalid number of cards given to the kitty"; }
+    static get DUPLICATE_CARD_THROWN_TO_KITTY(): string { return "You must throw two UNIQUE cards to the kitty"; }
+    static get INVALID_THROWER(): string { return "You aren't allowed to throw any cards!"; }
+    static get KITTY_NOT_READY(): string { return "The kitty still needs people to throw to it"; }
+    static get KITTY_IS_READY(): string { return "The kitty already has all the cards it needs."; }
+    static get EXCEEDS_31(): string { return "Exceeds 31"; }
+    static get FMT_NOT_NEXT_PLAYER(): string { return "The next player is "; }
+    static get FMT_PLAYER_DOESNT_HAVE_CARD(): string { return "You don't have "; }
+    static get PLAYER_DOES_NOT_EXIST(): string { return "You're not part of the game!"; }
+    static get PLAYER_ALREADY_IN_GAME(): string { return "You're already in the game"; }
+    static get PLAYER_CAN_PLAY(): string { return "You have a card you can still play"; }
+    static get PLAYER_NOT_IN_PLAY(): string { return "You've already said \"go\""; }
+    static get GAME_HAS_ALREADY_BEGUN(): string { return "The game has already begun!"; }
 }
 
 export class CribbageGameDescription {
@@ -245,7 +245,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         }
         while (true) {
             var team = this.teams.findTeam(player);
-            var cardValue = CribbageHand.getCardValue(card.value);
+            var cardValue = CribbageHand.getCardValue(card);
             if ((this.count + cardValue) > 31) {
                 throw CribbageErrorStrings.EXCEEDS_31;
             }
@@ -278,18 +278,28 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 }
             }
             if (this.roundOver()) {
-                response.message += `
-                ${this.roundOverResetState()}`;
-                if (!is31)
-                    points++;
+                // The last player to play gets a point for a go
+                response.message = `${player.name} gets a point for a go.`;
                 if (team.addPoints(player, 1)) {
+                    // Game over
                     this.winningTeam = team;
                     response.gameOver = true;
-                    response.message = "Game over!";
-                    break;
+                    response.message += "\nGame Over!";
                 }
-                response.message += `
+                else {
+                    response.message += `
+                ${this.roundOverResetState()}`;
+                    if (!is31)
+                        points++;
+                    if (team.addPoints(player, 1)) {
+                        this.winningTeam = team;
+                        response.gameOver = true;
+                        response.message = "\nGame over!";
+                        break;
+                    }
+                    response.message += `
                  ${this.roundOverStr()}`;
+                }
             }
             else if (is31) {
                 // Reset the sequence
@@ -429,7 +439,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         var player = this.findPlayer(playerName);
         if (player != null) {
             console.log(`Found ${playerName}, now iterate the cards in their hand`);
-            hand = this.printHand(player.hand);
+            hand = this.printHand(<CribbageHand>player.hand);
             console.log(`${playerName} has hand ${hand}`);
         }
         else {
@@ -523,7 +533,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 break;
             }
             ret.message += `
-            ${countingPlayer.name} has hand ${this.printHand(countingPlayer.hand)} and scored ${points} points.`;
+            ${countingPlayer.name} has hand ${this.printHand(<CribbageHand>countingPlayer.hand)} and scored ${points} points.`;
             if (this.dealer.equalsOther(countingPlayer)) {
                 // Add the kitty up
                 points = this.kitty.countPoints(this.cut, true);
