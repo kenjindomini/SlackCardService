@@ -4,6 +4,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var team_1 = require("../base_classes/collections/team");
+var card_game_1 = require("../base_classes/card_game");
 "use strict";
 var CribbageTeamErrorStrings = (function () {
     function CribbageTeamErrorStrings() {
@@ -37,6 +38,13 @@ var CribbageTeam = (function (_super) {
     };
     CribbageTeam.prototype.numPlayers = function () {
         return this.countItems();
+    };
+    CribbageTeam.prototype.printTeam = function () {
+        var team = "";
+        for (var ix = 0; ix < this.numPlayers(); ix++) {
+            team += this.itemAt(ix).name + ", ";
+        }
+        return card_game_1.removeLastTwoChars(team);
     };
     return CribbageTeam;
 })(team_1.BaseTeam);

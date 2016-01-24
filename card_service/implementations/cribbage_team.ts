@@ -5,6 +5,7 @@
 import {ItemCollection} from "../base_classes/collections/item_collection";
 import {CribbagePlayer} from "./cribbage_player";
 import {BaseTeam} from "../base_classes/collections/team";
+import {removeLastTwoChars} from "../base_classes/card_game";
 
 "use strict";
 
@@ -42,5 +43,12 @@ export class CribbageTeam extends BaseTeam<CribbagePlayer> {
     }
     numPlayers():number {
         return this.countItems();
+    }
+    printTeam():string {
+        var team = "";
+        for (var ix = 0; ix < this.numPlayers(); ix++) {
+            team += `${this.itemAt(ix).name}, `;
+        }
+        return removeLastTwoChars(team);
     }
 }

@@ -438,7 +438,7 @@ var Cribbage = (function (_super) {
     };
     Cribbage.prototype.setGameOver = function (winningTeam) {
         this.winningTeam = winningTeam;
-        return new CribbageReturn(true, MessageStrings.GAME_OVER);
+        return new CribbageReturn(true, MessageStrings.GAME_OVER + " Winning team: " + this.winningTeam.printTeam());
     };
     Cribbage.prototype.printHand = function (hand) {
         var handStr = "";

@@ -466,7 +466,10 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
 
     private setGameOver(winningTeam: CribbageTeam):CribbageReturn {
         this.winningTeam = winningTeam;
-        return new CribbageReturn(true, MessageStrings.GAME_OVER);
+        return new CribbageReturn(
+            true,
+            `${MessageStrings.GAME_OVER} Winning team: ${this.winningTeam.printTeam()}`
+        );
     }
 
     private printHand(hand:CribbageHand):string {
