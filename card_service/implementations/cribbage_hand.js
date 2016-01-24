@@ -31,7 +31,15 @@ var CribbageHand = (function (_super) {
         if (cutCard.value != card_1.Value.Jack && this.indexOfItem(new card_1.BaseCard(cutCard.suit, card_1.Value.Jack)) != -1) {
             points++;
         }
-        var numInFlush = this.countFlush();
+        var numInFlush = 0;
+        if (mustHaveFiveCardFlush) {
+            numInFlush = this.countFlush();
+        }
+        else {
+            this.removeItem(cutCard);
+            numInFlush = this.countFlush();
+            this.addItem(cutCard);
+        }
         if (numInFlush >= (mustHaveFiveCardFlush ? 5 : 4)) {
             points += numInFlush;
         }

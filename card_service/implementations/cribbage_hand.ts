@@ -38,7 +38,15 @@ export class CribbageHand extends BaseHand {
             points++;
         }
         // Count flush
-        var numInFlush = this.countFlush();
+        var numInFlush = 0;
+        if (mustHaveFiveCardFlush) {
+            numInFlush = this.countFlush();
+        }
+        else {
+            this.removeItem(cutCard);
+            numInFlush = this.countFlush();
+            this.addItem(cutCard);
+        }
         if (numInFlush >= (mustHaveFiveCardFlush ? 5 : 4)) {
             points += numInFlush;
         }
