@@ -215,7 +215,7 @@ var CribbageRoutes;
             var cards = [];
             var ix = 0;
             while (ix < textLen) {
-                var charValue = text[ix].toLowerCase(), charSuit = text[ix + 1].toLowerCase();
+                var charValue = text.charAt(ix).toLowerCase(), charSuit = text.charAt(ix + 1).toLowerCase();
                 var value, suit;
                 switch (charValue) {
                     case 'a':
@@ -251,7 +251,7 @@ var CribbageRoutes;
                         else
                             value = card_1.Value.Ten;
                         if (ix + 2 < textLen) {
-                            charSuit = text[ix + 2].toLowerCase();
+                            charSuit = text.charAt(ix + 2).toLowerCase();
                             ix++;
                         }
                         break;

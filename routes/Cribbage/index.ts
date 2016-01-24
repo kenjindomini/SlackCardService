@@ -192,7 +192,7 @@ export module CribbageRoutes {
             var cards = [];
             var ix = 0;
             while (ix < textLen) {
-                var charValue = text[ix].toLowerCase(), charSuit = text[ix+1].toLowerCase();
+                var charValue = text.charAt(ix).toLowerCase(), charSuit = text.charAt(ix+1).toLowerCase();
                 var value: Value, suit: Suit;
                 switch (charValue) {
                     case 'a': value = Value.Ace; break;
@@ -211,7 +211,7 @@ export module CribbageRoutes {
                             value = Value.Ten;
                         // set the suit character to the next character
                         if (ix + 2 < textLen) {
-                            charSuit = text[ix+2].toLowerCase();
+                            charSuit = text.charAt(ix+2).toLowerCase();
                             ix++;
                         }
                         break;
