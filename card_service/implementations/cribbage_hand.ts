@@ -110,6 +110,9 @@ export class CribbageHand extends BaseHand {
                             subLongestCards.push(aHand.itemAt(counter));
                     }
                     else {
+                        if (subLongestCards.length > longestRun.length) {
+                            longestRun = subLongestCards;
+                        }
                         break;
                     }
                     if (subLongestCards.length > longestRun.length) {

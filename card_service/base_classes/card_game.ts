@@ -138,7 +138,6 @@ export class Sequence implements IItem {
             last = next;
         }
         return sequential;
-
     }
     private findLongestReverseSequence() {
         var numItems = this.cards.countItems();

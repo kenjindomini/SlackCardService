@@ -44,6 +44,7 @@ describe("Test a Cribbage game between two players", function() {
         tenOfClubs = new BaseCard(Suit.Clubs, Value.Ten),
         tenOfDiamonds = new BaseCard(Suit.Diamonds, Value.Ten),
         jackOfSpades = new BaseCard(Suit.Spades, Value.Jack),
+        jackOfClubs = new BaseCard(Suit.Clubs, Value.Jack),
         jackOfHearts = new BaseCard(Suit.Hearts, Value.Jack),
         queenOfClubs = new BaseCard(Suit.Clubs, Value.Queen),
         queenOfHearts = new BaseCard(Suit.Hearts, Value.Queen),
@@ -85,6 +86,10 @@ describe("Test a Cribbage game between two players", function() {
         it("counts correctly", function() {
             var hand = new CribbageHand([twoOfClubs, threeOfSpades, threeOfHearts, jackOfSpades]);
             expect(hand.countPoints(queenOfSpades, false)).toEqual(11); // 15 for eight points + a pair + right jack makes 11 points
+        });
+        it("counts correctly", function() {
+            var hand = new CribbageHand([eightOfDiamonds, jackOfClubs, queenOfSpades, kingOfHearts]);
+            expect(hand.countPoints(eightOfClubs, true)).toEqual(6); // A pair + a run of 3 + right jack makes 6 points
         });
     });
 });

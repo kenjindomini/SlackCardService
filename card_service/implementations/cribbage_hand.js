@@ -96,6 +96,9 @@ var CribbageHand = (function (_super) {
                             subLongestCards.push(aHand.itemAt(counter));
                     }
                     else {
+                        if (subLongestCards.length > longestRun.length) {
+                            longestRun = subLongestCards;
+                        }
                         break;
                     }
                     if (subLongestCards.length > longestRun.length) {
