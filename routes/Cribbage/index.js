@@ -388,6 +388,9 @@ var CribbageRoutes;
                     else if (cards.length > 1)
                         throw CribbageStrings.ErrorStrings.TOO_MANY_CARDS;
                     var card = cards[0];
+                    if (card == undefined || card.suit == undefined || card.value == undefined) {
+                        throw "Parsing the card failed without throwing, so I'm doing it now!";
+                    }
                     var cribRes = this.currentGame.playCard(player, card);
                     gameOver = cribRes.gameOver;
                     var responseText = cribRes.message;
