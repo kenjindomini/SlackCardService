@@ -246,7 +246,7 @@ var CribbageRoutes;
             if (this.currentGame == null) {
                 this.currentGame = new cribbage_1.Cribbage(new card_game_1.Players([newPlayer]));
             }
-            else if (!Router.verifyRequest(req, Routes.joinGame)) {
+            if (!Router.verifyRequest(req, Routes.joinGame)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
             else {

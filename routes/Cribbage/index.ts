@@ -233,7 +233,7 @@ export module CribbageRoutes {
             if (this.currentGame == null) {
                 this.currentGame = new Cribbage(new Players([newPlayer]))
             }
-            else if (!Router.verifyRequest(req, Routes.joinGame)) {
+            if (!Router.verifyRequest(req, Routes.joinGame)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
             else {

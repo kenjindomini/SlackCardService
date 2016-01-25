@@ -444,6 +444,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         if (this.findPlayer(player.name)) {
             throw ErrorStrings.PLAYER_ALREADY_IN_GAME;
         }
+        else if (this.hasBegun) {
+            throw ErrorStrings.GAME_HAS_ALREADY_BEGUN;
+        }
         else {
             this.players.addPlayer(player);
         }
