@@ -272,19 +272,23 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         }
         while (true) {
             var team = this.teams.findTeam(player);
+            console.log(`playCard: getting card value from ${card.toString()}`);
             var cardValue = CribbageHand.getCardValue(card);
             if ((this.count + cardValue) > 31) {
                 throw ErrorStrings.EXCEEDS_31;
             }
+            console.log(`playCard: about to play the card ${card.toString()}`);
             if (!player.playCard(card)) {
                 throw `${ErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD} the ${card.toString()}!`;
             }
+            console.log(`playCard: played card ${card.toString()}`);
             this.lastPlayerToPlay = player;
             if (player.hand.size() == 0) {
                 // The player played their last card, remove them from the round of play
                 this.playersInPlay.removeItem(player);
             }
             this.count += cardValue;
+            console.log(`playCard: adding card ${card.toString()} to the sequence`);
             var points = this.sequence.addCard(card);
             if (points > 0) {
                 if (team.addPoints(player, points)) {
@@ -301,17 +305,20 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 }
             }
             if (this.roundOver()) {
+                console.log(`playCard: round over!`);
                 // The last player to play gets a point for a go
                 response.message = `${player.name} gets a point for a go`;
                 if (points > 0) {
                     response.message += ` in addition to ${points} points`;
                 }
+                console.log(`playCard: round over adding one point`);
                 if (team.addPoints(player, 1)) {
                     // Game over
                     response = this.setGameOver(team);
                     break;
                 }
                 else {
+                    console.log(`playCard: round over setting the response message`);
                     response.message += `
                 ${this.roundOverResetState()}`;
                     if (!is31)

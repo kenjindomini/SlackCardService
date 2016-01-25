@@ -335,6 +335,7 @@ var CribbageRoutes;
             }
             else {
                 try {
+                    console.log("index.playCard: parsing cards");
                     var cards = Router.parseCards(req.body.text);
                     if (cards.length == 0)
                         throw cribbage_1.CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
@@ -344,7 +345,9 @@ var CribbageRoutes;
                     if (card == undefined || card.suit == undefined || card.value == undefined) {
                         throw "Parsing the card failed without throwing, so I'm doing it now!";
                     }
+                    console.log("index.playCard: parsed " + card.toString());
                     var cribRes = this.currentGame.playCard(player, card);
+                    console.log("index.playCard: played " + card.toString());
                     gameOver = cribRes.gameOver;
                     var responseText = cribRes.message;
                     var cardStr = (card ? card.toString() : "(oh my, looks like something went horribly wrong)");
