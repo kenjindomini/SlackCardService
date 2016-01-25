@@ -274,7 +274,7 @@ var CribbageRoutes;
                 try {
                     this.currentGame.begin();
                     response.data.text = "" + cribbage_1.CribbageStrings.MessageStrings.FMT_START_GAME + this.currentGame.dealer.name + "'s crib.";
-                    response.data.attachments.push(new CribbageResponseAttachment("" + this.currentGame.printPlayers(), "", "#666"));
+                    response.data.attachments.push(new CribbageResponseAttachment("Players: " + this.currentGame.printPlayers(), "", "#666"));
                 }
                 catch (e) {
                     response = Router.makeResponse(500, "Cannot start the game, an error has occurred: " + e);
