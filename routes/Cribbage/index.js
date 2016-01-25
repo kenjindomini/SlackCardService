@@ -6,53 +6,6 @@ var card_1 = require("../../card_service/base_classes/items/card");
 var item_collection_1 = require("../../card_service/base_classes/collections/item_collection");
 var card_game_2 = require("../../card_service/base_classes/card_game");
 var request = require("request");
-var CribbageStrings;
-(function (CribbageStrings) {
-    var MessageStrings = (function () {
-        function MessageStrings() {
-        }
-        Object.defineProperty(MessageStrings, "START_GAME", {
-            get: function () { return "The game is afoot, throw your cards to the crib."; },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(MessageStrings, "GAME_RESET", {
-            get: function () { return "The game was reset"; },
-            enumerable: true,
-            configurable: true
-        });
-        return MessageStrings;
-    })();
-    CribbageStrings.MessageStrings = MessageStrings;
-    var ErrorStrings = (function () {
-        function ErrorStrings() {
-        }
-        Object.defineProperty(ErrorStrings, "NO_GAME", {
-            get: function () { return "The game hasn't been created. Add some players first."; },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(ErrorStrings, "HAS_BEGUN", {
-            get: function () { return "The game has already begun"; },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(ErrorStrings, "INVALID_CARD_SYNTAX", {
-            get: function () {
-                return "Invalid syntax. Enter your card as (value)(suit), for example enter the five of hearts as 5H.";
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(ErrorStrings, "TOO_MANY_CARDS", {
-            get: function () { return "You can only play one card!"; },
-            enumerable: true,
-            configurable: true
-        });
-        return ErrorStrings;
-    })();
-    CribbageStrings.ErrorStrings = ErrorStrings;
-})(CribbageStrings = exports.CribbageStrings || (exports.CribbageStrings = {}));
 var CribbageRoutes;
 (function (CribbageRoutes) {
     var SlackResponseType;
@@ -207,15 +160,15 @@ var CribbageRoutes;
         };
         Router.parseCards = function (text) {
             if (!text)
-                throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                throw cribbage_1.CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
             text = text.replace(/\s+/g, "");
             var textLen = text.length;
             if (textLen == 0 || textLen == 1)
-                throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                throw cribbage_1.CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
             var cards = [];
             var ix = 0;
             while (ix < textLen) {
-                var charValue = text[ix].toLowerCase(), charSuit = text[ix + 1].toLowerCase();
+                var charValue = text.charAt(ix).toLowerCase(), charSuit = text.charAt(ix + 1).toLowerCase();
                 var value, suit;
                 switch (charValue) {
                     case 'a':
@@ -247,11 +200,11 @@ var CribbageRoutes;
                         break;
                     case '1':
                         if (charSuit != "0")
-                            throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                            throw cribbage_1.CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
                         else
                             value = card_1.Value.Ten;
                         if (ix + 2 < textLen) {
-                            charSuit = text[ix + 2].toLowerCase();
+                            charSuit = text.charAt(ix + 2).toLowerCase();
                             ix++;
                         }
                         break;
@@ -264,7 +217,7 @@ var CribbageRoutes;
                     case 'k':
                         value = card_1.Value.King;
                         break;
-                    default: throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                    default: throw cribbage_1.CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
                 }
                 switch (charSuit) {
                     case 'h':
@@ -279,7 +232,7 @@ var CribbageRoutes;
                     case 'c':
                         suit = card_1.Suit.Clubs;
                         break;
-                    default: throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                    default: throw cribbage_1.CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
                 }
                 cards.push(new card_1.BaseCard(suit, value));
                 ix += 2;
@@ -307,12 +260,12 @@ var CribbageRoutes;
             Router.sendResponse(response, res);
         };
         Router.prototype.beginGame = function (req, res) {
-            var response = Router.makeResponse(200, CribbageStrings.MessageStrings.START_GAME, SlackResponseType.in_channel);
+            var response = Router.makeResponse(200, cribbage_1.CribbageStrings.MessageStrings.START_GAME, SlackResponseType.in_channel);
             if (this.currentGame == null) {
-                response = Router.makeResponse(500, CribbageStrings.ErrorStrings.NO_GAME);
+                response = Router.makeResponse(500, cribbage_1.CribbageStrings.ErrorStrings.NO_GAME);
             }
             else if (this.currentGame.hasBegun) {
-                response = Router.makeResponse(500, CribbageStrings.ErrorStrings.HAS_BEGUN);
+                response = Router.makeResponse(500, cribbage_1.CribbageStrings.ErrorStrings.HAS_BEGUN);
             }
             else if (!Router.verifyRequest(req, Routes.beginGame)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
@@ -337,7 +290,7 @@ var CribbageRoutes;
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
             else if (secret != null && secret == "secret") {
-                response = Router.makeResponse(200, CribbageStrings.MessageStrings.GAME_RESET, SlackResponseType.ephemeral);
+                response = Router.makeResponse(200, cribbage_1.CribbageStrings.MessageStrings.GAME_RESET, SlackResponseType.ephemeral);
                 this.currentGame = new cribbage_1.Cribbage(new card_game_1.Players([]));
                 reset = true;
             }
@@ -384,22 +337,20 @@ var CribbageRoutes;
                 try {
                     var cards = Router.parseCards(req.body.text);
                     if (cards.length == 0)
-                        throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
+                        throw cribbage_1.CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
                     else if (cards.length > 1)
-                        throw CribbageStrings.ErrorStrings.TOO_MANY_CARDS;
+                        throw cribbage_1.CribbageStrings.ErrorStrings.TOO_MANY_CARDS;
                     var card = cards[0];
+                    if (card == undefined || card.suit == undefined || card.value == undefined) {
+                        throw "Parsing the card failed without throwing, so I'm doing it now!";
+                    }
                     var cribRes = this.currentGame.playCard(player, card);
                     gameOver = cribRes.gameOver;
                     var responseText = cribRes.message;
                     response.data.text =
                         player + " played the " + card.toString() + ".\n                        The count is at " + this.currentGame.count + ".\n                        The cards in play are: " + this.currentGame.sequence.toString() + ".\n                        You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
                     if (gameOver) {
-                        var winners = "";
-                        for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
-                            winners += (this.currentGame.players.itemAt(ix).name + ", ");
-                        }
-                        winners = card_game_2.removeLastTwoChars(winners);
-                        response.data.text = "Game over. Winners: " + winners;
+                        response.data.text = responseText;
                     }
                     else if (responseText.length > 0) {
                         if (responseText.indexOf("round over") != -1) {
@@ -466,7 +417,10 @@ var CribbageRoutes;
             else {
                 try {
                     var cribResponse = this.currentGame.go(player);
-                    if (cribResponse.message.length > 0) {
+                    if (cribResponse.gameOver) {
+                        response.data.text = cribResponse.message;
+                    }
+                    else if (cribResponse.message.length > 0) {
                         response.data.text += "\n                        " + cribResponse.message;
                     }
                 }

@@ -98,6 +98,18 @@ var Sequence = (function () {
         ret = removeLastTwoChars(ret);
         return ret;
     };
+    Sequence.prototype.equalsOther = function (other) {
+        if (this.cards.countItems() != other.cards.countItems())
+            return false;
+        var equals = true;
+        for (var ix = 0; ix < this.cards.countItems(); ix++) {
+            if (!this.cards.itemAt(ix).equalsOther(other.cards.itemAt(ix))) {
+                equals = false;
+                break;
+            }
+        }
+        return equals;
+    };
     Sequence.isSequentialAscending = function (array) {
         if (array.length < 3) {
             return true;

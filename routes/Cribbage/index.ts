@@ -6,31 +6,14 @@
 
 import {Request, Response} from "express";
 import {CribbagePlayer} from "../../card_service/implementations/cribbage_player";
-import {Cribbage} from "../../card_service/implementations/cribbage";
+import {Cribbage, CribbageStrings} from "../../card_service/implementations/cribbage";
 import {CribbageHand} from "../../card_service/implementations/cribbage_hand";
 import {Players, Teams} from "../../card_service/base_classes/card_game";
 import {BaseCard as Card, Value, Suit} from "../../card_service/base_classes/items/card";
 import {ItemCollection} from "../../card_service/base_classes/collections/item_collection";
 import {removeLastTwoChars} from "../../card_service/base_classes/card_game";
-import MessageStrings = CribbageStrings.MessageStrings;
 
 var request = require("request");
-
-// Generic messages
-export module CribbageStrings {
-    export class MessageStrings {
-        static get START_GAME():string { return "The game is afoot, throw your cards to the crib."; }
-        static get GAME_RESET():string { return "The game was reset"; }
-    }
-    export class ErrorStrings {
-        static get NO_GAME():string { return "The game hasn't been created. Add some players first."; }
-        static get HAS_BEGUN():string { return "The game has already begun"; }
-        static get INVALID_CARD_SYNTAX():string {
-            return "Invalid syntax. Enter your card as (value)(suit), for example enter the five of hearts as 5H.";
-        }
-        static get TOO_MANY_CARDS():string { return "You can only play one card!"; }
-    }
-}
 
 export module CribbageRoutes {
 
@@ -192,7 +175,7 @@ export module CribbageRoutes {
             var cards = [];
             var ix = 0;
             while (ix < textLen) {
-                var charValue = text[ix].toLowerCase(), charSuit = text[ix+1].toLowerCase();
+                var charValue = text.charAt(ix).toLowerCase(), charSuit = text.charAt(ix+1).toLowerCase();
                 var value: Value, suit: Suit;
                 switch (charValue) {
                     case 'a': value = Value.Ace; break;
@@ -211,7 +194,7 @@ export module CribbageRoutes {
                             value = Value.Ten;
                         // set the suit character to the next character
                         if (ix + 2 < textLen) {
-                            charSuit = text[ix+2].toLowerCase();
+                            charSuit = text.charAt(ix+2).toLowerCase();
                             ix++;
                         }
                         break;
@@ -358,6 +341,9 @@ export module CribbageRoutes {
                     else if (cards.length > 1)
                         throw CribbageStrings.ErrorStrings.TOO_MANY_CARDS;
                     var card = cards[0];
+                    if (card == undefined || card.suit == undefined || card.value == undefined) {
+                        throw "Parsing the card failed without throwing, so I'm doing it now!";
+                    }
                     var cribRes = this.currentGame.playCard(player, card);
                     gameOver = cribRes.gameOver;
                     var responseText = cribRes.message;
@@ -367,13 +353,7 @@ export module CribbageRoutes {
                         The cards in play are: ${this.currentGame.sequence.toString()}.
                         You're up, ${this.currentGame.nextPlayerInSequence.name}.`;
                     if (gameOver) {
-                        var winners = "";
-                        for (var ix = 0; ix < this.currentGame.players.countItems(); ix++) {
-                            winners += (this.currentGame.players.itemAt(ix).name + ", ");
-                        }
-                        // Remove last two chars
-                        winners = removeLastTwoChars(winners);
-                        response.data.text = `Game over. Winners: ${winners}`;
+                        response.data.text = responseText;
                     }
                     else if (responseText.length > 0) {
                         if (responseText.indexOf("round over") != -1) {
@@ -464,7 +444,10 @@ export module CribbageRoutes {
             else {
                 try {
                     var cribResponse = this.currentGame.go(player);
-                    if (cribResponse.message.length > 0) {
+                    if (cribResponse.gameOver) {
+                        response.data.text = cribResponse.message;
+                    }
+                    else if (cribResponse.message.length > 0) {
                         response.data.text += `
                         ${cribResponse.message}`;
                     }

@@ -22,32 +22,40 @@ var CribbageHand = (function (_super) {
     CribbageHand.prototype.countPoints = function (cutCard, mustHaveFiveCardFlush) {
         var points = 0;
         this.takeCard(cutCard);
-        points = (2 * this.countFifteens());
         points += this.countPairs();
+        points += this.countFifteens(0, 0);
         var runLength = this.countRuns();
         if (runLength.runLength >= 3) {
             points += (runLength.runLength * runLength.numRuns);
         }
-        if (this.indexOfItem(new card_1.BaseCard(card_1.Suit.Spades, card_1.Value.Jack)) != -1) {
+        if (cutCard.value != card_1.Value.Jack && this.indexOfItem(new card_1.BaseCard(cutCard.suit, card_1.Value.Jack)) != -1) {
             points++;
         }
-        var numInFlush = this.countFlush();
+        var numInFlush = 0;
+        if (mustHaveFiveCardFlush) {
+            numInFlush = this.countFlush();
+        }
+        else {
+            this.removeItem(cutCard);
+            numInFlush = this.countFlush();
+            this.addItem(cutCard);
+        }
         if (numInFlush >= (mustHaveFiveCardFlush ? 5 : 4)) {
             points += numInFlush;
         }
         return points;
     };
-    CribbageHand.getCardValue = function (value) {
-        if (value > 10) {
+    CribbageHand.getCardValue = function (card) {
+        if (card.value > 10) {
             return 10;
         }
         else {
-            return value;
+            return card.value;
         }
     };
-    CribbageHand.prototype.findDuplicates = function (hand) {
+    CribbageHand.findDuplicates = function (hand) {
         hand.sortCards();
-        var duplicates = new Array();
+        var duplicates = [];
         for (var index = hand.size() - 1; index >= 0; index--) {
             var card = hand.itemAt(index);
             for (var subIx = index - 1; subIx >= 0; subIx--) {
@@ -63,7 +71,7 @@ var CribbageHand = (function (_super) {
     };
     CribbageHand.prototype.countPairs = function () {
         var hand = this.makeCopy();
-        var duplicates = this.findDuplicates(hand);
+        var duplicates = CribbageHand.findDuplicates(hand);
         var points = 0;
         for (var ix = 0; ix < duplicates.length; ix++) {
             var dup = duplicates[ix];
@@ -72,6 +80,7 @@ var CribbageHand = (function (_super) {
                 if (duplicates[subIx].value == dup.value) {
                     matches++;
                     duplicates.splice(subIx, 1);
+                    subIx--;
                 }
             }
             points += (matches == 1 ? 2 : matches == 2 ? 6 : 12);
@@ -80,25 +89,26 @@ var CribbageHand = (function (_super) {
     };
     CribbageHand.prototype.countRuns = function () {
         var hand = this.makeCopy();
-        var duplicates = this.findDuplicates(hand);
+        var duplicates = CribbageHand.findDuplicates(hand);
         hand.sortCards();
-        var longestRun = new Array();
+        var longestRun = [];
         (function findLongestRun(aHand) {
             if (aHand.size() >= 3) {
                 aHand.sortCards();
                 var counter = 0;
                 var subLongestCards = [aHand.itemAt(counter++), aHand.itemAt(counter++), aHand.itemAt(counter++)];
                 var subLongest = [subLongestCards[0].value, subLongestCards[1].value, subLongestCards[2].value];
-                var isSequential = card_game_1.Sequence.isSequentialAscending(subLongest);
-                if (isSequential) {
-                    while (isSequential) {
-                        if (counter < aHand.size()) {
+                while (card_game_1.Sequence.isSequentialAscending(subLongest)) {
+                    if (counter < aHand.size()) {
+                        subLongest.push(aHand.itemAt(counter++).value);
+                        if (card_game_1.Sequence.isSequentialAscending(subLongest))
                             subLongestCards.push(aHand.itemAt(counter));
-                            subLongest.push(subLongestCards[counter++].value);
+                    }
+                    else {
+                        if (subLongestCards.length > longestRun.length) {
+                            longestRun = subLongestCards;
                         }
-                        else {
-                            break;
-                        }
+                        break;
                     }
                     if (subLongestCards.length > longestRun.length) {
                         longestRun = subLongestCards;
@@ -146,33 +156,23 @@ var CribbageHand = (function (_super) {
         return Math.max.apply(Math, [hearts, spades, diamonds, clubs]);
     };
     CribbageHand.prototype.makeCopy = function () {
-        var cards = new Array();
+        var cards = [];
         for (var index = 0; index < this.size(); index++) {
             var card = this.itemAt(index);
             cards.push(new card_1.BaseCard(card.suit, card.value));
         }
         return new CribbageHand(cards);
     };
-    CribbageHand.prototype.countFifteens = function () {
-        return this.countMatches(0, this.makeCopy());
-    };
-    CribbageHand.prototype.countMatches = function (value, hand) {
-        var matches = 0;
-        var match = (15 - value);
-        hand.sortCards();
-        for (var index = hand.size() - 1; index >= 0; index--) {
-            var card = hand.itemAt(index);
-            var cardValue = card.value;
-            if (cardValue == match) {
-                matches++;
-            }
+    CribbageHand.prototype.countFifteens = function (j, total) {
+        var score = 0;
+        for (; j < 5; j++) {
+            var subtotal = (total + CribbageHand.getCardValue(this.itemAt(j)));
+            if (subtotal == 15)
+                score += 2;
+            else if (subtotal < 15)
+                score += this.countFifteens(j + 1, subtotal);
         }
-        if (hand.size() > 1) {
-            var next = hand.itemAt(0);
-            hand.playCard(next);
-            matches += this.countMatches(next.value, hand);
-        }
-        return matches;
+        return score;
     };
     return CribbageHand;
 })(hand_1.BaseHand);
