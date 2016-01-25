@@ -122,14 +122,19 @@ var CribbageHand = (function (_super) {
         if (longestRun.length >= 3) {
             runLength.runLength = longestRun.length;
             runLength.numRuns = 1;
+            var lastDup = null;
             for (var dupIx = 0; dupIx < duplicates.length; dupIx++) {
                 var dup = duplicates[dupIx];
                 for (var runIx = 0; runIx < longestRun.length; runIx++) {
                     var runCard = longestRun[runIx];
                     if (runCard.value == dup.value) {
-                        runLength.numRuns++;
+                        if (lastDup && lastDup.value == dup.value)
+                            runLength.numRuns++;
+                        else
+                            runLength.numRuns *= 2;
                     }
                 }
+                lastDup = dup;
             }
         }
         return runLength;
