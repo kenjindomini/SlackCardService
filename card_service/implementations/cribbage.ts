@@ -68,7 +68,7 @@ export class CribbageGameDescription {
  * Class that will be the return value for route-responding messages
  */
 export class CribbageReturn {
-    constructor(public gameOver:boolean=false, public message:string="") {
+    constructor(public gameOver:boolean=false, public message:string="", public roundOver:boolean=false) {
     }
 }
 
@@ -305,6 +305,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 }
             }
             if (this.roundOver()) {
+                response.roundOver = true;
                 console.log(`playCard: round over!`);
                 // The last player to play gets a point for a go
                 response.message = `${player.name} gets a point for a go`;
@@ -391,6 +392,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 response = this.setGameOver(team);
             }
             else if (this.roundOver()) {
+                response.roundOver = true;
                 this.roundOverResetState();
                 response.message += ` ${this.roundOverStr()}`;
             }

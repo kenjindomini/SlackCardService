@@ -152,11 +152,13 @@ var CribbageGameDescription = (function () {
 })();
 exports.CribbageGameDescription = CribbageGameDescription;
 var CribbageReturn = (function () {
-    function CribbageReturn(gameOver, message) {
+    function CribbageReturn(gameOver, message, roundOver) {
         if (gameOver === void 0) { gameOver = false; }
         if (message === void 0) { message = ""; }
+        if (roundOver === void 0) { roundOver = false; }
         this.gameOver = gameOver;
         this.message = message;
+        this.roundOver = roundOver;
     }
     return CribbageReturn;
 })();
@@ -328,6 +330,7 @@ var Cribbage = (function (_super) {
                 }
             }
             if (this.roundOver()) {
+                response.roundOver = true;
                 console.log("playCard: round over!");
                 response.message = player.name + " gets a point for a go";
                 if (points > 0) {
@@ -393,6 +396,7 @@ var Cribbage = (function (_super) {
                 response = this.setGameOver(team);
             }
             else if (this.roundOver()) {
+                response.roundOver = true;
                 this.roundOverResetState();
                 response.message += " " + this.roundOverStr();
             }
