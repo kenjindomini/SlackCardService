@@ -371,6 +371,11 @@ var Cribbage = (function (_super) {
                 break;
             }
             else if (this.playersInPlay.countItems() == 0) {
+                points++;
+                if (team.addPoints(player, 1)) {
+                    response = this.setGameOver(team);
+                    break;
+                }
                 this.resetSequence(null);
                 this.setNextPlayerInSequence(player);
                 response.message += "\n                Scores: " + this.printScores();

@@ -351,6 +351,13 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 break;
             }
             else if (this.playersInPlay.countItems() == 0) {
+                // Give the player a point for a go
+                points++;
+                if (team.addPoints(player, 1)) {
+                    // Game over
+                    response = this.setGameOver(team);
+                    break;
+                }
                 // Reset the sequence and set the next player
                 this.resetSequence(null);
                 this.setNextPlayerInSequence(player);
