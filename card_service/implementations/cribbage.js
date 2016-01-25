@@ -332,9 +332,14 @@ var Cribbage = (function (_super) {
             if (this.roundOver()) {
                 response.roundOver = true;
                 console.log("playCard: round over!");
-                response.message = player.name + " gets a point for a go";
-                if (points > 0) {
-                    response.message += " in addition to " + points + " points";
+                if (!is31) {
+                    response.message = player.name + " gets a point for a go";
+                    if (points > 0) {
+                        response.message += " in addition to " + points + " points";
+                    }
+                }
+                else {
+                    response.message = player.name + " gets 31 for two points";
                 }
                 console.log("playCard: round over adding one point");
                 if (team.addPoints(player, 1)) {
