@@ -30,6 +30,8 @@ export class BaseCard implements IItem {
         this.value = value;
     }
     equalsOther(card: BaseCard) {
+        if (card == undefined || card == null)
+            return false;
         return (this.suit == card.suit && this.value == card.value);
     }
     toString() {
