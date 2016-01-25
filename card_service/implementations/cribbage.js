@@ -405,6 +405,9 @@ var Cribbage = (function (_super) {
         else if (this.playersInPlay.indexOfItem(player) == -1) {
             throw ErrorStrings.PLAYER_NOT_IN_PLAY;
         }
+        else if (!this.nextPlayerInSequence.equalsOther(player)) {
+            throw ErrorStrings.FMT_NOT_NEXT_PLAYER + this.nextPlayerInSequence.name;
+        }
         else {
             this.playersInPlay.removeItem(player);
         }
