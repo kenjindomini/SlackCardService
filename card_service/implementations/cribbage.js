@@ -321,7 +321,10 @@ var Cribbage = (function (_super) {
                 }
             }
             if (this.roundOver()) {
-                response.message = player.name + " gets a point for a go.";
+                response.message = player.name + " gets a point for a go";
+                if (points > 0) {
+                    response.message += " in addition to " + points + " points";
+                }
                 if (team.addPoints(player, 1)) {
                     response = this.setGameOver(team);
                     break;

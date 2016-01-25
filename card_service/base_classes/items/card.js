@@ -37,6 +37,8 @@ var BaseCard = (function () {
         this.value = value;
     }
     BaseCard.prototype.equalsOther = function (card) {
+        if (card == undefined || card == null)
+            return false;
         return (this.suit == card.suit && this.value == card.value);
     };
     BaseCard.prototype.toString = function () {
