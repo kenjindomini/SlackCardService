@@ -347,8 +347,9 @@ var CribbageRoutes;
                     var cribRes = this.currentGame.playCard(player, card);
                     gameOver = cribRes.gameOver;
                     var responseText = cribRes.message;
+                    var cardStr = (card ? card.toString() : "(oh my, looks like something went horribly wrong)");
                     response.data.text =
-                        player + " played the " + card.toString() + ".\n                        The count is at " + this.currentGame.count + ".\n                        The cards in play are: " + this.currentGame.sequence.toString() + ".\n                        You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
+                        player + " played the " + cardStr + ".\n                        The count is at " + this.currentGame.count + ".\n                        The cards in play are: " + this.currentGame.sequence.toString() + ".\n                        You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
                     if (gameOver) {
                         response.data.text = responseText;
                     }
