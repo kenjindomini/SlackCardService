@@ -25,7 +25,8 @@ var CribbageRoutes;
         return CribbageAttachmentField;
     })();
     var CribbageResponseAttachment = (function () {
-        function CribbageResponseAttachment(fallback, color, pretext, author_name, author_link, author_icon, title, title_link, text, fields, image_url, thumb_url) {
+        function CribbageResponseAttachment(text, fallback, color, pretext, author_name, author_link, author_icon, title, title_link, fields, image_url, thumb_url) {
+            if (text === void 0) { text = ""; }
             if (fallback === void 0) { fallback = ""; }
             if (color === void 0) { color = ""; }
             if (pretext === void 0) { pretext = ""; }
@@ -34,10 +35,10 @@ var CribbageRoutes;
             if (author_icon === void 0) { author_icon = ""; }
             if (title === void 0) { title = ""; }
             if (title_link === void 0) { title_link = ""; }
-            if (text === void 0) { text = ""; }
             if (fields === void 0) { fields = []; }
             if (image_url === void 0) { image_url = ""; }
             if (thumb_url === void 0) { thumb_url = ""; }
+            this.text = text;
             this.fallback = fallback;
             this.color = color;
             this.pretext = pretext;
@@ -46,7 +47,6 @@ var CribbageRoutes;
             this.author_icon = author_icon;
             this.title = title;
             this.title_link = title_link;
-            this.text = text;
             this.fields = fields;
             this.image_url = image_url;
             this.thumb_url = thumb_url;
@@ -274,7 +274,7 @@ var CribbageRoutes;
                 try {
                     this.currentGame.begin();
                     response.data.text = "" + cribbage_1.CribbageStrings.MessageStrings.FMT_START_GAME + this.currentGame.dealer.name + "'s crib.";
-                    response.data.attachments.push(new CribbageResponseAttachment("", "#666", "", "", "", "", "", "", "" + this.currentGame.printPlayers()));
+                    response.data.attachments.push(new CribbageResponseAttachment("" + this.currentGame.printPlayers(), "", "#666"));
                 }
                 catch (e) {
                     response = Router.makeResponse(500, "Cannot start the game, an error has occurred: " + e);
