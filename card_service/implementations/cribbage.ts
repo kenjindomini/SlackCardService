@@ -24,7 +24,7 @@ enum Mode {
 // Generic messages
 export module CribbageStrings {
     export class MessageStrings {
-        static get START_GAME():string { return "The game is afoot, throw your cards to the crib."; }
+        static get FMT_START_GAME():string { return "The game is afoot, throw your cards to "; }
         static get GAME_RESET():string { return "The game was reset"; }
         static get GAME_OVER(): string { return "Game over!"; }
     }

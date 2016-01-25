@@ -260,7 +260,7 @@ var CribbageRoutes;
             Router.sendResponse(response, res);
         };
         Router.prototype.beginGame = function (req, res) {
-            var response = Router.makeResponse(200, cribbage_1.CribbageStrings.MessageStrings.START_GAME, SlackResponseType.in_channel);
+            var response = Router.makeResponse(200, cribbage_1.CribbageStrings.MessageStrings.FMT_START_GAME, SlackResponseType.in_channel);
             if (this.currentGame == null) {
                 response = Router.makeResponse(500, cribbage_1.CribbageStrings.ErrorStrings.NO_GAME);
             }
@@ -273,6 +273,7 @@ var CribbageRoutes;
             else {
                 try {
                     this.currentGame.begin();
+                    response.data.text = "" + cribbage_1.CribbageStrings.MessageStrings.FMT_START_GAME + this.currentGame.dealer.name + "'s crib.";
                     response.data.attachments.push(new CribbageResponseAttachment("" + this.currentGame.describe(), "#666", "", "", "", "", "", "", "" + this.currentGame.describe()));
                 }
                 catch (e) {

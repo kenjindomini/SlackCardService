@@ -21,8 +21,8 @@ var CribbageStrings;
     var MessageStrings = (function () {
         function MessageStrings() {
         }
-        Object.defineProperty(MessageStrings, "START_GAME", {
-            get: function () { return "The game is afoot, throw your cards to the crib."; },
+        Object.defineProperty(MessageStrings, "FMT_START_GAME", {
+            get: function () { return "The game is afoot, throw your cards to "; },
             enumerable: true,
             configurable: true
         });

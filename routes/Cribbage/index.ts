@@ -248,7 +248,7 @@ export module CribbageRoutes {
         }
 
         beginGame(req:Request, res:Response) {
-            var response = Router.makeResponse(200, CribbageStrings.MessageStrings.START_GAME, SlackResponseType.in_channel);
+            var response = Router.makeResponse(200, CribbageStrings.MessageStrings.FMT_START_GAME, SlackResponseType.in_channel);
             if (this.currentGame == null) {
                 response = Router.makeResponse(500, CribbageStrings.ErrorStrings.NO_GAME);
             }
@@ -261,6 +261,7 @@ export module CribbageRoutes {
             else {
                 try {
                     this.currentGame.begin();
+                    response.data.text = `${CribbageStrings.MessageStrings.FMT_START_GAME}${this.currentGame.dealer.name}'s crib.`;
                     response.data.attachments.push(
                         new CribbageResponseAttachment(`${this.currentGame.describe()}`, "#666", "", "", "", "", "", "", `${this.currentGame.describe()}`)
                     );
