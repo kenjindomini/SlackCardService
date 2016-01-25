@@ -427,7 +427,8 @@ export module CribbageRoutes {
             if (response.status == 200 && !cribRes.gameOver) {
                 if (cribRes.message.length > 0)
                     response.data.text = `${cribRes.message}`;
-                response.data.text += `${player} threw to the kitty`;
+                response.data.text += `
+                ${player} threw to the kitty`;
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
                 if (this.currentGame.isReady()) {
