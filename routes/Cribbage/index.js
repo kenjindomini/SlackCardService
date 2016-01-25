@@ -380,27 +380,37 @@ var CribbageRoutes;
         Router.prototype.throwCard = function (req, res) {
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(200, "...");
+            var cribRes = null;
             if (!Router.verifyRequest(req, Routes.throwCard)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
             else {
                 try {
                     var cards = Router.parseCards(req.body.text);
-                    this.currentGame.giveToKitty(player, new item_collection_1.ItemCollection(cards));
+                    cribRes = this.currentGame.giveToKitty(player, new item_collection_1.ItemCollection(cards));
                     var played = "";
                     for (var ix = 0; ix < cards.length; ix++) {
                         played += cards[ix].toString() + ", ";
                     }
                     played = card_game_2.removeLastTwoChars(played);
-                    response.data.text =
-                        "You threw " + played + ".\n                        Your cards are " + this.currentGame.getPlayerHand(player);
+                    if (cribRes.gameOver) {
+                        response.data.text = cribRes.message;
+                    }
+                    else if (cribRes.message.length > 0) {
+                        response.data.text =
+                            cribRes.message + "\n                            You threw " + played + ".\n                        Your cards are " + this.currentGame.getPlayerHand(player);
+                    }
+                    else {
+                        response.data.text =
+                            "You threw " + played + ".\n                        Your cards are " + this.currentGame.getPlayerHand(player);
+                    }
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
                 }
             }
             Router.sendResponse(response, res);
-            if (response.status == 200) {
+            if (response.status == 200 && !cribRes.gameOver) {
                 response.data.text = player + " threw to the kitty";
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));

@@ -6,7 +6,7 @@
 
 import {Request, Response} from "express";
 import {CribbagePlayer} from "../../card_service/implementations/cribbage_player";
-import {Cribbage, CribbageStrings} from "../../card_service/implementations/cribbage";
+import {Cribbage, CribbageStrings, CribbageReturn} from "../../card_service/implementations/cribbage";
 import {CribbageHand} from "../../card_service/implementations/cribbage_hand";
 import {Players, Teams} from "../../card_service/base_classes/card_game";
 import {BaseCard as Card, Value, Suit} from "../../card_service/base_classes/items/card";
@@ -395,28 +395,40 @@ export module CribbageRoutes {
         throwCard(req:Request, res:Response) {
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(200, "...");
+            var cribRes:CribbageReturn = null;
             if (!Router.verifyRequest(req, Routes.throwCard)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
             else {
                 try {
                     var cards:Array<Card> = Router.parseCards(req.body.text);
-                    this.currentGame.giveToKitty(player, new ItemCollection(cards));
+                    cribRes = this.currentGame.giveToKitty(player, new ItemCollection(cards));
                     var played = "";
                     for (var ix = 0; ix < cards.length; ix++) {
                         played += `${cards[ix].toString()}, `;
                     }
                     played = removeLastTwoChars(played);
-                    response.data.text =
-                        `You threw ${played}.
+                    if (cribRes.gameOver) {
+                        response.data.text = cribRes.message;
+                    }
+                    else if (cribRes.message.length > 0) {
+                        response.data.text =
+                            `${cribRes.message}
+                            You threw ${played}.
                         Your cards are ${this.currentGame.getPlayerHand(player)}`;
+                    }
+                    else {
+                        response.data.text =
+                            `You threw ${played}.
+                        Your cards are ${this.currentGame.getPlayerHand(player)}`;
+                    }
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
                 }
             }
             Router.sendResponse(response, res);
-            if (response.status == 200) {
+            if (response.status == 200 && !cribRes.gameOver) {
                 response.data.text = `${player} threw to the kitty`;
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));

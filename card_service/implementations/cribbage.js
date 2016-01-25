@@ -278,6 +278,9 @@ var Cribbage = (function (_super) {
                 if (this.findTeam(this.dealer).addPoints(this.dealer, 2)) {
                     response = this.setGameOver(team);
                 }
+                else {
+                    response.message = "2 points to " + this.dealer.name + " for \"His Heels\" (cutting the right jack)";
+                }
             }
         }
         return response;

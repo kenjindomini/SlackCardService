@@ -240,6 +240,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                     // Game over
                     response = this.setGameOver(team);
                 }
+                else {
+                    response.message = `2 points to ${this.dealer.name} for "His Heels" (cutting the right jack)`;
+                }
             }
         }
         return response;
