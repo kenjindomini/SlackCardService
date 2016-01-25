@@ -325,16 +325,22 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 }
                 else {
                     console.log(`playCard: round over setting the response message`);
+                    console.log(`about to call roundOverResetState`);
+                    var scores = this.roundOverResetState();
+                    console.log(`called roundOverResetState`);
                     response.message += `
-                ${this.roundOverResetState()}`;
+                ${scores}`;
                     if (!is31)
                         points++;
                     if (team.addPoints(player, 1)) {
                         response = this.setGameOver(team);
                         break;
                     }
+                    console.log(`about to call roundOverStr`);
+                    var ros = this.roundOverStr();
+                    console.log(`called roundOverStr`);
                     response.message += `
-                 ${this.roundOverStr()}`;
+                 ${ros}`;
                     break;
                 }
             }
@@ -629,7 +635,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
     private deal():void {
         this.kitty.removeAll();
         this.resetHands();
+        console.log("suffling");
         this.shuffle();
+        console.log("done shuffling, about to deal");
         switch (this.numPlayers) {
             case 2:
                 this.dealForTwo();
@@ -719,9 +727,13 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * Deal the cards for a two player game
      */
     private dealForTwo():void {
+        console.log("dealing for 2");
         var player = this.nextPlayerInOrder(this.dealer);
         while (player.numCards() < 6) {
-            player.hand.takeCard(this.draw());
+            var card = this.draw();
+            console.log(`giving ${player.name} card ${card.toString()}`);
+            player.hand.takeCard(card);
+            console.log(`gave ${player.name} card ${card.toString()}`);
             player = this.nextPlayerInOrder(player);
         }
     }
