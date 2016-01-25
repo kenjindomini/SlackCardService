@@ -398,10 +398,6 @@ var CribbageRoutes;
                     if (cribRes.gameOver) {
                         response.data.text = cribRes.message;
                     }
-                    else if (cribRes.message.length > 0) {
-                        response.data.text =
-                            cribRes.message + "\n                            You threw " + played + ".\n                        Your cards are " + this.currentGame.getPlayerHand(player);
-                    }
                     else {
                         response.data.text =
                             "You threw " + played + ".\n                        Your cards are " + this.currentGame.getPlayerHand(player);
@@ -413,7 +409,9 @@ var CribbageRoutes;
             }
             Router.sendResponse(response, res);
             if (response.status == 200 && !cribRes.gameOver) {
-                response.data.text = player + " threw to the kitty";
+                if (cribRes.message.length > 0)
+                    response.data.text = "" + cribRes.message;
+                response.data.text += "\n                " + player + " threw to the kitty";
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
                 if (this.currentGame.isReady()) {
