@@ -348,6 +348,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 // Reset the sequence
                 this.resetSequence(player);
                 this.setNextPlayerInSequence(player);
+                break;
             }
             else if (this.playersInPlay.countItems() == 0) {
                 // Reset the sequence and set the next player
@@ -355,16 +356,18 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 this.setNextPlayerInSequence(player);
                 response.message += `
                 Scores: ${this.printScores()}`;
+                break;
             }
             else {
                 this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
                 this.setNextPlayerInSequence(player);
-            }
-            if (points > 0) {
-                response.message = `${player.name} scored ${points} points.
-                ${response.message}`;
+                break;
             }
             break;
+        }
+        if (points > 0) {
+            response.message = `${player.name} scored ${points} points.
+                ${response.message}`;
         }
         return response;
     }
@@ -558,11 +561,17 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      */
     private roundOverResetState():string {
         var scores = "";
+        console.log("about to add all the points");
         scores = this.countPoints().message;
+        console.log("added all the points");
         this.cut = null;
         this.lastPlayerToPlay = null;
+        console.log("about to set the next dealer");
         this.setNextDealer();
+        console.log("set the next dealer");
+        console.log("about to deal");
         this.deal();
+        console.log("dealt");
         return scores;
     }
 

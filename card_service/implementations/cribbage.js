@@ -368,20 +368,23 @@ var Cribbage = (function (_super) {
             else if (is31) {
                 this.resetSequence(player);
                 this.setNextPlayerInSequence(player);
+                break;
             }
             else if (this.playersInPlay.countItems() == 0) {
                 this.resetSequence(null);
                 this.setNextPlayerInSequence(player);
                 response.message += "\n                Scores: " + this.printScores();
+                break;
             }
             else {
                 this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
                 this.setNextPlayerInSequence(player);
-            }
-            if (points > 0) {
-                response.message = player.name + " scored " + points + " points.\n                " + response.message;
+                break;
             }
             break;
+        }
+        if (points > 0) {
+            response.message = player.name + " scored " + points + " points.\n                " + response.message;
         }
         return response;
     };
@@ -507,11 +510,17 @@ var Cribbage = (function (_super) {
     };
     Cribbage.prototype.roundOverResetState = function () {
         var scores = "";
+        console.log("about to add all the points");
         scores = this.countPoints().message;
+        console.log("added all the points");
         this.cut = null;
         this.lastPlayerToPlay = null;
+        console.log("about to set the next dealer");
         this.setNextDealer();
+        console.log("set the next dealer");
+        console.log("about to deal");
         this.deal();
+        console.log("dealt");
         return scores;
     };
     Cribbage.prototype.roundOver = function () {
