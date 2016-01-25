@@ -54,7 +54,7 @@ var CribbageStrings;
         });
         Object.defineProperty(ErrorStrings, "INVALID_CARD_SYNTAX", {
             get: function () {
-                return "Invalid syntax. Enter your card as (value)(suit), for example enter the five of hearts as 5H.";
+                return "Invalid syntax. Enter your card as (value)(suit), for example enter the five of hearts as 5H";
             },
             enumerable: true,
             configurable: true
@@ -544,7 +544,9 @@ var Cribbage = (function (_super) {
         var countingPlayer = firstPlayer;
         do {
             var team = this.findTeam(countingPlayer);
+            console.log("counting points for " + countingPlayer.name);
             var points = countingPlayer.countPoints(this.cut);
+            console.log("done counting points for " + countingPlayer.name);
             if (team.addPoints(countingPlayer, points)) {
                 ret = this.setGameOver(team);
                 break;

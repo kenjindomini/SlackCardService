@@ -32,7 +32,7 @@ export module CribbageStrings {
         static get NO_GAME():string { return "The game hasn't been created. Add some players first."; }
         static get HAS_BEGUN():string { return "The game has already begun"; }
         static get INVALID_CARD_SYNTAX():string {
-            return "Invalid syntax. Enter your card as (value)(suit), for example enter the five of hearts as 5H.";
+            return "Invalid syntax. Enter your card as (value)(suit), for example enter the five of hearts as 5H";
         }
         static get TOO_MANY_CARDS():string { return "You can only play one card!"; }
         static get INVALID_NUMBER_OF_PLAYERS():string { return "Invalid number of players"; }
@@ -607,7 +607,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         var countingPlayer = firstPlayer;
         do {
             var team = this.findTeam(countingPlayer);
+            console.log(`counting points for ${countingPlayer.name}`);
             var points = countingPlayer.countPoints(this.cut);
+            console.log(`done counting points for ${countingPlayer.name}`);
             if (team.addPoints(countingPlayer, points)) {
                 // Game over
                 ret = this.setGameOver(team);
