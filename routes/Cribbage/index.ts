@@ -263,7 +263,7 @@ export module CribbageRoutes {
                     this.currentGame.begin();
                     response.data.text = `${CribbageStrings.MessageStrings.FMT_START_GAME}${this.currentGame.dealer.name}'s crib.`;
                     response.data.attachments.push(
-                        new CribbageResponseAttachment(`${this.currentGame.describe()}`, "#666", "", "", "", "", "", "", `${this.currentGame.describe()}`)
+                        new CribbageResponseAttachment("", "#666", "", "", "", "", "", "", `${this.currentGame.printPlayers()}`)
                     );
                 }
                 catch (e) {

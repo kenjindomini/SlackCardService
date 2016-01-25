@@ -372,7 +372,7 @@ var Cribbage = (function (_super) {
             else if (this.playersInPlay.countItems() == 0) {
                 this.resetSequence(null);
                 this.setNextPlayerInSequence(player);
-                response.message += "\n                " + this.describe();
+                response.message += "\n                Ssores: " + this.printScores();
             }
             else {
                 this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
@@ -433,16 +433,7 @@ var Cribbage = (function (_super) {
     Cribbage.prototype.describe = function () {
         var scores = "";
         if (this.teams) {
-            for (var ix = 0; ix < this.teams.numTeams(); ix++) {
-                scores += "{ ";
-                var team = this.teams.teams.itemAt(ix);
-                for (var jx = 0; jx < team.numPlayers(); jx++) {
-                    scores += (team.itemAt(jx).name + ", ");
-                }
-                scores = card_game_1.removeLastTwoChars(scores);
-                scores += (" = " + team.countPoints() + " }, ");
-            }
-            scores = card_game_1.removeLastTwoChars(scores);
+            scores = this.printScores();
         }
         var players = [];
         for (var jx = 0; jx < this.players.countItems(); jx++) {
@@ -468,6 +459,22 @@ var Cribbage = (function (_super) {
         this.winningTeam = winningTeam;
         return new CribbageReturn(true, MessageStrings.GAME_OVER + " Winning team: " + this.winningTeam.printTeam());
     };
+    Cribbage.prototype.printScores = function () {
+        var scores = "";
+        if (this.teams) {
+            for (var ix = 0; ix < this.teams.numTeams(); ix++) {
+                scores += "{ ";
+                var team = this.teams.teams.itemAt(ix);
+                for (var jx = 0; jx < team.numPlayers(); jx++) {
+                    scores += (team.itemAt(jx).name + ", ");
+                }
+                scores = card_game_1.removeLastTwoChars(scores);
+                scores += (" = " + team.countPoints() + " }, ");
+            }
+            scores = card_game_1.removeLastTwoChars(scores);
+        }
+        return scores;
+    };
     Cribbage.prototype.printHand = function (hand) {
         var handStr = "";
         hand.sortCards();
@@ -488,8 +495,15 @@ var Cribbage = (function (_super) {
         }
         return player;
     };
+    Cribbage.prototype.printPlayers = function () {
+        var players = "";
+        for (var jx = 0; jx < this.players.countItems(); jx++) {
+            players += this.players.itemAt(jx).name + ", ";
+        }
+        return card_game_1.removeLastTwoChars(players);
+    };
     Cribbage.prototype.roundOverStr = function () {
-        return "Round over.\n        The cards have been shuffled and dealt.\n        Throw to " + this.dealer.name + "'s kitty!\n        " + this.describe();
+        return "Round over.\n        The cards have been shuffled and dealt.\n        Throw to " + this.dealer.name + "'s kitty!\n        Scores: " + this.printScores();
     };
     Cribbage.prototype.roundOverResetState = function () {
         var scores = "";

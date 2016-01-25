@@ -354,7 +354,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 this.resetSequence(null);
                 this.setNextPlayerInSequence(player);
                 response.message += `
-                ${this.describe()}`;
+                Scores: ${this.printScores()}`;
             }
             else {
                 this.nextPlayerInSequence = this.nextPlayerInOrder(this.nextPlayerInSequence);
@@ -443,16 +443,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
     describe():string {
         var scores = "";
         if (this.teams) {
-            for (var ix = 0; ix < this.teams.numTeams(); ix++) {
-                scores += "{ ";
-                var team = <CribbageTeam>this.teams.teams.itemAt(ix);
-                for (var jx = 0; jx < team.numPlayers(); jx++) {
-                    scores += (team.itemAt(jx).name + ", ");
-                }
-                scores = removeLastTwoChars(scores);
-                scores += (" = " + team.countPoints() + " }, ");
-            }
-            scores = removeLastTwoChars(scores);
+            scores = this.printScores();
         }
         var players = [];
         for (var jx = 0; jx < this.players.countItems(); jx++) {
@@ -498,6 +489,23 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         );
     }
 
+    private printScores():string {
+        var scores = "";
+        if (this.teams) {
+            for (var ix = 0; ix < this.teams.numTeams(); ix++) {
+                scores += "{ ";
+                var team = <CribbageTeam>this.teams.teams.itemAt(ix);
+                for (var jx = 0; jx < team.numPlayers(); jx++) {
+                    scores += (team.itemAt(jx).name + ", ");
+                }
+                scores = removeLastTwoChars(scores);
+                scores += (" = " + team.countPoints() + " }, ");
+            }
+            scores = removeLastTwoChars(scores);
+        }
+        return scores;
+    }
+
     private printHand(hand:CribbageHand):string {
         var handStr = "";
         hand.sortCards();
@@ -525,6 +533,14 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         return player;
     }
 
+    printPlayers():string {
+        var players = "";
+        for (var jx = 0; jx < this.players.countItems(); jx++) {
+            players += `${this.players.itemAt(jx).name}, `;
+        }
+        return removeLastTwoChars(players);
+    }
+
     /**
      * Format a string to return to the channel when the round is over
      * @returns {string}
@@ -533,7 +549,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         return `Round over.
         The cards have been shuffled and dealt.
         Throw to ${this.dealer.name}'s kitty!
-        ${this.describe()}`;
+        Scores: ${this.printScores()}`;
     }
 
     /**
