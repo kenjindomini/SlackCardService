@@ -611,6 +611,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             if (this.dealer.equalsOther(countingPlayer)) {
                 // Add the kitty up
                 points = this.kitty.countPoints(this.cut, true);
+                this.kitty.playCard(this.cut);
                 if (team.addPoints(countingPlayer, points)) {
                     // Game over
                     ret = this.setGameOver(team);

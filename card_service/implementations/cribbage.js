@@ -547,6 +547,7 @@ var Cribbage = (function (_super) {
             ret.message += "\n            " + countingPlayer.name + " has hand " + this.printHand(countingPlayer.hand) + " and scored " + points + " points.";
             if (this.dealer.equalsOther(countingPlayer)) {
                 points = this.kitty.countPoints(this.cut, true);
+                this.kitty.playCard(this.cut);
                 if (team.addPoints(countingPlayer, points)) {
                     ret = this.setGameOver(team);
                     break;
