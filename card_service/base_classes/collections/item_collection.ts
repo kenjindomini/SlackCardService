@@ -4,11 +4,14 @@ import {IItem} from "../../interfaces/iitem";
 import {removeLastTwoChars} from "../card_game";
 
 "use strict";
-export class ItemCollection<ItemType extends IItem> {
+export class ItemCollection<ItemType extends IItem> implements IItem {
     items: Array<ItemType>;
 
     constructor(items: Array<ItemType>) {
         this.items = items;
+    }
+    deepCopy(): ItemCollection<ItemType> {
+        return new ItemCollection<ItemType>(this.items.slice());
     }
     indexOfItem(item: ItemType) {
         var index = -1;
@@ -48,5 +51,22 @@ export class ItemCollection<ItemType extends IItem> {
             throw "Index out of bounds!";
         }
         return this.items[index];
+    }
+    equalsOther(other: ItemCollection<ItemType>):boolean {
+        var equals = true;
+        for (var ix = 0; ix < this.items.length; ix++) {
+            var matched = false;
+            for (var jx = 0; jx < other.items.length; jx++) {
+                if (this.items[ix].equalsOther(other.items[jx])) {
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                equals = false;
+                break;
+            }
+        }
+        return equals;
     }
 }

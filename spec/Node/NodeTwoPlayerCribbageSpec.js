@@ -1,4 +1,5 @@
 var cribbage_player_1 = require("../../card_service/implementations/cribbage_player");
+var cribbage_1 = require("../../card_service/implementations/cribbage");
 var cribbage_hand_1 = require("../../card_service/implementations/cribbage_hand");
 var app_1 = require("../../app");
 var setup_1 = require("./setup");
@@ -50,7 +51,7 @@ describe("Integration test the Cribbage game between two players", function () {
                     .expect(200)
                     .expect(function (res) {
                     var response = JSON.parse(res.text);
-                    if (response.text != index_1.CribbageStrings.MessageStrings.START_GAME)
+                    if (response.text != cribbage_1.CribbageStrings.MessageStrings.START_GAME)
                         return true;
                 })
                     .end(cb);

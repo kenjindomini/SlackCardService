@@ -9,6 +9,7 @@ import {BasePlayer as Player} from "./items/player";
 import {BaseTeam as Team} from "./collections/team";
 import {BaseDeck as Deck} from "./collections/deck";
 import {ItemCollection} from "./collections/item_collection";
+import {IItem} from "../interfaces/iitem";
 
 "use strict";
 
@@ -72,7 +73,7 @@ export class Teams<SomePlayerClass extends Player> {
     }
 }
 
-export class Sequence {
+export class Sequence implements IItem {
     cards: ItemCollection<Card>;
     constructor() {
         this.cards = new ItemCollection<Card>([]);
@@ -105,6 +106,18 @@ export class Sequence {
         ret = removeLastTwoChars(ret);
         return ret;
     }
+    equalsOther(other: Sequence):boolean {
+        if (this.cards.countItems() != other.cards.countItems())
+            return false;
+        var equals = true;
+        for (var ix = 0; ix < this.cards.countItems(); ix++) {
+            if (!this.cards.itemAt(ix).equalsOther(other.cards.itemAt(ix))) {
+                equals = false;
+                break;
+            }
+        }
+        return equals;
+    }
     static isSequentialAscending(array: Array<number>) {
         if (array.length < 3) {
             return true;
@@ -125,7 +138,6 @@ export class Sequence {
             last = next;
         }
         return sequential;
-
     }
     private findLongestReverseSequence() {
         var numItems = this.cards.countItems();
