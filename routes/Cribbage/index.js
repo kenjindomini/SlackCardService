@@ -121,7 +121,7 @@ var CribbageRoutes;
             hand.sortCards();
             for (var ix = 0; ix < hand.size(); ix++) {
                 var card = hand.itemAt(ix);
-                images += "<" + card.toUrlString(".png") + ">";
+                images += "<" + getCardImageUrl(card) + ">";
             }
             return images;
         };

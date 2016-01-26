@@ -130,7 +130,7 @@ export module CribbageRoutes {
             hand.sortCards();
             for (var ix = 0; ix < hand.size(); ix++) {
                 var card:Card = hand.itemAt(ix);
-                images += `<${card.toUrlString(".png")}>`;
+                images += `<${getCardImageUrl(card)}>`;
             }
             return images;
         }
