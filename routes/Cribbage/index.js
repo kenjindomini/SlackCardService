@@ -94,9 +94,12 @@ var CribbageRoutes;
         Routes[Routes["go"] = "/go"] = "go";
     })(CribbageRoutes.Routes || (CribbageRoutes.Routes = {}));
     var Routes = CribbageRoutes.Routes;
+    function removeSpaces(str) {
+        return str.replace(/\s+/g, "");
+    }
     function getCardImageUrl(card, deckType) {
         if (deckType === void 0) { deckType = "Default"; }
-        var cardStr = card.toString();
+        var cardStr = removeSpaces(card.toString());
         cardStr = "" + cardStr.charAt(0).toUpperCase() + cardStr.slice(1) + ".png";
         var ret = "" + process.env.AWS_S3_STANDARD_DECK_URL + deckType + "/" + cardStr;
         console.log(ret);
@@ -176,7 +179,7 @@ var CribbageRoutes;
         Router.parseCards = function (text) {
             if (!text)
                 throw cribbage_1.CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
-            text = text.replace(/\s+/g, "");
+            text = removeSpaces(text);
             var textLen = text.length;
             if (textLen == 0 || textLen == 1)
                 throw cribbage_1.CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;

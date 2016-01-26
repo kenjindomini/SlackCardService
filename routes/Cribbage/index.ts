@@ -91,8 +91,12 @@ export module CribbageRoutes {
         go = <any>"/go"
     }
 
+    function removeSpaces(str:string):string {
+        return str.replace(/\s+/g, "");
+    }
+
     function getCardImageUrl(card:Card, deckType:string="Default"): string {
-        var cardStr = card.toString();
+        var cardStr = removeSpaces(card.toString());
         // Capitalize the first letter and add ".png"
         cardStr = `${cardStr.charAt(0).toUpperCase()}${cardStr.slice(1)}.png`;
         var ret = `${process.env.AWS_S3_STANDARD_DECK_URL}${deckType}/${cardStr}`;
@@ -188,7 +192,7 @@ export module CribbageRoutes {
             if (!text)
                 throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
             // Strip out all the spaces
-            text = text.replace(/\s+/g, "");
+            text = removeSpaces(text);
             var textLen = text.length;
             if (textLen == 0 || textLen == 1)
                 throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
