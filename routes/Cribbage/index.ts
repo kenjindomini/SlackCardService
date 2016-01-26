@@ -40,6 +40,7 @@ export module CribbageRoutes {
         constructor(
             public text: string = "", // This is the main text in a message attachment, and can contain standard message markup
             public fallback: string = "", // Required plain-text summary of the attachment
+            public image_url: string = "", // A valid URL to an image file that will be displayed inside a message attachment. We currently support the following formats: GIF, JPEG, PNG, and BMP.
             public color: string = "", // An optional value that can either be one of good, warning, danger, or any hex color code
             public pretext: string = "", // Optional text that appears above the attachment block
             public author_name: string = "", // Small text used to display the author's name.
@@ -48,7 +49,6 @@ export module CribbageRoutes {
             public title: string = "", // The title is displayed as larger, bold text near the top of a message attachment
             public title_link: string = "", // By passing a valid URL in the title_link parameter (optional), the title text will be hyperlinked.
             public fields: Array<CribbageAttachmentField> = [], // Fields are defined as an array, and hashes contained within it will be displayed in a table inside the message attachment.
-            public image_url: string = "", // A valid URL to an image file that will be displayed inside a message attachment. We currently support the following formats: GIF, JPEG, PNG, and BMP.
             public thumb_url: string = "" // A valid URL to an image file that will be displayed as a thumbnail on the right side of a message attachment. We currently support the following formats: GIF, JPEG, PNG, and BMP.
         ){
         }
@@ -91,6 +91,13 @@ export module CribbageRoutes {
         go = <any>"/go"
     }
 
+    function getCardImageUrl(card:Card, deckType:string="Default"): string {
+        var cardStr = card.toString();
+        // Capitalize the first letter and add ".png"
+        cardStr = `${cardStr.charAt(0).toUpperCase()}${cardStr.slice(1)}.png`;
+        return `${process.env.AWS_S3_STANDARD_DECK_URL}${deckType}/${cardStr}`;
+    }
+
     export class Router {
 
         currentGame:Cribbage;
@@ -100,6 +107,17 @@ export module CribbageRoutes {
             );
 
         /* ***** Helper Methods ***** */
+
+        private static getPlayerHandAttachments(hand: CribbageHand): Array<CribbageResponseAttachment> {
+            var attachments:Array<CribbageResponseAttachment> = [];
+            for (var ix = 0; ix < hand.size(); ix++) {
+                var card:Card = hand.itemAt(ix);
+                attachments.push(
+                    new CribbageResponseAttachment("", card.toString(), getCardImageUrl(card))
+                );
+            }
+            return attachments;
+        }
 
         private static makeResponse(
             status:number=200,
@@ -275,7 +293,6 @@ export module CribbageRoutes {
         }
 
         resetGame(req:Request, res:Response) {
-            // SB TODO: Have a better way to have a secret on the server so that trolls can't keep resetting the game
             var secret = req.body.text;
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(500, `You're not allowed to reset the game, ${player}!!`, SlackResponseType.in_channel);
@@ -283,7 +300,7 @@ export module CribbageRoutes {
             if (!Router.verifyRequest(req, Routes.resetGame)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
-            else if (secret != null && secret == "secret") {
+            else if (secret != null && secret == (process.env.CRIB_RESET_SECRET || "secret")) {
                 // Allow the game to be reset
                 response = Router.makeResponse(200, CribbageStrings.MessageStrings.GAME_RESET, SlackResponseType.ephemeral);
                 this.currentGame = new Cribbage(new Players<CribbagePlayer>([]));
@@ -315,8 +332,9 @@ export module CribbageRoutes {
             }
             else {
                 try {
-                    response.data.text = this.currentGame.getPlayerHand(Router.getPlayerName(req));
-                    if (response.data.text.length == 0) {
+                    var hand:CribbageHand = this.currentGame.getPlayerHand(Router.getPlayerName(req));
+                    response.data.attachments = Router.getPlayerHandAttachments(hand);
+                    if (response.data.attachments.length == 0) {
                         response.data.text = "You played all your cards!";
                     }
                 }
@@ -377,17 +395,16 @@ export module CribbageRoutes {
             Router.sendResponse(response, res);
             if (response.status == 200 && !cribRes.gameOver && !cribRes.roundOver) {
                 // Tell the player what cards they have
-                var theirHand = this.currentGame.getPlayerHand(Router.getPlayerName(req));
-                var hasHand = (theirHand.length > 0);
+                var theirHand:CribbageHand = this.currentGame.getPlayerHand(Router.getPlayerName(req));
+                var theirCards = Router.getPlayerHandAttachments(theirHand);
+                var hasHand = (theirCards.length > 0);
+                var delayedData = new CribbageResponseData(SlackResponseType.ephemeral);
                 if (!hasHand)
-                    theirHand = "You have no more cards!";
+                     delayedData.text = "You have no more cards!";
                 else
-                    theirHand = `Your remaining cards are ${theirHand}`;
+                    delayedData.attachments = theirCards;
                 Router.sendDelayedResponse(
-                    new CribbageResponseData(
-                        SlackResponseType.ephemeral,
-                        theirHand
-                    ),
+                    delayedData,
                     Router.getResponseUrl(req),
                     1000
                 );
@@ -405,18 +422,25 @@ export module CribbageRoutes {
                 try {
                     var cards:Array<Card> = Router.parseCards(req.body.text);
                     cribRes = this.currentGame.giveToKitty(player, new ItemCollection(cards));
-                    var played = "";
+                    var cardsPlayed:Array<CribbageResponseAttachment> = [];
                     for (var ix = 0; ix < cards.length; ix++) {
-                        played += `${cards[ix].toString()}, `;
+                        cardsPlayed.push(new CribbageResponseAttachment("You threw", "", getCardImageUrl(cards[ix])));
                     }
-                    played = removeLastTwoChars(played);
                     if (cribRes.gameOver) {
                         response.data.text = cribRes.message;
                     }
                     else {
-                        response.data.text =
-                            `You threw ${played}.
-                        Your cards are ${this.currentGame.getPlayerHand(player)}`;
+                        // Show the card they just played
+                        response.data.attachments = cardsPlayed;
+                        // Show the rest of their hand
+                        var theirHand = this.currentGame.getPlayerHand(player);
+                        var theirCards = Router.getPlayerHandAttachments(theirHand);
+                        if (theirCards.length > 0) {
+                            response.data.attachments = cardsPlayed.concat(theirCards);
+                        }
+                        else {
+                            response.data.text = "You have no more cards left";
+                        }
                     }
                 }
                 catch (e) {
@@ -437,8 +461,8 @@ export module CribbageRoutes {
                         new CribbageResponseData(
                             SlackResponseType.in_channel,
                             `The game is ready to begin.
-                            The cut card is the ${this.currentGame.cut.toString()}.
-                            Play a card ${this.currentGame.nextPlayerInSequence.name}.`
+                            Play a card ${this.currentGame.nextPlayerInSequence.name}.`,
+                            [new CribbageResponseAttachment("Card Card", "", getCardImageUrl(this.currentGame.cut))]
                         ),
                         Router.getResponseUrl(req),
                         1000

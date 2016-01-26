@@ -482,7 +482,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * @returns {string} the string representation of the player's hand
      * @throws ErrorStrings.PLAYER_DOES_NOT_EXIST if the player does not exist
      */
-    getPlayerHand(playerName: string):string {
+    getPlayerHandStr(playerName:string): string {
         var hand = "";
         console.log(`Trying to find ${playerName}`);
         var player = this.findPlayer(playerName);
@@ -490,6 +490,18 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             console.log(`Found ${playerName}, now iterate the cards in their hand`);
             hand = this.printHand(<CribbageHand>player.hand);
             console.log(`${playerName} has hand ${hand}`);
+        }
+        else {
+            throw ErrorStrings.PLAYER_DOES_NOT_EXIST;
+        }
+        return hand;
+    }
+
+    getPlayerHand(playerName:string): CribbageHand {
+        var hand:CribbageHand = null;
+        var player = this.findPlayer(playerName);
+        if (player != null) {
+            hand = <CribbageHand>player.hand;
         }
         else {
             throw ErrorStrings.PLAYER_DOES_NOT_EXIST;

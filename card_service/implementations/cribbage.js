@@ -455,7 +455,7 @@ var Cribbage = (function (_super) {
         }
         return JSON.stringify(new CribbageGameDescription((this.dealer ? this.dealer.name : ""), (this.nextPlayerInSequence ? this.nextPlayerInSequence.name : ""), (this.cut ? this.cut.toString() : ""), this.count, this.sequence.toString(), scores, players));
     };
-    Cribbage.prototype.getPlayerHand = function (playerName) {
+    Cribbage.prototype.getPlayerHandStr = function (playerName) {
         var hand = "";
         console.log("Trying to find " + playerName);
         var player = this.findPlayer(playerName);
@@ -463,6 +463,17 @@ var Cribbage = (function (_super) {
             console.log("Found " + playerName + ", now iterate the cards in their hand");
             hand = this.printHand(player.hand);
             console.log(playerName + " has hand " + hand);
+        }
+        else {
+            throw ErrorStrings.PLAYER_DOES_NOT_EXIST;
+        }
+        return hand;
+    };
+    Cribbage.prototype.getPlayerHand = function (playerName) {
+        var hand = null;
+        var player = this.findPlayer(playerName);
+        if (player != null) {
+            hand = player.hand;
         }
         else {
             throw ErrorStrings.PLAYER_DOES_NOT_EXIST;
