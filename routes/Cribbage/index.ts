@@ -95,7 +95,9 @@ export module CribbageRoutes {
         var cardStr = card.toString();
         // Capitalize the first letter and add ".png"
         cardStr = `${cardStr.charAt(0).toUpperCase()}${cardStr.slice(1)}.png`;
-        return `${process.env.AWS_S3_STANDARD_DECK_URL}${deckType}/${cardStr}`;
+        var ret = `${process.env.AWS_S3_STANDARD_DECK_URL}${deckType}/${cardStr}`;
+        console.log(ret);
+        return ret;
     }
 
     export class Router {
@@ -342,6 +344,7 @@ export module CribbageRoutes {
                     response = Router.makeResponse(500, e);
                 }
             }
+            console.log(`Returning ${JSON.stringify(response)}`);
             Router.sendResponse(response, res);
         }
 

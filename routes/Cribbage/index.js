@@ -98,7 +98,9 @@ var CribbageRoutes;
         if (deckType === void 0) { deckType = "Default"; }
         var cardStr = card.toString();
         cardStr = "" + cardStr.charAt(0).toUpperCase() + cardStr.slice(1) + ".png";
-        return "" + process.env.AWS_S3_STANDARD_DECK_URL + deckType + "/" + cardStr;
+        var ret = "" + process.env.AWS_S3_STANDARD_DECK_URL + deckType + "/" + cardStr;
+        console.log(ret);
+        return ret;
     }
     var Router = (function () {
         function Router() {
@@ -339,6 +341,7 @@ var CribbageRoutes;
                     response = Router.makeResponse(500, e);
                 }
             }
+            console.log("Returning " + JSON.stringify(response));
             Router.sendResponse(response, res);
         };
         Router.prototype.playCard = function (req, res) {
