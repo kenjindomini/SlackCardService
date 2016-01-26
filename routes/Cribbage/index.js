@@ -347,8 +347,14 @@ var CribbageRoutes;
                     var cribRes = this.currentGame.playCard(player, card);
                     gameOver = cribRes.gameOver;
                     var responseText = cribRes.message;
+                    var justPlayed = player + " played the " + card.toString() + ".";
+                    var currentCount = "The count is at " + this.currentGame.count + ".";
+                    var cardsInPlay = this.currentGame.sequence.toString() ?
+                        "The cards in play are: " + this.currentGame.sequence.toString() + "." :
+                        "There are no cards currently in play.";
+                    var nextPlayer = "You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
                     response.data.text =
-                        player + " played the " + card.toString() + ".\n                        The count is at " + this.currentGame.count + ".\n                        The cards in play are: " + this.currentGame.sequence.toString() + ".\n                        You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
+                        justPlayed + "\n                        " + currentCount + "\n                        " + cardsInPlay + "\n                        " + nextPlayer;
                     if (gameOver) {
                         response.data.text = responseText;
                     }
