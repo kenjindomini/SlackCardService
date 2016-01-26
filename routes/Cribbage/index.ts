@@ -58,7 +58,8 @@ export module CribbageRoutes {
         constructor(
             public response_type: SlackResponseType = SlackResponseType.ephemeral,
             public text: string = "",
-            public attachments: Array<CribbageResponseAttachment> = []
+            public attachments: Array<CribbageResponseAttachment> = [],
+            public unfurl_media: boolean = true
         ) {
         }
     }

@@ -53,13 +53,15 @@ var CribbageRoutes;
         return CribbageResponseAttachment;
     })();
     var CribbageResponseData = (function () {
-        function CribbageResponseData(response_type, text, attachments) {
+        function CribbageResponseData(response_type, text, attachments, unfurl_media) {
             if (response_type === void 0) { response_type = SlackResponseType.ephemeral; }
             if (text === void 0) { text = ""; }
             if (attachments === void 0) { attachments = []; }
+            if (unfurl_media === void 0) { unfurl_media = true; }
             this.response_type = response_type;
             this.text = text;
             this.attachments = attachments;
+            this.unfurl_media = unfurl_media;
         }
         return CribbageResponseData;
     })();
