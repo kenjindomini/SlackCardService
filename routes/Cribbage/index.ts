@@ -40,8 +40,8 @@ export module CribbageRoutes {
         constructor(
             public text: string = "", // This is the main text in a message attachment, and can contain standard message markup
             public fallback: string = "", // Required plain-text summary of the attachment
-            public thumb_url: string = "", // A valid URL to an image file that will be displayed as a thumbnail on the right side of a message attachment. We currently support the following formats: GIF, JPEG, PNG, and BMP.
             public image_url: string = "", // A valid URL to an image file that will be displayed inside a message attachment. We currently support the following formats: GIF, JPEG, PNG, and BMP.
+            public thumb_url: string = "", // A valid URL to an image file that will be displayed as a thumbnail on the right side of a message attachment. We currently support the following formats: GIF, JPEG, PNG, and BMP.
             public color: string = "", // An optional value that can either be one of good, warning, danger, or any hex color code
             public pretext: string = "", // Optional text that appears above the attachment block
             public author_name: string = "", // Small text used to display the author's name.
@@ -58,8 +58,7 @@ export module CribbageRoutes {
         constructor(
             public response_type: SlackResponseType = SlackResponseType.ephemeral,
             public text: string = "",
-            public attachments: Array<CribbageResponseAttachment> = [],
-            public unfurl_media: boolean = true
+            public attachments: Array<CribbageResponseAttachment> = []
         ) {
         }
     }
@@ -124,17 +123,6 @@ export module CribbageRoutes {
                 );
             }
             return attachments;
-        }
-
-        private static getPlayerHandImages(hand: CribbageHand): string {
-            var images = "";
-            hand.sortCards();
-            for (var ix = 0; ix < hand.size(); ix++) {
-                var card:Card = hand.itemAt(ix);
-                images += `${getCardImageUrl(card)}`;
-                break;
-            }
-            return images;
         }
 
         private static makeResponse(
@@ -351,7 +339,6 @@ export module CribbageRoutes {
             else {
                 try {
                     var hand:CribbageHand = this.currentGame.getPlayerHand(Router.getPlayerName(req));
-                    response.data.text = Router.getPlayerHandImages(hand);
                     response.data.attachments = Router.getPlayerHandAttachments(hand);
                     if (response.data.attachments.length == 0) {
                         response.data.text = "You played all your cards!";
@@ -419,7 +406,6 @@ export module CribbageRoutes {
                 var theirCards = Router.getPlayerHandAttachments(theirHand);
                 var hasHand = (theirCards.length > 0);
                 var delayedData = new CribbageResponseData(SlackResponseType.ephemeral);
-                delayedData.text = Router.getPlayerHandImages(theirHand);
                 if (!hasHand)
                      delayedData.text = "You have no more cards!";
                 else
@@ -456,7 +442,6 @@ export module CribbageRoutes {
                         // Show the rest of their hand
                         var theirHand = this.currentGame.getPlayerHand(player);
                         var theirCards = Router.getPlayerHandAttachments(theirHand);
-                        response.data.text = Router.getPlayerHandImages(theirHand);
                         if (theirCards.length > 0) {
                             response.data.attachments = cardsPlayed.concat(theirCards);
                         }

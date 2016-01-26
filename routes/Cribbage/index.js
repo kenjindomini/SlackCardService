@@ -24,11 +24,11 @@ var CribbageRoutes;
         return CribbageAttachmentField;
     })();
     var CribbageResponseAttachment = (function () {
-        function CribbageResponseAttachment(text, fallback, thumb_url, image_url, color, pretext, author_name, author_link, author_icon, title, title_link, fields) {
+        function CribbageResponseAttachment(text, fallback, image_url, thumb_url, color, pretext, author_name, author_link, author_icon, title, title_link, fields) {
             if (text === void 0) { text = ""; }
             if (fallback === void 0) { fallback = ""; }
-            if (thumb_url === void 0) { thumb_url = ""; }
             if (image_url === void 0) { image_url = ""; }
+            if (thumb_url === void 0) { thumb_url = ""; }
             if (color === void 0) { color = ""; }
             if (pretext === void 0) { pretext = ""; }
             if (author_name === void 0) { author_name = ""; }
@@ -39,8 +39,8 @@ var CribbageRoutes;
             if (fields === void 0) { fields = []; }
             this.text = text;
             this.fallback = fallback;
-            this.thumb_url = thumb_url;
             this.image_url = image_url;
+            this.thumb_url = thumb_url;
             this.color = color;
             this.pretext = pretext;
             this.author_name = author_name;
@@ -53,15 +53,13 @@ var CribbageRoutes;
         return CribbageResponseAttachment;
     })();
     var CribbageResponseData = (function () {
-        function CribbageResponseData(response_type, text, attachments, unfurl_media) {
+        function CribbageResponseData(response_type, text, attachments) {
             if (response_type === void 0) { response_type = SlackResponseType.ephemeral; }
             if (text === void 0) { text = ""; }
             if (attachments === void 0) { attachments = []; }
-            if (unfurl_media === void 0) { unfurl_media = true; }
             this.response_type = response_type;
             this.text = text;
             this.attachments = attachments;
-            this.unfurl_media = unfurl_media;
         }
         return CribbageResponseData;
     })();
@@ -117,16 +115,6 @@ var CribbageRoutes;
                 attachments.push(new CribbageResponseAttachment("", card.toString(), getCardImageUrl(card)));
             }
             return attachments;
-        };
-        Router.getPlayerHandImages = function (hand) {
-            var images = "";
-            hand.sortCards();
-            for (var ix = 0; ix < hand.size(); ix++) {
-                var card = hand.itemAt(ix);
-                images += "" + getCardImageUrl(card);
-                break;
-            }
-            return images;
         };
         Router.makeResponse = function (status, text, response_type, attachments) {
             if (status === void 0) { status = 200; }
@@ -347,7 +335,6 @@ var CribbageRoutes;
             else {
                 try {
                     var hand = this.currentGame.getPlayerHand(Router.getPlayerName(req));
-                    response.data.text = Router.getPlayerHandImages(hand);
                     response.data.attachments = Router.getPlayerHandAttachments(hand);
                     if (response.data.attachments.length == 0) {
                         response.data.text = "You played all your cards!";
@@ -407,7 +394,6 @@ var CribbageRoutes;
                 var theirCards = Router.getPlayerHandAttachments(theirHand);
                 var hasHand = (theirCards.length > 0);
                 var delayedData = new CribbageResponseData(SlackResponseType.ephemeral);
-                delayedData.text = Router.getPlayerHandImages(theirHand);
                 if (!hasHand)
                     delayedData.text = "You have no more cards!";
                 else
@@ -437,7 +423,6 @@ var CribbageRoutes;
                         response.data.attachments = cardsPlayed;
                         var theirHand = this.currentGame.getPlayerHand(player);
                         var theirCards = Router.getPlayerHandAttachments(theirHand);
-                        response.data.text = Router.getPlayerHandImages(theirHand);
                         if (theirCards.length > 0) {
                             response.data.attachments = cardsPlayed.concat(theirCards);
                         }
