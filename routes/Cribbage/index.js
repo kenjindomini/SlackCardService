@@ -109,11 +109,21 @@ var CribbageRoutes;
         }
         Router.getPlayerHandAttachments = function (hand) {
             var attachments = [];
+            hand.sortCards();
             for (var ix = 0; ix < hand.size(); ix++) {
                 var card = hand.itemAt(ix);
                 attachments.push(new CribbageResponseAttachment("", card.toString(), getCardImageUrl(card)));
             }
             return attachments;
+        };
+        Router.getPlayerHandImages = function (hand) {
+            var images = "";
+            hand.sortCards();
+            for (var ix = 0; ix < hand.size(); ix++) {
+                var card = hand.itemAt(ix);
+                images += "<" + card.toUrlString(".png") + ">";
+            }
+            return images;
         };
         Router.makeResponse = function (status, text, response_type, attachments) {
             if (status === void 0) { status = 200; }
@@ -327,13 +337,14 @@ var CribbageRoutes;
             Router.sendResponse(response, res);
         };
         Router.prototype.showHand = function (req, res) {
-            var response = Router.makeResponse(200, "...");
+            var response = Router.makeResponse(200, "");
             if (!Router.verifyRequest(req, Routes.showHand)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
             else {
                 try {
                     var hand = this.currentGame.getPlayerHand(Router.getPlayerName(req));
+                    response.data.text = Router.getPlayerHandImages(hand);
                     response.data.attachments = Router.getPlayerHandAttachments(hand);
                     if (response.data.attachments.length == 0) {
                         response.data.text = "You played all your cards!";
@@ -393,6 +404,7 @@ var CribbageRoutes;
                 var theirCards = Router.getPlayerHandAttachments(theirHand);
                 var hasHand = (theirCards.length > 0);
                 var delayedData = new CribbageResponseData(SlackResponseType.ephemeral);
+                delayedData.text = Router.getPlayerHandImages(theirHand);
                 if (!hasHand)
                     delayedData.text = "You have no more cards!";
                 else
@@ -422,6 +434,7 @@ var CribbageRoutes;
                         response.data.attachments = cardsPlayed;
                         var theirHand = this.currentGame.getPlayerHand(player);
                         var theirCards = Router.getPlayerHandAttachments(theirHand);
+                        response.data.text = Router.getPlayerHandImages(theirHand);
                         if (theirCards.length > 0) {
                             response.data.attachments = cardsPlayed.concat(theirCards);
                         }

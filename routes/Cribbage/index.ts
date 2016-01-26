@@ -115,6 +115,7 @@ export module CribbageRoutes {
 
         private static getPlayerHandAttachments(hand: CribbageHand): Array<CribbageResponseAttachment> {
             var attachments:Array<CribbageResponseAttachment> = [];
+            hand.sortCards();
             for (var ix = 0; ix < hand.size(); ix++) {
                 var card:Card = hand.itemAt(ix);
                 attachments.push(
@@ -122,6 +123,16 @@ export module CribbageRoutes {
                 );
             }
             return attachments;
+        }
+
+        private static getPlayerHandImages(hand: CribbageHand): string {
+            var images = "";
+            hand.sortCards();
+            for (var ix = 0; ix < hand.size(); ix++) {
+                var card:Card = hand.itemAt(ix);
+                images += `<${card.toUrlString(".png")}>`;
+            }
+            return images;
         }
 
         private static makeResponse(
@@ -331,13 +342,14 @@ export module CribbageRoutes {
         }
 
         showHand(req:Request, res:Response) {
-            var response = Router.makeResponse(200, "...");
+            var response = Router.makeResponse(200, "");
             if (!Router.verifyRequest(req, Routes.showHand)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
             else {
                 try {
                     var hand:CribbageHand = this.currentGame.getPlayerHand(Router.getPlayerName(req));
+                    response.data.text = Router.getPlayerHandImages(hand);
                     response.data.attachments = Router.getPlayerHandAttachments(hand);
                     if (response.data.attachments.length == 0) {
                         response.data.text = "You played all your cards!";
@@ -405,6 +417,7 @@ export module CribbageRoutes {
                 var theirCards = Router.getPlayerHandAttachments(theirHand);
                 var hasHand = (theirCards.length > 0);
                 var delayedData = new CribbageResponseData(SlackResponseType.ephemeral);
+                delayedData.text = Router.getPlayerHandImages(theirHand);
                 if (!hasHand)
                      delayedData.text = "You have no more cards!";
                 else
@@ -441,6 +454,7 @@ export module CribbageRoutes {
                         // Show the rest of their hand
                         var theirHand = this.currentGame.getPlayerHand(player);
                         var theirCards = Router.getPlayerHandAttachments(theirHand);
+                        response.data.text = Router.getPlayerHandImages(theirHand);
                         if (theirCards.length > 0) {
                             response.data.attachments = cardsPlayed.concat(theirCards);
                         }
