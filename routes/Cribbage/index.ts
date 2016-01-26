@@ -96,10 +96,9 @@ export module CribbageRoutes {
     }
 
     function getCardImageUrl(card:Card, deckType:string="Default"): string {
-        var cardStr = removeSpaces(card.toString());
+        var cardUrlStr = card.toUrlString(".png");
         // Capitalize the first letter and add ".png"
-        cardStr = `${cardStr.charAt(0).toUpperCase()}${cardStr.slice(1)}.png`;
-        var ret = `${process.env.AWS_S3_STANDARD_DECK_URL}${deckType}/${cardStr}`;
+        var ret = `${process.env.AWS_S3_STANDARD_DECK_URL}${deckType}/${cardUrlStr}`;
         console.log(ret);
         return ret;
     }

@@ -99,9 +99,8 @@ var CribbageRoutes;
     }
     function getCardImageUrl(card, deckType) {
         if (deckType === void 0) { deckType = "Default"; }
-        var cardStr = removeSpaces(card.toString());
-        cardStr = "" + cardStr.charAt(0).toUpperCase() + cardStr.slice(1) + ".png";
-        var ret = "" + process.env.AWS_S3_STANDARD_DECK_URL + deckType + "/" + cardStr;
+        var cardUrlStr = card.toUrlString(".png");
+        var ret = "" + process.env.AWS_S3_STANDARD_DECK_URL + deckType + "/" + cardUrlStr;
         console.log(ret);
         return ret;
     }
