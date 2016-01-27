@@ -21,13 +21,9 @@ var CribbageHand = (function (_super) {
     }
     CribbageHand.prototype.countPoints = function (cutCard, mustHaveFiveCardFlush) {
         var points = 0;
-        console.log("taking the cut card");
         this.takeCard(cutCard);
-        console.log("counting the pairs");
         points += this.countPairs();
-        console.log("counting the fifteens");
         points += this.countFifteens(0, 0);
-        console.log("counting the runs");
         var runLength = this.countRuns();
         if (runLength.runLength >= 3) {
             points += (runLength.runLength * runLength.numRuns);
@@ -35,7 +31,6 @@ var CribbageHand = (function (_super) {
         if (cutCard.value != card_1.Value.Jack && this.indexOfItem(new card_1.BaseCard(cutCard.suit, card_1.Value.Jack)) != -1) {
             points++;
         }
-        console.log("counting the flush");
         var numInFlush = 0;
         if (mustHaveFiveCardFlush) {
             numInFlush = this.countFlush();
@@ -75,11 +70,8 @@ var CribbageHand = (function (_super) {
         return duplicates;
     };
     CribbageHand.prototype.countPairs = function () {
-        console.log("making a copy of the hand");
         var hand = this.makeCopy();
-        console.log("finding the duplicates");
         var duplicates = CribbageHand.findDuplicates(hand);
-        console.log("iterating the duplicates");
         var points = 0;
         for (var ix = 0; ix < duplicates.length; ix++) {
             var dup = duplicates[ix];

@@ -35,19 +35,23 @@ var ImageConvert;
         });
     }
     function makeHandImage(hand, player, cardsPath) {
+        console.log("Making the hand image");
         return new Promise(function (resolve, reject) {
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
             if (!fs.existsSync(cardsPath)) {
+                console.log("Creating directory " + cardsPath);
                 fs.mkdirSync(cardsPath);
             }
             hand.sortCards();
             var promises = [];
+            console.log("downloading the cards");
             for (var ix = 0; ix < hand.size(); ix++) {
                 promises.push(downloadCard(hand.itemAt(ix), cardsPath));
             }
             Promise.all(promises).then(function (values) {
+                console.log("Finished downloading the cards, now create the final image");
                 playerHandPath = "" + cardsPath + player + ".png";
                 var width = 0, maxHeight = 0;
                 for (var jx = 0; jx < values.length; jx++) {
@@ -67,6 +71,7 @@ var ImageConvert;
                     playerHandImage = playerHandImage.draw(images(filePath), xOffset, 0);
                     xOffset = width;
                 }
+                console.log("Creating the final image...");
                 try {
                     playerHandImage.size(width, maxHeight).save(playerHandPath);
                 }
@@ -388,6 +393,7 @@ var CribbageRoutes;
         Router.prototype.sendPlayerHand = function (player, hand, response, res) {
             ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                 .done(function (handPath) {
+                console.log("done creating the hand at " + handPath);
                 var imagePath = process.env.APP_HOST_URL + "/" + handPath;
                 response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
                 if (response.data.attachments.length == 0) {

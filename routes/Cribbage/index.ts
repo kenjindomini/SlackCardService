@@ -50,20 +50,24 @@ export module ImageConvert {
     }
 
     export function makeHandImage(hand:CribbageHand, player:string, cardsPath:string):Promise {
+        console.log("Making the hand image");
         return new Promise(function(resolve, reject) {
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
             if (!fs.existsSync(cardsPath)) {
+                console.log(`Creating directory ${cardsPath}`);
                 fs.mkdirSync(cardsPath);
             }
             hand.sortCards();
             var promises:Array<Promise> = [];
+            console.log("downloading the cards");
             for (var ix = 0; ix < hand.size(); ix++) {
                 // Download all the cards asynchronously
                 promises.push(downloadCard(hand.itemAt(ix), cardsPath));
             }
             Promise.all(promises).then(function (values) {
+                console.log("Finished downloading the cards, now create the final image");
                 // Merge together all the downloaded images
                 playerHandPath = `${cardsPath}${player}.png`;
                 var width = 0, maxHeight = 0;
@@ -84,6 +88,7 @@ export module ImageConvert {
                     playerHandImage = playerHandImage.draw(images(filePath), xOffset, 0);
                     xOffset = width;
                 }
+                console.log("Creating the final image...");
                 try { playerHandImage.size(width, maxHeight).save(playerHandPath); }
                 catch (e) { reject(e); }
                 resolve(playerHandPath);
@@ -391,6 +396,7 @@ export module CribbageRoutes {
         private sendPlayerHand(player:string, hand:CribbageHand, response:CribbageResponse, res:Response):void {
             ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                 .done(function (handPath:string) {
+                    console.log(`done creating the hand at ${handPath}`);
                     var imagePath = `${process.env.APP_HOST_URL}/${handPath}`;
                     response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
                     if (response.data.attachments.length == 0) {
