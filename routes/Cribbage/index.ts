@@ -456,8 +456,11 @@ export module CribbageRoutes {
                             if (response.data.attachments.length == 0) {
                                 response.data.text = "You played all your cards!";
                             }
+                            else {
+                                response.data.text = "";
+                            }
                             console.log(`Returning ${JSON.stringify(response)}`);
-                            Router.sendResponse(response, res);
+                            Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
                         });
                 }
                 catch (e) {
