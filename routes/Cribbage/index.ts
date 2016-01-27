@@ -460,7 +460,7 @@ export module CribbageRoutes {
                                 response.data.text = "";
                             }
                             console.log(`Returning ${JSON.stringify(response)}`);
-                            Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
+                            Router.sendDelayedResponse(response.data, Router.getResponseUrl(req), 1);
                         });
                 }
                 catch (e) {

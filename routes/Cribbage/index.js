@@ -409,8 +409,11 @@ var CribbageRoutes;
                         if (response.data.attachments.length == 0) {
                             response.data.text = "You played all your cards!";
                         }
+                        else {
+                            response.data.text = "";
+                        }
                         console.log("Returning " + JSON.stringify(response));
-                        Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
+                        Router.sendDelayedResponse(response.data, Router.getResponseUrl(req), 1);
                     });
                 }
                 catch (e) {
