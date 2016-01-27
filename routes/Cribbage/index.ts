@@ -457,10 +457,15 @@ export module CribbageRoutes {
                                 response.data.text = "You played all your cards!";
                             }
                             else {
-                                response.data.text = "???";
+                                response.data.text = "";
                             }
                             console.log(`Returning ${JSON.stringify(response)}`);
-                            Router.sendDelayedResponse(response.data, Router.getResponseUrl(req), 1);
+                            Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
+                            setTimeout(function () {
+                                if (fs.existsSync(imagePath)) {
+                                    fs.unlinkSync(imagePath);
+                                }
+                            }, 5000);
                         });
                 }
                 catch (e) {
