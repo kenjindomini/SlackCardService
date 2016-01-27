@@ -3,8 +3,8 @@
 import request = require("request");
 import fs = require("fs");
 import Promise = require("promise");
-//if (process.env.NODE_ENV != "Production")
-    //require('promise/lib/rejection-tracking').enable();
+if (process.env.NODE_ENV != "Production")
+    require('promise/lib/rejection-tracking').enable();
 // SB TODO: write typescript definition file
 import images = require("images");
 import {CribbageHand} from "../../../card_service/implementations/cribbage_hand";
