@@ -435,9 +435,24 @@ export module CribbageRoutes {
                     var hand:CribbageHand = this.currentGame.getPlayerHand(player);
                     console.log("calling sendPlayerHand");
                     //this.sendPlayerHand(player, hand, response, res);
+                    //ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
+                    //    .done(function (handPath:string) {
+                    //        console.log(`done creating the hand at ${handPath}`);
+                    //        var imagePath = `${process.env.APP_HOST_URL}/${handPath}`;
+                    //        response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
+                    //        if (response.data.attachments.length == 0) {
+                    //            response.data.text = "You played all your cards!";
+                    //        }
+                    //        console.log(`Returning ${JSON.stringify(response)}`);
+                    //        Router.sendResponse(response, res);
+                    //        setTimeout(function () {
+                    //            if (fs.existsSync(imagePath)) {
+                    //                fs.unlinkSync(imagePath);
+                    //            }
+                    //        }, 3000);
+                    //    });
                     ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
-                        .done(function (handPath:string) {
-                            console.log(`done creating the hand at ${handPath}`);
+                        .done(function(handPath:string) {
                             var imagePath = `${process.env.APP_HOST_URL}/${handPath}`;
                             response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
                             if (response.data.attachments.length == 0) {
@@ -445,11 +460,6 @@ export module CribbageRoutes {
                             }
                             console.log(`Returning ${JSON.stringify(response)}`);
                             Router.sendResponse(response, res);
-                            setTimeout(function () {
-                                if (fs.existsSync(imagePath)) {
-                                    fs.unlinkSync(imagePath);
-                                }
-                            }, 3000);
                         });
                 }
                 catch (e) {

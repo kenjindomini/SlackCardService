@@ -406,7 +406,6 @@ var CribbageRoutes;
                     console.log("calling sendPlayerHand");
                     ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                         .done(function (handPath) {
-                        console.log("done creating the hand at " + handPath);
                         var imagePath = process.env.APP_HOST_URL + "/" + handPath;
                         response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
                         if (response.data.attachments.length == 0) {
@@ -414,11 +413,6 @@ var CribbageRoutes;
                         }
                         console.log("Returning " + JSON.stringify(response));
                         Router.sendResponse(response, res);
-                        setTimeout(function () {
-                            if (fs.existsSync(imagePath)) {
-                                fs.unlinkSync(imagePath);
-                            }
-                        }, 3000);
                     });
                 }
                 catch (e) {
