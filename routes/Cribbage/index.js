@@ -418,9 +418,6 @@ var CribbageRoutes;
                 }
                 return "Have patience...";
             }
-            if (response.status != 200) {
-                Router.sendResponse(response, res);
-            }
         };
         Router.prototype.playCard = function (req, res) {
             var player = Router.getPlayerName(req);
