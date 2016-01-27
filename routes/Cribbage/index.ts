@@ -421,7 +421,7 @@ export module CribbageRoutes {
                         }
                         console.log(`Returning ${JSON.stringify(response)}`);
                         Router.sendResponse(response, res);
-                        return true;
+                        resolve();
                     });
             });
         }
