@@ -8,7 +8,7 @@
 import fs = require("fs");
 import {BaseCard, Suit, Value} from "../../card_service/base_classes/items/card";
 import {CribbageHand} from "../../card_service/implementations/cribbage_hand";
-import {ImageConvert} from "../../routes/Cribbage/ImageConvert";
+import {ImageConvert} from "../../routes/Cribbage/lib/image_convert";
 
 "use strict";
 

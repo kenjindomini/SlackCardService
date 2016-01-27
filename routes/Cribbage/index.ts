@@ -12,7 +12,7 @@ import {Players, Teams} from "../../card_service/base_classes/card_game";
 import {BaseCard as Card, Value, Suit} from "../../card_service/base_classes/items/card";
 import {ItemCollection} from "../../card_service/base_classes/collections/item_collection";
 import {removeLastTwoChars} from "../../card_service/base_classes/card_game";
-import {ImageConvert} from "./ImageConvert";
+import {ImageConvert} from "./lib/image_convert";
 
 var request = require("request");
 
@@ -321,13 +321,13 @@ export module CribbageRoutes {
                 try {
                     var player = Router.getPlayerName(req);
                     var hand:CribbageHand = this.currentGame.getPlayerHand(player);
-                    //ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
-                    //    .done(function(handPath:string) {
-                    //        response.data.attachments = [new CribbageResponseAttachment("", "", handPath)];
-                    //        if (response.data.attachments.length == 0) {
-                    //            response.data.text = "You played all your cards!";
-                    //        }
-                    //    });
+                    ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
+                        .done(function(handPath:string) {
+                            response.data.attachments = [new CribbageResponseAttachment("", "", handPath)];
+                            if (response.data.attachments.length == 0) {
+                                response.data.text = "You played all your cards!";
+                            }
+                        });
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
@@ -398,15 +398,15 @@ export module CribbageRoutes {
                 if (!hasHand)
                      delayedData.text = "You have no more cards!";
                 else {
-                    //ImageConvert.makeHandImage(theirHand, player, process.env.TMP_CARDS_PATH)
-                    //    .done(function(handPath:string) {
-                    //        delayedData.attachments = [new CribbageResponseAttachment("", "", handPath)];
-                    //        Router.sendDelayedResponse(
-                    //            delayedData,
-                    //            Router.getResponseUrl(req),
-                    //            1000
-                    //        );
-                    //    });
+                    ImageConvert.makeHandImage(theirHand, player, process.env.TMP_CARDS_PATH)
+                        .done(function(handPath:string) {
+                            delayedData.attachments = [new CribbageResponseAttachment("", "", handPath)];
+                            Router.sendDelayedResponse(
+                                delayedData,
+                                Router.getResponseUrl(req),
+                                1000
+                            );
+                        });
                 }
             }
         }
@@ -437,11 +437,11 @@ export module CribbageRoutes {
                         var theirHand = this.currentGame.getPlayerHand(player);
                         if (theirHand.size() > 0) {
                             delayed = true;
-                            //ImageConvert.makeHandImage(theirHand, player, process.env.TMP_CARDS_PATH)
-                            //    .done(function (handPath:string) {
-                            //        response.data.attachments = [new CribbageResponseAttachment("", "", handPath)];
-                            //        Router.sendResponse(response, res);
-                            //    });
+                            ImageConvert.makeHandImage(theirHand, player, process.env.TMP_CARDS_PATH)
+                                .done(function (handPath:string) {
+                                    response.data.attachments = [new CribbageResponseAttachment("", "", handPath)];
+                                    Router.sendResponse(response, res);
+                                });
                         }
                         else {
                             response.data.text = "You have no more cards left";
@@ -468,7 +468,7 @@ export module CribbageRoutes {
                         new CribbageResponseData(
                             SlackResponseType.in_channel,
                             `The game is ready to begin.
-                            Play a card ${this.currentGame.nextPlayerInSequence.name}.`,
+                            Play a card ${this.currentGame.nextPlayerInSequence.name}.`
                             [new CribbageResponseAttachment("Card Card", "", ImageConvert.getCardImageUrl(this.currentGame.cut))]
                         ),
                         Router.getResponseUrl(req),
