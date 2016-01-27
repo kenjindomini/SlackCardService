@@ -370,7 +370,7 @@ export module CribbageRoutes {
                         ${ currentCount }
                         ${ cardsInPlay }
                         ${ nextPlayer }`;
-                    if (gameOver) {
+                    if (cribRes.gameOver) {
                         response.data.text = responseText;
                     }
                     else if (responseText.length > 0) {

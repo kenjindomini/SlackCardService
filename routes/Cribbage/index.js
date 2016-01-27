@@ -366,7 +366,7 @@ var CribbageRoutes;
                     var nextPlayer = "You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
                     response.data.text =
                         justPlayed + "\n                        " + currentCount + "\n                        " + cardsInPlay + "\n                        " + nextPlayer;
-                    if (gameOver) {
+                    if (cribRes.gameOver) {
                         response.data.text = responseText;
                     }
                     else if (responseText.length > 0) {
