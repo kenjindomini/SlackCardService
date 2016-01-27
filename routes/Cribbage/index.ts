@@ -59,7 +59,7 @@ export module ImageConvert {
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
-            if (!fs.existsSync(cardsPath)){
+            if (!fs.existsSync("./tmp/cards")){
                 fs.mkdirSync(cardsPath);
             }
             hand.sortCards();
