@@ -393,7 +393,7 @@ export module CribbageRoutes {
             Router.sendResponse(response, res);
         }
 
-        private sendPlayerHand(player:string, hand:CribbageHand, response:CribbageResponse, res:Response):void {
+        private sendPlayerHand(player:string, hand:CribbageHand, response:CribbageResponse, res:Response):Promise {
             console.log("calling makeHandImage");
             //ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
             //    .done(function (handPath:string) {
@@ -411,16 +411,19 @@ export module CribbageRoutes {
             //            }
             //        }, 3000);
             //    });
-            ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
-                .done(function(handPath:string) {
-                    var imagePath = `${process.env.APP_HOST_URL}/${handPath}`;
-                    response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
-                    if (response.data.attachments.length == 0) {
-                        response.data.text = "You played all your cards!";
-                    }
-                    console.log(`Returning ${JSON.stringify(response)}`);
-                    Router.sendResponse(response, res);
-                });
+            return new Promise(function(resolve, reject) {
+                ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
+                    .done(function(handPath:string) {
+                        var imagePath = `${process.env.APP_HOST_URL}/${handPath}`;
+                        response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
+                        if (response.data.attachments.length == 0) {
+                            response.data.text = "You played all your cards!";
+                        }
+                        console.log(`Returning ${JSON.stringify(response)}`);
+                        Router.sendResponse(response, res);
+                        return true;
+                    });
+            });
         }
 
         showHand(req:Request, res:Response) {
@@ -434,7 +437,7 @@ export module CribbageRoutes {
                     var player = Router.getPlayerName(req);
                     var hand:CribbageHand = this.currentGame.getPlayerHand(player);
                     console.log("calling sendPlayerHand");
-                    this.sendPlayerHand(player, hand, response, res);
+                    this.sendPlayerHand(player, hand, response, res).then(function() { console.log("yay!"); });
                     //ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                     //    .done(function(handPath:string) {
                     //        var imagePath = `${process.env.APP_HOST_URL}/${handPath}`;
