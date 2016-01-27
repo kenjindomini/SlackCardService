@@ -45,20 +45,6 @@ var ImageConvert;
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
-            try {
-                if (!fs.existsSync("#{RAILS_ROOT}")) {
-                    fs.mkdirSync("#{RAILS_ROOT}");
-                }
-                if (!fs.existsSync("#{RAILS_ROOT}/tmp")) {
-                    fs.mkdirSync("#{RAILS_ROOT}/tmp");
-                }
-                if (!fs.existsSync("#{RAILS_ROOT}/tmp/cards")) {
-                    fs.mkdirSync("#{RAILS_ROOT}/tmp/cards");
-                }
-            }
-            catch (ex) {
-                console.log(ex);
-            }
             hand.sortCards();
             var promises = [];
             console.log("Begin downloading Cards");
