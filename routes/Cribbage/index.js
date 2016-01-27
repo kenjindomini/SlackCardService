@@ -408,7 +408,8 @@ var CribbageRoutes;
                     var hand = this.currentGame.getPlayerHand(player);
                     ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                         .done(function (handPath) {
-                        response.data.attachments = [new CribbageResponseAttachment("", "", handPath)];
+                        var imagePath = process.env.APP_HOST_URL + "/" + handPath;
+                        response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
                         if (response.data.attachments.length == 0) {
                             response.data.text = "You played all your cards!";
                         }
