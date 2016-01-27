@@ -31,6 +31,8 @@
     "errorhandler": "^1.4.2",
     "express": "^4.13.3",
     "form-data": "^0.2.0",
+    "images": "^2.1.10",
+    "promise": "^7.1.1",
     "request": "^2.67.0"
   },
   "devDependencies": {
@@ -40,6 +42,7 @@
     "jasmine-node": "^1.14.5",
     "jquery": "^2.1.4",
     "mocha": "^2.3.4",
+    "node-inspector": "^0.12.5",
     "supertest": "^1.1.0",
     "tsd": "^0.6.5",
     "typescript": "^1.6.2"

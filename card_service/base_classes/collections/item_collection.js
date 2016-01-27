@@ -4,7 +4,7 @@ var ItemCollection = (function () {
         this.items = items;
     }
     ItemCollection.prototype.deepCopy = function () {
-        return new ItemCollection(this.items.slice());
+        return new ItemCollection(this.items.slice(0));
     };
     ItemCollection.prototype.indexOfItem = function (item) {
         var index = -1;

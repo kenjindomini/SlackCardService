@@ -44,6 +44,10 @@ var BaseCard = (function () {
     BaseCard.prototype.toString = function () {
         return (Value[this.value] + ' of ' + Suit[this.suit]);
     };
+    BaseCard.prototype.toUrlString = function (extension) {
+        if (extension === void 0) { extension = "png"; }
+        return Value[this.value] + "Of" + Suit[this.suit] + "." + extension;
+    };
     return BaseCard;
 })();
 exports.BaseCard = BaseCard;
