@@ -81,6 +81,15 @@ describe("Integration test the Cribbage game between two players", function () {
     });
     it("is able to show a player's cards", function (done) {
         var agent = request(this.app);
+        var series = joinGameAndBeginSeries(agent).concat(function (cb) {
+            agent.get(app_1.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.showHand)
+                .query({ token: "" + Tokens.showHand })
+                .expect(200)
+                .expect(function (res) {
+                console.log(res);
+            });
+        });
+        async.series(series, done);
     });
 });
 //# sourceMappingURL=NodeTwoPlayerCribbageSpec.js.map

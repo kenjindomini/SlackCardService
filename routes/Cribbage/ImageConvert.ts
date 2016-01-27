@@ -27,7 +27,7 @@ export module ImageConvert {
         });
     };
 
-    function downloadCard(card:Card, cardsPath:string): Promise<string> {
+    function downloadCard(card:Card, cardsPath:string): Promise {
         if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
             cardsPath = cardsPath.concat("/");
         return new Promise(function(resolve, reject) {
@@ -45,13 +45,13 @@ export module ImageConvert {
         });
     }
 
-    export function makeHandImage(hand:CribbageHand, player:string, cardsPath:string):Promise<string> {
+    export function makeHandImage(hand:CribbageHand, player:string, cardsPath:string):Promise {
         return new Promise(function(resolve, reject) {
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
             hand.sortCards();
-            var promises:Array<Promise<string>> = [];
+            var promises:Array<Promise> = [];
             for (var ix = 0; ix < hand.size(); ix++) {
                 // Download all the cards asynchronously
                 promises.push(downloadCard(hand.itemAt(ix), cardsPath));
