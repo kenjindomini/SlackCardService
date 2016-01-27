@@ -85,7 +85,6 @@ describe("Test a Cribbage game between two players", function () {
             ]), user, tmpPath)
                 .done(function (result) {
                 expect(result.indexOf(user + ".png")).not.toEqual(-1);
-                deleteFolderRecursive(tmpPath);
                 done();
             });
         });

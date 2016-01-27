@@ -43,8 +43,16 @@ var ImageConvert;
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
-            if (!fs.existsSync("./tmp/cards")) {
-                fs.mkdirSync(cardsPath);
+            try {
+                if (!fs.existsSync("./tmp")) {
+                    fs.mkdirSync("./tmp");
+                }
+                if (!fs.existsSync("./tmp/cards")) {
+                    fs.mkdirSync("./tmp/cards");
+                }
+            }
+            catch (ex) {
+                console.log(ex);
             }
             hand.sortCards();
             var promises = [];
