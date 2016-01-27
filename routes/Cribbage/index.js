@@ -44,11 +44,11 @@ var ImageConvert;
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
             try {
-                if (!fs.existsSync("./tmp")) {
-                    fs.mkdirSync("./tmp");
+                if (!fs.existsSync("/tmp")) {
+                    fs.mkdirSync("/tmp");
                 }
-                if (!fs.existsSync("./tmp/cards")) {
-                    fs.mkdirSync("./tmp/cards");
+                if (!fs.existsSync("/tmp/cards")) {
+                    fs.mkdirSync("/tmp/cards");
                 }
             }
             catch (ex) {
