@@ -206,7 +206,7 @@ var CribbageRoutes;
             return (req.body.user_name ? req.body.user_name : req.query.user_name ? req.query.user_name : "Unknown Player");
         };
         Router.getResponseUrl = function (req) {
-            return (req.body.response_url ? req.body.response_url : "");
+            return (req.body.response_url ? req.body.response_url : req.query.response_url ? req.query.response_url : "");
         };
         Router.verifyRequest = function (req, route) {
             var verified = false;

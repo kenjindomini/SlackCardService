@@ -218,7 +218,7 @@ export module CribbageRoutes {
         }
 
         private static getResponseUrl(req:Request):string {
-            return (req.body.response_url ? req.body.response_url : "");
+            return (req.body.response_url ? req.body.response_url : req.query.response_url ? req.query.response_url : "");
         }
 
         /**
