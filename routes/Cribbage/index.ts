@@ -26,7 +26,6 @@ export module ImageConvert {
         var cardUrlStr = card.toUrlString();
         // Capitalize the first letter and add ".png"
         var ret = `${process.env.AWS_S3_STANDARD_DECK_URL}${deckType}/${cardUrlStr}`;
-        console.log(ret);
         return ret;
     }
 
@@ -47,7 +46,9 @@ export module ImageConvert {
             }
             else {
                 // Download the card
+                console.log(`Downloading the ${card.toString()}`)
                 download(getCardImageUrl(card), cardFilePath, function () {
+                    console.log(`Resolving to ${cardFilePath}`)
                     resolve(cardFilePath);
                 });
             }
@@ -80,6 +81,7 @@ export module ImageConvert {
             Promise.all(promises).then(function (values) {
                 // Merge together all the downloaded images
                 playerHandPath = `${cardsPath}${player}.png`;
+                console.log(`Merging the hand into ${playerHandPath}`)
                 var width = 0, maxHeight = 0;
                 for (var jx = 0; jx < values.length; jx++) {
                     var cardFilePath = values[jx];

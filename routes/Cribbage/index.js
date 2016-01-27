@@ -14,7 +14,6 @@ var ImageConvert;
         if (deckType === void 0) { deckType = "Default"; }
         var cardUrlStr = card.toUrlString();
         var ret = "" + process.env.AWS_S3_STANDARD_DECK_URL + deckType + "/" + cardUrlStr;
-        console.log(ret);
         return ret;
     }
     ImageConvert.getCardImageUrl = getCardImageUrl;
@@ -32,7 +31,9 @@ var ImageConvert;
                 resolve(cardFilePath);
             }
             else {
+                console.log("Downloading the " + card.toString());
                 download(getCardImageUrl(card), cardFilePath, function () {
+                    console.log("Resolving to " + cardFilePath);
                     resolve(cardFilePath);
                 });
             }
@@ -64,6 +65,7 @@ var ImageConvert;
             }
             Promise.all(promises).then(function (values) {
                 playerHandPath = "" + cardsPath + player + ".png";
+                console.log("Merging the hand into " + playerHandPath);
                 var width = 0, maxHeight = 0;
                 for (var jx = 0; jx < values.length; jx++) {
                     var cardFilePath = values[jx];
