@@ -26,8 +26,6 @@ var ImageConvert;
         });
     };
     function downloadCard(card, cardsPath) {
-        if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
-            cardsPath = cardsPath.concat("/");
         return new Promise(function (resolve, reject) {
             var cardFilePath = "" + cardsPath + card.toUrlString();
             if (fs.exists(cardFilePath)) {
@@ -45,6 +43,9 @@ var ImageConvert;
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir);
+            }
             hand.sortCards();
             var promises = [];
             for (var ix = 0; ix < hand.size(); ix++) {

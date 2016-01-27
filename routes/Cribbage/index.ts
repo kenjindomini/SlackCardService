@@ -39,8 +39,6 @@ export module ImageConvert {
     };
 
     function downloadCard(card:Card, cardsPath:string): Promise {
-        if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
-            cardsPath = cardsPath.concat("/");
         return new Promise(function(resolve, reject) {
             var cardFilePath = `${cardsPath}${card.toUrlString()}`;
             if (fs.exists(cardFilePath)) {
@@ -61,6 +59,9 @@ export module ImageConvert {
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
+            if (!fs.existsSync(cardsPath)){
+                fs.mkdirSync(cardsPath);
+            }
             hand.sortCards();
             var promises:Array<Promise> = [];
             for (var ix = 0; ix < hand.size(); ix++) {
