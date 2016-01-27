@@ -358,10 +358,15 @@ var CribbageRoutes;
                     var cribRes = this.currentGame.playCard(player, card);
                     console.log("index.playCard: played " + card.toString());
                     var responseText = cribRes.message;
-                    var cardStr = (card ? card.toString() : "(oh my, looks like something went horribly wrong)");
+                    var justPlayed = player + " played the " + card.toString() + ".";
+                    var currentCount = "The count is at " + this.currentGame.count + ".";
+                    var cardsInPlay = this.currentGame.sequence.toString() ?
+                        "The cards in play are: " + this.currentGame.sequence.toString() + "." :
+                        "There are no cards currently in play.";
+                    var nextPlayer = "You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
                     response.data.text =
-                        player + " played the " + cardStr + ".\n                        The count is at " + this.currentGame.count + ".\n                        The cards in play are: " + this.currentGame.sequence.toString() + ".\n                        You're up, " + this.currentGame.nextPlayerInSequence.name + ".";
-                    if (cribRes.gameOver) {
+                        justPlayed + "\n                        " + currentCount + "\n                        " + cardsInPlay + "\n                        " + nextPlayer;
+                    if (gameOver) {
                         response.data.text = responseText;
                     }
                     else if (responseText.length > 0) {
