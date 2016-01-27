@@ -1,11 +1,87 @@
+var request = require("request");
+var fs = require("fs");
+var Promise = require("promise");
+var images = require("images");
 var cribbage_player_1 = require("../../card_service/implementations/cribbage_player");
 var cribbage_1 = require("../../card_service/implementations/cribbage");
 var cribbage_hand_1 = require("../../card_service/implementations/cribbage_hand");
 var card_game_1 = require("../../card_service/base_classes/card_game");
 var card_1 = require("../../card_service/base_classes/items/card");
 var item_collection_1 = require("../../card_service/base_classes/collections/item_collection");
-var image_convert_1 = require("./lib/image_convert");
-var request = require("request");
+var ImageConvert;
+(function (ImageConvert) {
+    function getCardImageUrl(card, deckType) {
+        if (deckType === void 0) { deckType = "Default"; }
+        var cardUrlStr = card.toUrlString();
+        var ret = "" + process.env.AWS_S3_STANDARD_DECK_URL + deckType + "/" + cardUrlStr;
+        console.log(ret);
+        return ret;
+    }
+    ImageConvert.getCardImageUrl = getCardImageUrl;
+    var download = function (uri, filename, callback) {
+        request.head(uri, function (err, res, body) {
+            console.log('content-type:', res.headers['content-type']);
+            console.log('content-length:', res.headers['content-length']);
+            request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+        });
+    };
+    function downloadCard(card, cardsPath) {
+        if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
+            cardsPath = cardsPath.concat("/");
+        return new Promise(function (resolve, reject) {
+            var cardFilePath = "" + cardsPath + card.toUrlString();
+            if (fs.exists(cardFilePath)) {
+                resolve(cardFilePath);
+            }
+            else {
+                download(getCardImageUrl(card), cardFilePath, function () {
+                    resolve(cardFilePath);
+                });
+            }
+        });
+    }
+    function makeHandImage(hand, player, cardsPath) {
+        return new Promise(function (resolve, reject) {
+            var playerHandPath = "";
+            if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
+                cardsPath = cardsPath.concat("/");
+            hand.sortCards();
+            var promises = [];
+            for (var ix = 0; ix < hand.size(); ix++) {
+                promises.push(downloadCard(hand.itemAt(ix), cardsPath));
+            }
+            Promise.all(promises).then(function (values) {
+                playerHandPath = "" + cardsPath + player + ".png";
+                var width = 0, maxHeight = 0;
+                for (var jx = 0; jx < values.length; jx++) {
+                    var cardFilePath = values[jx];
+                    width += images(cardFilePath).width();
+                    var height = images(cardFilePath).height();
+                    if (height > maxHeight) {
+                        maxHeight = height;
+                    }
+                }
+                var playerHandImage = images(width, maxHeight);
+                var xOffset = 0;
+                width = 0;
+                for (var kx = 0; kx < values.length; kx++) {
+                    var filePath = values[kx];
+                    width += images(filePath).width();
+                    playerHandImage = playerHandImage.draw(images(filePath), xOffset, 0);
+                    xOffset = width;
+                }
+                try {
+                    playerHandImage.size(width, maxHeight).save(playerHandPath);
+                }
+                catch (e) {
+                    reject(e);
+                }
+                resolve(playerHandPath);
+            });
+        });
+    }
+    ImageConvert.makeHandImage = makeHandImage;
+})(ImageConvert = exports.ImageConvert || (exports.ImageConvert = {}));
 var CribbageRoutes;
 (function (CribbageRoutes) {
     var SlackResponseType;
@@ -321,7 +397,7 @@ var CribbageRoutes;
                 try {
                     var player = Router.getPlayerName(req);
                     var hand = this.currentGame.getPlayerHand(player);
-                    image_convert_1.ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
+                    ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                         .done(function (handPath) {
                         response.data.attachments = [new CribbageResponseAttachment("", "", handPath)];
                         if (response.data.attachments.length == 0) {
@@ -390,7 +466,7 @@ var CribbageRoutes;
                 if (!hasHand)
                     delayedData.text = "You have no more cards!";
                 else {
-                    image_convert_1.ImageConvert.makeHandImage(theirHand, player, process.env.TMP_CARDS_PATH)
+                    ImageConvert.makeHandImage(theirHand, player, process.env.TMP_CARDS_PATH)
                         .done(function (handPath) {
                         delayedData.attachments = [new CribbageResponseAttachment("", "", handPath)];
                         Router.sendDelayedResponse(delayedData, Router.getResponseUrl(req), 1000);
@@ -417,7 +493,7 @@ var CribbageRoutes;
                         var theirHand = this.currentGame.getPlayerHand(player);
                         if (theirHand.size() > 0) {
                             delayed = true;
-                            image_convert_1.ImageConvert.makeHandImage(theirHand, player, process.env.TMP_CARDS_PATH)
+                            ImageConvert.makeHandImage(theirHand, player, process.env.TMP_CARDS_PATH)
                                 .done(function (handPath) {
                                 response.data.attachments = [new CribbageResponseAttachment("", "", handPath)];
                                 Router.sendResponse(response, res);
@@ -442,7 +518,7 @@ var CribbageRoutes;
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
                 if (this.currentGame.isReady()) {
-                    Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, ("The game is ready to begin.\n                            Play a card " + this.currentGame.nextPlayerInSequence.name + ".")[new CribbageResponseAttachment("Card Card", "", image_convert_1.ImageConvert.getCardImageUrl(this.currentGame.cut))]), Router.getResponseUrl(req), 1000);
+                    Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, ("The game is ready to begin.\n                            Play a card " + this.currentGame.nextPlayerInSequence.name + ".")[new CribbageResponseAttachment("Card Card", "", ImageConvert.getCardImageUrl(this.currentGame.cut))]), Router.getResponseUrl(req), 1000);
                 }
             }
         };
