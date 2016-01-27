@@ -394,6 +394,7 @@ export module CribbageRoutes {
         }
 
         private sendPlayerHand(player:string, hand:CribbageHand, response:CribbageResponse, res:Response):void {
+            console.log("calling makeHandImage");
             ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                 .done(function (handPath:string) {
                     console.log(`done creating the hand at ${handPath}`);
