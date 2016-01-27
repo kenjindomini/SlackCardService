@@ -394,7 +394,6 @@ var CribbageRoutes;
             console.log("calling makeHandImage");
             ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                 .done(function (handPath) {
-                console.log("done creating the hand at " + handPath);
                 var imagePath = process.env.APP_HOST_URL + "/" + handPath;
                 response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
                 if (response.data.attachments.length == 0) {
@@ -402,11 +401,6 @@ var CribbageRoutes;
                 }
                 console.log("Returning " + JSON.stringify(response));
                 Router.sendResponse(response, res);
-                setTimeout(function () {
-                    if (fs.existsSync(imagePath)) {
-                        fs.unlinkSync(imagePath);
-                    }
-                }, 3000);
             });
         };
         Router.prototype.showHand = function (req, res) {
@@ -420,16 +414,7 @@ var CribbageRoutes;
                     var player = Router.getPlayerName(req);
                     var hand = this.currentGame.getPlayerHand(player);
                     console.log("calling sendPlayerHand");
-                    ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
-                        .done(function (handPath) {
-                        var imagePath = process.env.APP_HOST_URL + "/" + handPath;
-                        response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
-                        if (response.data.attachments.length == 0) {
-                            response.data.text = "You played all your cards!";
-                        }
-                        console.log("Returning " + JSON.stringify(response));
-                        Router.sendResponse(response, res);
-                    });
+                    this.sendPlayerHand(player, hand, response, res);
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
