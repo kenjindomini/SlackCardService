@@ -30,7 +30,7 @@ export module ImageConvert {
     function downloadCard(card:Card, cardsPath:string): Promise<string> {
         if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
             cardsPath = cardsPath.concat("/");
-        var promise = new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {
             var cardFilePath = `${cardsPath}${card.toUrlString()}`;
             if (fs.exists(cardFilePath)) {
                 // Resolve right away, no need to download again
@@ -43,11 +43,10 @@ export module ImageConvert {
                 });
             }
         });
-        return promise;
     }
 
     export function makeHandImage(hand:CribbageHand, player:string, cardsPath:string):Promise<string> {
-        var promise = new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
@@ -83,6 +82,5 @@ export module ImageConvert {
                 resolve(playerHandPath);
             });
         });
-        return promise;
     }
 }
