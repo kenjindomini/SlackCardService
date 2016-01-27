@@ -12,7 +12,7 @@ import {Players, Teams} from "../../card_service/base_classes/card_game";
 import {BaseCard as Card, Value, Suit} from "../../card_service/base_classes/items/card";
 import {ItemCollection} from "../../card_service/base_classes/collections/item_collection";
 import {removeLastTwoChars} from "../../card_service/base_classes/card_game";
-import {ImageConvert} from "./ImageConverter";
+import {ImageConvert} from "./ImageConvert";
 
 var request = require("request");
 

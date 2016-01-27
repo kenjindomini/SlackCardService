@@ -1,7 +1,7 @@
 var fs = require("fs");
 var card_1 = require("../../card_service/base_classes/items/card");
 var cribbage_hand_1 = require("../../card_service/implementations/cribbage_hand");
-var ImageConverter_1 = require("../../routes/Cribbage/ImageConverter");
+var ImageConvert_1 = require("../../routes/Cribbage/ImageConvert");
 "use strict";
 var deleteFolderRecursive = function (path) {
     if (fs.existsSync(path)) {
@@ -76,7 +76,7 @@ describe("Test a Cribbage game between two players", function () {
         it("is able to show a player's cards", function (done) {
             process.env.AWS_S3_STANDARD_DECK_URL = "https://s3.amazonaws.com/slackcardservice/StandardDeck/";
             var tmpPath = "../tmp/cards", user = "TestUser";
-            ImageConverter_1.ImageConvert.makeHandImage(new cribbage_hand_1.CribbageHand([
+            ImageConvert_1.ImageConvert.makeHandImage(new cribbage_hand_1.CribbageHand([
                 aceOfClubs,
                 twoOfClubs,
                 threeOfDiamonds,
