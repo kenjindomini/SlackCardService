@@ -420,7 +420,16 @@ var CribbageRoutes;
                     var player = Router.getPlayerName(req);
                     var hand = this.currentGame.getPlayerHand(player);
                     console.log("calling sendPlayerHand");
-                    this.sendPlayerHand(player, hand, response, res);
+                    ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
+                        .done(function (handPath) {
+                        var imagePath = process.env.APP_HOST_URL + "/" + handPath;
+                        response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
+                        if (response.data.attachments.length == 0) {
+                            response.data.text = "You played all your cards!";
+                        }
+                        console.log("Returning " + JSON.stringify(response));
+                        Router.sendResponse(response, res);
+                    });
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
