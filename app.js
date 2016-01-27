@@ -6,6 +6,10 @@ function setup(app) {
     app.use(bodyParser.urlencoded({
         extended: true
     }));
+    app.configure(function () {
+        app.use("/public", express.static(__dirname + "/public"));
+        app.use(express.static(__dirname + "/public"));
+    });
     var env = process.env.NODE_ENV || "development";
     if ("development" == env) {
         app.use(errorHandler({ dumpExceptions: true, showStack: true }));
@@ -26,6 +30,7 @@ function setup(app) {
     app.post(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.joinGame, routes.joinGame);
     app.post(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.resetGame, routes.resetGame);
     app.post(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.throwCard, routes.throwCard);
+    app.get(exports.CribbageRoutePrefix + "*.png", routes.getImage);
     app.get("*", function (req, res) {
         res.status(404).send("Unknown request");
     });

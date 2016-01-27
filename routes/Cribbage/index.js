@@ -45,6 +45,8 @@ var ImageConvert;
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
+            if (!fs.exists(cardsPath))
+                fs.mkdirSync(cardsPath);
             hand.sortCards();
             var promises = [];
             console.log("Begin downloading Cards");
@@ -320,6 +322,15 @@ var CribbageRoutes;
                 ix += 2;
             }
             return cards;
+        };
+        Router.prototype.getImage = function (req, res) {
+            var ix = req.url.lastIndexOf("/");
+            var pic = req.url.substr(ix);
+            if (fs.exists(pic)) {
+            }
+            else {
+                return "There is no " + pic;
+            }
         };
         Router.prototype.joinGame = function (req, res) {
             var player = Router.getPlayerName(req);

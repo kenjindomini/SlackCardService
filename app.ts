@@ -20,6 +20,11 @@ export function setup(app: Express):Express {
         extended: true
     }));
 
+    app.configure(function() {
+        app.use("/public", express.static(__dirname + "/public"));
+        app.use(express.static(__dirname + "/public"));
+    });
+
     var env = process.env.NODE_ENV || "development";
     if("development" == env) {
         app.use(errorHandler({ dumpExceptions: true, showStack: true }));
@@ -44,6 +49,7 @@ export function setup(app: Express):Express {
     app.post(CribbageRoutePrefix + CribbageRoutes.Routes.joinGame, routes.joinGame);
     app.post(CribbageRoutePrefix + CribbageRoutes.Routes.resetGame, routes.resetGame);
     app.post(CribbageRoutePrefix + CribbageRoutes.Routes.throwCard, routes.throwCard);
+    app.get(CribbageRoutePrefix + "*.png", routes.getImage);
     // All other routes send back a "request not found"
     app.get("*", function(req: Request, res: Response) {
         res.status(404).send("Unknown request");

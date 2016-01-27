@@ -60,6 +60,8 @@ export module ImageConvert {
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
+            if (!fs.exists(cardsPath))
+                fs.mkdirSync(cardsPath);
             hand.sortCards();
             var promises:Array<Promise> = [];
             console.log("Begin downloading Cards");
@@ -312,6 +314,17 @@ export module CribbageRoutes {
         /* ***** ROUTES ***** */
 
         /* ***** Initializing the Game ***** */
+
+        getImage(req:Request, res:Response) {
+            var ix = req.url.lastIndexOf("/");
+            var pic = req.url.substr(ix);
+            if (fs.exists(pic)) {
+
+            }
+            else {
+                return `There is no ${pic}`;
+            }
+        }
 
         joinGame(req:Request, res:Response) {
             var player = Router.getPlayerName(req);
