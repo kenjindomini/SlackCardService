@@ -35,7 +35,7 @@ var ImageConvert;
         });
     }
     function makeHandImage(hand, player, cardsPath) {
-        console.log("Making the hand image");
+        console.log("Making the hand image at " + cardsPath);
         return new Promise(function (resolve, reject) {
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
@@ -391,6 +391,7 @@ var CribbageRoutes;
             Router.sendResponse(response, res);
         };
         Router.prototype.sendPlayerHand = function (player, hand, response, res) {
+            console.log("calling makeHandImage");
             ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                 .done(function (handPath) {
                 console.log("done creating the hand at " + handPath);
@@ -409,6 +410,7 @@ var CribbageRoutes;
             });
         };
         Router.prototype.showHand = function (req, res) {
+            console.log("showHand");
             var response = Router.makeResponse(200, "");
             if (!Router.verifyRequest(req, Routes.showHand)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
@@ -417,13 +419,14 @@ var CribbageRoutes;
                 try {
                     var player = Router.getPlayerName(req);
                     var hand = this.currentGame.getPlayerHand(player);
+                    console.log("calling sendPlayerHand");
                     this.sendPlayerHand(player, hand, response, res);
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
                 }
-                return "Have patience...";
             }
+            Router.sendResponse(response, res);
         };
         Router.prototype.playCard = function (req, res) {
             var player = Router.getPlayerName(req);

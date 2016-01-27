@@ -50,7 +50,7 @@ export module ImageConvert {
     }
 
     export function makeHandImage(hand:CribbageHand, player:string, cardsPath:string):Promise {
-        console.log("Making the hand image");
+        console.log(`Making the hand image at ${cardsPath}`);
         return new Promise(function(resolve, reject) {
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
@@ -414,6 +414,7 @@ export module CribbageRoutes {
         }
 
         showHand(req:Request, res:Response) {
+            console.log("showHand");
             var response = Router.makeResponse(200, "");
             if (!Router.verifyRequest(req, Routes.showHand)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
@@ -422,6 +423,7 @@ export module CribbageRoutes {
                 try {
                     var player = Router.getPlayerName(req);
                     var hand:CribbageHand = this.currentGame.getPlayerHand(player);
+                    console.log("calling sendPlayerHand");
                     this.sendPlayerHand(player, hand, response, res);
                     //ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                     //    .done(function(handPath:string) {
@@ -437,8 +439,8 @@ export module CribbageRoutes {
                 catch (e) {
                     response = Router.makeResponse(500, e);
                 }
-                return "Have patience...";
             }
+            Router.sendResponse(response, res);
         }
 
         playCard(req:Request, res:Response) {
