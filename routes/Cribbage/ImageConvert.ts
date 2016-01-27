@@ -2,7 +2,7 @@
 
 import request = require("request");
 import fs = require("fs");
-import Promise = require("promise");
+//import Promise = require("promise");
 //if (process.env.NODE_ENV != "Production")
     //require('promise/lib/rejection-tracking').enable();
 // SB TODO: write typescript definition file
@@ -17,6 +17,7 @@ export module ImageConvert {
         //var ret = `${process.env.AWS_S3_STANDARD_DECK_URL}${deckType}/${cardUrlStr}`;
         //console.log(ret);
         //return ret;
+        return "";
     }
 
     var download = function(uri:string, filename:string, callback:any){
@@ -27,7 +28,7 @@ export module ImageConvert {
         //});
     };
 
-    function downloadCard(card:Card, cardsPath:string): Promise {
+    //function downloadCard(card:Card, cardsPath:string): Promise {
         //if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
         //    cardsPath = cardsPath.concat("/");
         //return new Promise(function(resolve, reject) {
@@ -43,9 +44,9 @@ export module ImageConvert {
         //        });
         //    }
         //});
-    }
+    //}
 
-    export function makeHandImage(hand:CribbageHand, player:string, cardsPath:string):Promise {
+    //export function makeHandImage(hand:CribbageHand, player:string, cardsPath:string):Promise {
         //return new Promise(function(resolve, reject) {
         //    var playerHandPath = "";
         //    if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
@@ -82,5 +83,5 @@ export module ImageConvert {
         //        resolve(playerHandPath);
         //    });
         //});
-    }
+   //}
 }

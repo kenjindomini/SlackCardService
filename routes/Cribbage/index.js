@@ -321,13 +321,6 @@ var CribbageRoutes;
                 try {
                     var player = Router.getPlayerName(req);
                     var hand = this.currentGame.getPlayerHand(player);
-                    ImageConvert_1.ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
-                        .done(function (handPath) {
-                        response.data.attachments = [new CribbageResponseAttachment("", "", handPath)];
-                        if (response.data.attachments.length == 0) {
-                            response.data.text = "You played all your cards!";
-                        }
-                    });
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
@@ -390,11 +383,6 @@ var CribbageRoutes;
                 if (!hasHand)
                     delayedData.text = "You have no more cards!";
                 else {
-                    ImageConvert_1.ImageConvert.makeHandImage(theirHand, player, process.env.TMP_CARDS_PATH)
-                        .done(function (handPath) {
-                        delayedData.attachments = [new CribbageResponseAttachment("", "", handPath)];
-                        Router.sendDelayedResponse(delayedData, Router.getResponseUrl(req), 1000);
-                    });
                 }
             }
         };
@@ -417,11 +405,6 @@ var CribbageRoutes;
                         var theirHand = this.currentGame.getPlayerHand(player);
                         if (theirHand.size() > 0) {
                             delayed = true;
-                            ImageConvert_1.ImageConvert.makeHandImage(theirHand, player, process.env.TMP_CARDS_PATH)
-                                .done(function (handPath) {
-                                response.data.attachments = [new CribbageResponseAttachment("", "", handPath)];
-                                Router.sendResponse(response, res);
-                            });
                         }
                         else {
                             response.data.text = "You have no more cards left";
