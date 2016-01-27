@@ -394,7 +394,6 @@ var CribbageRoutes;
             console.log("calling makeHandImage");
         };
         Router.prototype.showHand = function (req, res) {
-            console.log("showHand");
             var response = Router.makeResponse(200, "creating your hand's image...");
             if (!Router.verifyRequest(req, Routes.showHand)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
@@ -403,7 +402,6 @@ var CribbageRoutes;
                 try {
                     var player = Router.getPlayerName(req);
                     var hand = this.currentGame.getPlayerHand(player);
-                    console.log("calling sendPlayerHand");
                     ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                         .done(function (handPath) {
                         var imagePath = process.env.APP_HOST_URL + "/" + handPath;
@@ -419,7 +417,6 @@ var CribbageRoutes;
                     response = Router.makeResponse(500, e);
                 }
             }
-            return "GO FUCK YORUSELF SLACK";
         };
         Router.prototype.playCard = function (req, res) {
             var player = Router.getPlayerName(req);

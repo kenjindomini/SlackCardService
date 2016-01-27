@@ -424,7 +424,6 @@ export module CribbageRoutes {
         }
 
         showHand(req:Request, res:Response) {
-            console.log("showHand");
             var response = Router.makeResponse(200, "creating your hand's image...");
             if (!Router.verifyRequest(req, Routes.showHand)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
@@ -433,7 +432,6 @@ export module CribbageRoutes {
                 try {
                     var player = Router.getPlayerName(req);
                     var hand:CribbageHand = this.currentGame.getPlayerHand(player);
-                    console.log("calling sendPlayerHand");
                     //this.sendPlayerHand(player, hand, response, res);
                     //ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                     //    .done(function (handPath:string) {
@@ -466,7 +464,7 @@ export module CribbageRoutes {
                     response = Router.makeResponse(500, e);
                 }
             }
-            return "GO FUCK YORUSELF SLACK";
+            //return "GO FUCK YORUSELF SLACK";
         }
 
         playCard(req:Request, res:Response) {
