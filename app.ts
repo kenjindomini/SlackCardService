@@ -47,7 +47,6 @@ export function setup(app: Express):Express {
     app.post(CribbageRoutePrefix + CribbageRoutes.Routes.joinGame, routes.joinGame);
     app.post(CribbageRoutePrefix + CribbageRoutes.Routes.resetGame, routes.resetGame);
     app.post(CribbageRoutePrefix + CribbageRoutes.Routes.throwCard, routes.throwCard);
-    app.get(CribbageRoutePrefix + "*.png", routes.getImage);
     // All other routes send back a "request not found"
     app.get("*", function(req: Request, res: Response) {
         res.status(404).send("Unknown request");

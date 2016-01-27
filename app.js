@@ -28,7 +28,6 @@ function setup(app) {
     app.post(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.joinGame, routes.joinGame);
     app.post(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.resetGame, routes.resetGame);
     app.post(exports.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.throwCard, routes.throwCard);
-    app.get(exports.CribbageRoutePrefix + "*.png", routes.getImage);
     app.get("*", function (req, res) {
         res.status(404).send("Unknown request");
     });

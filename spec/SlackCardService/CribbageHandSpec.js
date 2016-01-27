@@ -75,7 +75,7 @@ describe("Test a Cribbage game between two players", function () {
         });
         it("is able to show a player's cards", function (done) {
             process.env.AWS_S3_STANDARD_DECK_URL = "https://s3.amazonaws.com/slackcardservice/StandardDeck/";
-            var tmpPath = "../tmp/cards", user = "TestUser";
+            var tmpPath = "../public", user = "TestUser";
             index_1.ImageConvert.makeHandImage(new cribbage_hand_1.CribbageHand([
                 aceOfClubs,
                 twoOfClubs,

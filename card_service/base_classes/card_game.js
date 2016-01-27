@@ -84,6 +84,9 @@ var Sequence = (function () {
             this.addCard(cards[index]);
         }
     };
+    Sequence.prototype.length = function () {
+        return this.cards.countItems();
+    };
     Sequence.prototype.countPoints = function () {
         return this.findLongestReverseSequence() + this.countOfAKind();
     };

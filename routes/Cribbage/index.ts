@@ -7,6 +7,8 @@
 import request = require("request");
 import fs = require("fs");
 import Promise = require("promise");
+//if (process.env.NODE_ENV != "Production")
+//require('promise/lib/rejection-tracking').enable();
 // SB TODO: write typescript definition file
 import images = require("images");
 
@@ -18,7 +20,77 @@ import {Players, Teams} from "../../card_service/base_classes/card_game";
 import {BaseCard as Card, Value, Suit} from "../../card_service/base_classes/items/card";
 import {ItemCollection} from "../../card_service/base_classes/collections/item_collection";
 import {removeLastTwoChars} from "../../card_service/base_classes/card_game";
-import {ImageConvert} from "./lib/image_convert";
+
+export module ImageConvert {
+    export function getCardImageUrl(card:Card, deckType:string="Default"): string {
+        var cardUrlStr = card.toUrlString();
+        return `${process.env.AWS_S3_STANDARD_DECK_URL}${deckType}/${cardUrlStr}`;
+    }
+
+    var download = function(uri:string, filename:string, callback:any){
+        request.head(uri, function(err, res, body){
+            request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+        });
+    };
+
+    function downloadCard(card:Card, cardsPath:string): Promise {
+        return new Promise(function(resolve, reject) {
+            var cardFilePath = `${cardsPath}${card.toUrlString()}`;
+            if (fs.exists(cardFilePath)) {
+                // Resolve right away, no need to download again
+                resolve(cardFilePath);
+            }
+            else {
+                // Download the card
+                download(getCardImageUrl(card), cardFilePath, function () {
+                    resolve(cardFilePath);
+                });
+            }
+        });
+    }
+
+    export function makeHandImage(hand:CribbageHand, player:string, cardsPath:string):Promise {
+        return new Promise(function(resolve, reject) {
+            var playerHandPath = "";
+            if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
+                cardsPath = cardsPath.concat("/");
+            if (!fs.existsSync(cardsPath)) {
+                fs.mkdirSync(cardsPath);
+            }
+            hand.sortCards();
+            var promises:Array<Promise> = [];
+            for (var ix = 0; ix < hand.size(); ix++) {
+                // Download all the cards asynchronously
+                promises.push(downloadCard(hand.itemAt(ix), cardsPath));
+            }
+            Promise.all(promises).then(function (values) {
+                // Merge together all the downloaded images
+                playerHandPath = `${cardsPath}${player}.png`;
+                var width = 0, maxHeight = 0;
+                for (var jx = 0; jx < values.length; jx++) {
+                    var cardFilePath = values[jx];
+                    width += images(cardFilePath).width();
+                    var height = images(cardFilePath).height();
+                    if (height > maxHeight) {
+                        maxHeight = height;
+                    }
+                }
+                var playerHandImage = images(width, maxHeight);
+                var xOffset = 0;
+                width = 0;
+                for (var kx = 0; kx < values.length; kx++) {
+                    var filePath = values[kx];
+                    width += images(filePath).width();
+                    playerHandImage = playerHandImage.draw(images(filePath), xOffset, 0);
+                    xOffset = width;
+                }
+                try { playerHandImage.size(width, maxHeight).save(playerHandPath); }
+                catch (e) { reject(e); }
+                resolve(playerHandPath);
+            });
+        });
+    }
+}
 
 export module CribbageRoutes {
 
@@ -235,17 +307,6 @@ export module CribbageRoutes {
 
         /* ***** Initializing the Game ***** */
 
-        getImage(req:Request, res:Response) {
-            var ix = req.url.lastIndexOf("/");
-            var pic = req.url.substr(ix);
-            if (fs.exists(pic)) {
-
-            }
-            else {
-                return `There is no ${pic}`;
-            }
-        }
-
         joinGame(req:Request, res:Response) {
             var player = Router.getPlayerName(req);
             var newPlayer = new CribbagePlayer(player, new CribbageHand([]));
@@ -327,6 +388,24 @@ export module CribbageRoutes {
             Router.sendResponse(response, res);
         }
 
+        private sendPlayerHand(player:string, hand:CribbageHand, response:CribbageResponse, res:Response):void {
+            ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
+                .done(function (handPath:string) {
+                    var imagePath = `${process.env.APP_HOST_URL}/${handPath}`;
+                    response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
+                    if (response.data.attachments.length == 0) {
+                        response.data.text = "You played all your cards!";
+                    }
+                    console.log(`Returning ${JSON.stringify(response)}`);
+                    Router.sendResponse(response, res);
+                    setTimeout(function () {
+                        if (fs.existsSync(imagePath)) {
+                            fs.unlinkSync(imagePath);
+                        }
+                    }, 3000);
+                });
+        }
+
         showHand(req:Request, res:Response) {
             var response = Router.makeResponse(200, "");
             if (!Router.verifyRequest(req, Routes.showHand)) {
@@ -336,21 +415,15 @@ export module CribbageRoutes {
                 try {
                     var player = Router.getPlayerName(req);
                     var hand:CribbageHand = this.currentGame.getPlayerHand(player);
-                    ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
-                        .done(function(handPath:string) {
-                            var imagePath = `${process.env.APP_HOST_URL}/${handPath}`;
-                            response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
-                            if (response.data.attachments.length == 0) {
-                                response.data.text = "You played all your cards!";
-                            }
-                            console.log(`Returning ${JSON.stringify(response)}`);
-                            Router.sendResponse(response, res);
-                        });
+                    this.sendPlayerHand(player, hand, response, res);
+                    Router.sendResponse(Router.makeResponse(200, "Here's your hand..."), res);
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
                 }
-                return "Have patience...";
+            }
+            if (response.status != 200) {
+                Router.sendResponse(response, res);
             }
         }
 
@@ -362,7 +435,6 @@ export module CribbageRoutes {
             }
             else {
                 try {
-                    console.log("index.playCard: parsing cards");
                     var cards:Array<Card> = Router.parseCards(req.body.text);
                     if (cards.length == 0)
                         throw CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
@@ -372,13 +444,11 @@ export module CribbageRoutes {
                     if (card == undefined || card.suit == undefined || card.value == undefined) {
                         throw "Parsing the card failed without throwing, so I'm doing it now!";
                     }
-                    console.log(`index.playCard: parsed ${card.toString()}`);
                     var cribRes = this.currentGame.playCard(player, card);
-                    console.log(`index.playCard: played ${card.toString()}`);
                     var responseText = cribRes.message;
                     let justPlayed = `${player} played the ${card.toString()}.`;
                     let currentCount = `The count is at ${this.currentGame.count}.`;
-                    let cardsInPlay = this.currentGame.sequence.toString() ?
+                    let cardsInPlay = this.currentGame.sequence.length() > 0 ?
                         `The cards in play are: ${this.currentGame.sequence.toString()}.` :
                         `There are no cards currently in play.`;
                     let nextPlayer = `You're up, ${this.currentGame.nextPlayerInSequence.name}.`;
