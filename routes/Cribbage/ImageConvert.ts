@@ -2,8 +2,7 @@
 
 import request = require("request");
 import fs = require("fs");
-import rsvp = require("promise");
-import Promise = rsvp.Promise;
+import Promise = require("promise");
 //if (process.env.NODE_ENV != "Production")
     //require('promise/lib/rejection-tracking').enable();
 // SB TODO: write typescript definition file
