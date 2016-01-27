@@ -60,8 +60,9 @@ export module ImageConvert {
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
-            if (!fs.exists(cardsPath))
+            if (!fs.existsSync(cardsPath)) {
                 fs.mkdirSync(cardsPath);
+            }
             hand.sortCards();
             var promises:Array<Promise> = [];
             console.log("Begin downloading Cards");
