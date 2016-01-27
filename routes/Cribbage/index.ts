@@ -61,14 +61,14 @@ export module ImageConvert {
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
             try {
-                if (!fs.existsSync("/app")){
-                    fs.mkdirSync("/app");
+                if (!fs.existsSync("/public")){
+                    fs.mkdirSync("/public");
                 }
-                if (!fs.existsSync("/app/tmp")){
-                    fs.mkdirSync("/app/tmp");
+                if (!fs.existsSync("/public/tmp")){
+                    fs.mkdirSync("/public/tmp");
                 }
-                if (!fs.existsSync("/app/tmp/cards")){
-                    fs.mkdirSync("/app/tmp/cards");
+                if (!fs.existsSync("/public/tmp/cards")){
+                    fs.mkdirSync("/public/tmp/cards");
                 }
             }
             catch (ex) {console.log(ex);}
