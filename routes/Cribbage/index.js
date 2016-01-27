@@ -415,10 +415,10 @@ var CribbageRoutes;
                         console.log("Returning " + JSON.stringify(response));
                         Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
                         setTimeout(function () {
-                            if (fs.existsSync(imagePath)) {
-                                fs.unlinkSync(imagePath);
+                            if (fs.existsSync(handPath)) {
+                                fs.unlinkSync(handPath);
                             }
-                        }, 5000);
+                        }, 3000);
                     });
                 }
                 catch (e) {
