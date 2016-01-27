@@ -57,7 +57,7 @@ var CribbagePlayer = (function (_super) {
     CribbagePlayer.prototype.countPoints = function (cutCard) {
         this.hand.addItems(this.played.items);
         this.played.removeAll();
-        var cribHand = new cribbage_hand_1.CribbageHand(this.hand.items);
+        var cribHand = new cribbage_hand_1.CribbageHand(this.hand.items.slice(0));
         return cribHand.countPoints(cutCard, false);
     };
     return CribbagePlayer;
