@@ -429,6 +429,12 @@ export module CribbageRoutes {
                 catch (e) {
                     response = Router.makeResponse(500, e);
                 }
+                Router.sendResponse(
+                    new CribbageResponse(200,
+                        new CribbageResponseData(SlackResponseType.ephemeral, "give me a second...")
+                    ),
+                    res
+                );
             }
         }
 
