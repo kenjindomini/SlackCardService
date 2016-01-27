@@ -142,7 +142,7 @@ describe("Test a Cribbage game between two players", function() {
                 .done(function(result) {
                     // clean the temp directory
                     expect(result.indexOf(`${user}.png`)).not.toEqual(-1);
-                    //deleteFolderRecursive(tmpPath);
+                    deleteFolderRecursive(tmpPath);
                     done();
                 });
         });

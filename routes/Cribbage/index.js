@@ -412,14 +412,14 @@ var CribbageRoutes;
                         if (response.data.attachments.length == 0) {
                             response.data.text = "You played all your cards!";
                         }
+                        console.log("Returning " + JSON.stringify(response));
+                        Router.sendResponse(response, res);
                     });
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
                 }
             }
-            console.log("Returning " + JSON.stringify(response));
-            Router.sendResponse(response, res);
         };
         Router.prototype.playCard = function (req, res) {
             var player = Router.getPlayerName(req);
