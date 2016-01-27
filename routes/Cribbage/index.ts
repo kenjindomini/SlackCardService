@@ -415,7 +415,7 @@ export module CribbageRoutes {
 
         showHand(req:Request, res:Response) {
             console.log("showHand");
-            var response = Router.makeResponse(200, "");
+            var response = Router.makeResponse(200, "creating your hand's image...");
             if (!Router.verifyRequest(req, Routes.showHand)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
