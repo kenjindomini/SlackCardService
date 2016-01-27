@@ -412,7 +412,7 @@ var CribbageRoutes;
                     var player = Router.getPlayerName(req);
                     var hand = this.currentGame.getPlayerHand(player);
                     this.sendPlayerHand(player, hand, response, res);
-                    Router.sendResponse(Router.makeResponse(200, "Here's your hand..."), res);
+                    return "Have patience...";
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
