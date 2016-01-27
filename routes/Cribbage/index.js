@@ -4,6 +4,7 @@ var cribbage_hand_1 = require("../../card_service/implementations/cribbage_hand"
 var card_game_1 = require("../../card_service/base_classes/card_game");
 var card_1 = require("../../card_service/base_classes/items/card");
 var item_collection_1 = require("../../card_service/base_classes/collections/item_collection");
+var ImageConverter_1 = require("./ImageConverter");
 var request = require("request");
 var CribbageRoutes;
 (function (CribbageRoutes) {
@@ -97,25 +98,9 @@ var CribbageRoutes;
     function removeSpaces(str) {
         return str.replace(/\s+/g, "");
     }
-    function getCardImageUrl(card, deckType) {
-        if (deckType === void 0) { deckType = "Default"; }
-        var cardUrlStr = card.toUrlString(".png");
-        var ret = "" + process.env.AWS_S3_STANDARD_DECK_URL + deckType + "/" + cardUrlStr;
-        console.log(ret);
-        return ret;
-    }
     var Router = (function () {
         function Router() {
         }
-        Router.getPlayerHandAttachments = function (hand) {
-            var attachments = [];
-            hand.sortCards();
-            for (var ix = 0; ix < hand.size(); ix++) {
-                var card = hand.itemAt(ix);
-                attachments.push(new CribbageResponseAttachment("", card.toString(), getCardImageUrl(card)));
-            }
-            return attachments;
-        };
         Router.makeResponse = function (status, text, response_type, attachments) {
             if (status === void 0) { status = 200; }
             if (text === void 0) { text = ""; }
@@ -334,11 +319,15 @@ var CribbageRoutes;
             }
             else {
                 try {
-                    var hand = this.currentGame.getPlayerHand(Router.getPlayerName(req));
-                    response.data.attachments = Router.getPlayerHandAttachments(hand);
-                    if (response.data.attachments.length == 0) {
-                        response.data.text = "You played all your cards!";
-                    }
+                    var player = Router.getPlayerName(req);
+                    var hand = this.currentGame.getPlayerHand(player);
+                    ImageConverter_1.ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
+                        .done(function (handPath) {
+                        response.data.attachments = [new CribbageResponseAttachment("", "", handPath)];
+                        if (response.data.attachments.length == 0) {
+                            response.data.text = "You played all your cards!";
+                        }
+                    });
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
@@ -391,20 +380,24 @@ var CribbageRoutes;
             Router.sendResponse(response, res);
             if (response.status == 200 && !cribRes.gameOver && !cribRes.roundOver) {
                 var theirHand = this.currentGame.getPlayerHand(Router.getPlayerName(req));
-                var theirCards = Router.getPlayerHandAttachments(theirHand);
-                var hasHand = (theirCards.length > 0);
+                var hasHand = (theirHand.size() > 0);
                 var delayedData = new CribbageResponseData(SlackResponseType.ephemeral);
                 if (!hasHand)
                     delayedData.text = "You have no more cards!";
-                else
-                    delayedData.attachments = theirCards;
-                Router.sendDelayedResponse(delayedData, Router.getResponseUrl(req), 1000);
+                else {
+                    ImageConverter_1.ImageConvert.makeHandImage(theirHand, player, process.env.TMP_CARDS_PATH)
+                        .done(function (handPath) {
+                        delayedData.attachments = [new CribbageResponseAttachment("", "", handPath)];
+                        Router.sendDelayedResponse(delayedData, Router.getResponseUrl(req), 1000);
+                    });
+                }
             }
         };
         Router.prototype.throwCard = function (req, res) {
             var player = Router.getPlayerName(req);
             var response = Router.makeResponse(200, "...");
             var cribRes = null;
+            var delayed = false;
             if (!Router.verifyRequest(req, Routes.throwCard)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
@@ -412,19 +405,18 @@ var CribbageRoutes;
                 try {
                     var cards = Router.parseCards(req.body.text);
                     cribRes = this.currentGame.giveToKitty(player, new item_collection_1.ItemCollection(cards));
-                    var cardsPlayed = [];
-                    for (var ix = 0; ix < cards.length; ix++) {
-                        cardsPlayed.push(new CribbageResponseAttachment("You threw", "", getCardImageUrl(cards[ix])));
-                    }
                     if (cribRes.gameOver) {
                         response.data.text = cribRes.message;
                     }
                     else {
-                        response.data.attachments = cardsPlayed;
                         var theirHand = this.currentGame.getPlayerHand(player);
-                        var theirCards = Router.getPlayerHandAttachments(theirHand);
-                        if (theirCards.length > 0) {
-                            response.data.attachments = cardsPlayed.concat(theirCards);
+                        if (theirHand.size() > 0) {
+                            delayed = true;
+                            ImageConverter_1.ImageConvert.makeHandImage(theirHand, player, process.env.TMP_CARDS_PATH)
+                                .done(function (handPath) {
+                                response.data.attachments = [new CribbageResponseAttachment("", "", handPath)];
+                                Router.sendResponse(response, res);
+                            });
                         }
                         else {
                             response.data.text = "You have no more cards left";
@@ -435,7 +427,9 @@ var CribbageRoutes;
                     response = Router.makeResponse(500, e);
                 }
             }
-            Router.sendResponse(response, res);
+            if (!delayed) {
+                Router.sendResponse(response, res);
+            }
             if (response.status == 200 && !cribRes.gameOver) {
                 if (cribRes.message.length > 0)
                     response.data.text = "" + cribRes.message;
@@ -443,7 +437,7 @@ var CribbageRoutes;
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
                 if (this.currentGame.isReady()) {
-                    Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, "The game is ready to begin.\n                            Play a card " + this.currentGame.nextPlayerInSequence.name + ".", [new CribbageResponseAttachment("Card Card", "", getCardImageUrl(this.currentGame.cut))]), Router.getResponseUrl(req), 1000);
+                    Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, "The game is ready to begin.\n                            Play a card " + this.currentGame.nextPlayerInSequence.name + ".", [new CribbageResponseAttachment("Card Card", "", ImageConverter_1.ImageConvert.getCardImageUrl(this.currentGame.cut))]), Router.getResponseUrl(req), 1000);
                 }
             }
         };

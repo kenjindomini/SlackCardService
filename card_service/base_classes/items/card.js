@@ -45,7 +45,8 @@ var BaseCard = (function () {
         return (Value[this.value] + ' of ' + Suit[this.suit]);
     };
     BaseCard.prototype.toUrlString = function (extension) {
-        return Value[this.value] + "Of" + Suit[this.suit] + extension;
+        if (extension === void 0) { extension = "png"; }
+        return Value[this.value] + "Of" + Suit[this.suit] + "." + extension;
     };
     return BaseCard;
 })();

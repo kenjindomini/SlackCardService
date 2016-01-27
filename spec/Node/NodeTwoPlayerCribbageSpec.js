@@ -17,7 +17,8 @@ describe("Integration test the Cribbage game between two players", function () {
         joinGame: "WMYyNOpoJRM4dbNBp6x9yOqP",
         describe: "IA5AtVdbkur2aIGw1B549SgD",
         resetGame: "43LROOjSf8qa3KPYXvmxgdt1",
-        beginGame: "GECanrrjA8dYMlv2e4jkLQGe"
+        beginGame: "GECanrrjA8dYMlv2e4jkLQGe",
+        showHand: "Xa73JDXrWDnU276yqwremEsO"
     };
     function joinGameJson(player, token) {
         return JSON.stringify({
@@ -51,7 +52,7 @@ describe("Integration test the Cribbage game between two players", function () {
                     .expect(200)
                     .expect(function (res) {
                     var response = JSON.parse(res.text);
-                    if (response.text != cribbage_1.CribbageStrings.MessageStrings.START_GAME)
+                    if (response.text.indexOf(cribbage_1.CribbageStrings.MessageStrings.FMT_START_GAME) == -1)
                         return true;
                 })
                     .end(cb);
@@ -77,6 +78,9 @@ describe("Integration test the Cribbage game between two players", function () {
                 .end(cb);
         });
         async.series(series, done);
+    });
+    it("is able to show a player's cards", function (done) {
+        var agent = request(this.app);
     });
 });
 //# sourceMappingURL=NodeTwoPlayerCribbageSpec.js.map
