@@ -13,14 +13,15 @@ var ImageConvert;
     function getCardImageUrl(card, deckType) {
         if (deckType === void 0) { deckType = "Default"; }
         var cardUrlStr = card.toUrlString();
-        var ret = "" + process.env.AWS_S3_STANDARD_DECK_URL + deckType + "/" + cardUrlStr;
-        return ret;
+        return "" + process.env.AWS_S3_STANDARD_DECK_URL + deckType + "/" + cardUrlStr;
     }
     ImageConvert.getCardImageUrl = getCardImageUrl;
     var download = function (uri, filename, callback) {
+        console.log("Downloading from " + uri);
         request.head(uri, function (err, res, body) {
             console.log('content-type:', res.headers['content-type']);
             console.log('content-length:', res.headers['content-length']);
+            console.log("about to create stream " + filename);
             request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
         });
     };
@@ -60,10 +61,12 @@ var ImageConvert;
             }
             hand.sortCards();
             var promises = [];
+            console.log("Begin downloading Cards");
             for (var ix = 0; ix < hand.size(); ix++) {
                 promises.push(downloadCard(hand.itemAt(ix), cardsPath));
             }
             Promise.all(promises).then(function (values) {
+                console.log("Begin Merging Cards");
                 playerHandPath = "" + cardsPath + player + ".png";
                 console.log("Merging the hand into " + playerHandPath);
                 var width = 0, maxHeight = 0;
@@ -533,7 +536,7 @@ var CribbageRoutes;
                 response.data.response_type = SlackResponseType.in_channel;
                 Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
                 if (this.currentGame.isReady()) {
-                    Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, ("The game is ready to begin.\n                            Play a card " + this.currentGame.nextPlayerInSequence.name + ".")[new CribbageResponseAttachment("Card Card", "", ImageConvert.getCardImageUrl(this.currentGame.cut))]), Router.getResponseUrl(req), 1000);
+                    Router.sendDelayedResponse(new CribbageResponseData(SlackResponseType.in_channel, "The game is ready to begin.\n                            Play a card " + this.currentGame.nextPlayerInSequence.name + ".", [new CribbageResponseAttachment("Card Card", "", ImageConvert.getCardImageUrl(this.currentGame.cut))]), Router.getResponseUrl(req), 1000);
                 }
             }
         };
