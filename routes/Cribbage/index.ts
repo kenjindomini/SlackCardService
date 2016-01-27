@@ -464,7 +464,7 @@ export module CribbageRoutes {
                     response = Router.makeResponse(500, e);
                 }
             }
-            //return "GO FUCK YORUSELF SLACK";
+            Router.sendResponse(response, res);
         }
 
         playCard(req:Request, res:Response) {

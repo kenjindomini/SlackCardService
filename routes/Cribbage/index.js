@@ -417,6 +417,7 @@ var CribbageRoutes;
                     response = Router.makeResponse(500, e);
                 }
             }
+            Router.sendResponse(response, res);
         };
         Router.prototype.playCard = function (req, res) {
             var player = Router.getPlayerName(req);
