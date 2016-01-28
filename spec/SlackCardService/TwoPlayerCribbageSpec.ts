@@ -267,7 +267,7 @@ describe("Test a Cribbage game between two players", function() {
             game.playCard(playerOne.name, sevenOfSpades);
             // The round is over
             expect(game.getTeam(0).countPoints()).toEqual(
-                4 /* round of play */ + 6 /* their hand */ + 8 /* their kitty */ + 1 /* for the last card */
+                4 /* round of play */ + 6 /* their hand */ + 8 /* their kitty */
             );
             expect(game.getTeam(1).countPoints()).toEqual(
                 3 /* round of play */ + 6 /* their hand */

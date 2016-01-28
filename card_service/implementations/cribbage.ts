@@ -272,23 +272,19 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         }
         while (true) {
             var team = this.teams.findTeam(player);
-            console.log(`playCard: getting card value from ${card.toString()}`);
             var cardValue = CribbageHand.getCardValue(card);
             if ((this.count + cardValue) > 31) {
                 throw ErrorStrings.EXCEEDS_31;
             }
-            console.log(`playCard: about to play the card ${card.toString()}`);
             if (!player.playCard(card)) {
                 throw `${ErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD} the ${card.toString()}!`;
             }
-            console.log(`playCard: played card ${card.toString()}`);
             this.lastPlayerToPlay = player;
             if (player.hand.size() == 0) {
                 // The player played their last card, remove them from the round of play
                 this.playersInPlay.removeItem(player);
             }
             this.count += cardValue;
-            console.log(`playCard: adding card ${card.toString()} to the sequence`);
             var points = this.sequence.addCard(card);
             if (points > 0) {
                 if (team.addPoints(player, points)) {
@@ -306,7 +302,6 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
             }
             if (this.roundOver()) {
                 response.roundOver = true;
-                console.log(`playCard: round over!`);
                 if (!is31) {
                     // The last player to play gets a point for a go
                     response.message = `${player.name} gets a point for a go`;
@@ -317,28 +312,16 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                 else {
                     response.message = `${player.name} gets 31 for two points`;
                 }
-                console.log(`playCard: round over adding one point`);
                 if (team.addPoints(player, 1)) {
                     // Game over
                     response = this.setGameOver(team);
                     break;
                 }
                 else {
-                    console.log(`playCard: round over setting the response message`);
-                    console.log(`about to call roundOverResetState`);
                     var scores = this.roundOverResetState();
-                    console.log(`called roundOverResetState`);
                     response.message += `
                 ${scores}`;
-                    if (!is31)
-                        points++;
-                    if (team.addPoints(player, 1)) {
-                        response = this.setGameOver(team);
-                        break;
-                    }
-                    console.log(`about to call roundOverStr`);
                     var ros = this.roundOverStr();
-                    console.log(`called roundOverStr`);
                     response.message += `
                  ${ros}`;
                     break;
@@ -484,12 +467,9 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      */
     getPlayerHandStr(playerName:string): string {
         var hand = "";
-        console.log(`Trying to find ${playerName}`);
         var player = this.findPlayer(playerName);
         if (player != null) {
-            console.log(`Found ${playerName}, now iterate the cards in their hand`);
             hand = this.printHand(<CribbageHand>player.hand);
-            console.log(`${playerName} has hand ${hand}`);
         }
         else {
             throw ErrorStrings.PLAYER_DOES_NOT_EXIST;
@@ -586,17 +566,11 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      */
     private roundOverResetState():string {
         var scores = "";
-        console.log("about to add all the points");
         scores = this.countPoints().message;
-        console.log("added all the points");
         this.cut = null;
         this.lastPlayerToPlay = null;
-        console.log("about to set the next dealer");
         this.setNextDealer();
-        console.log("set the next dealer");
-        console.log("about to deal");
         this.deal();
-        console.log("dealt");
         return scores;
     }
 
@@ -625,9 +599,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
         var countingPlayer = firstPlayer;
         do {
             var team = this.findTeam(countingPlayer);
-            console.log(`counting points for ${countingPlayer.name}`);
             var points = countingPlayer.countPoints(this.cut);
-            console.log(`done counting points for ${countingPlayer.name}`);
             if (team.addPoints(countingPlayer, points)) {
                 // Game over
                 ret = this.setGameOver(team);
@@ -688,9 +660,7 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
     private deal():void {
         this.kitty.removeAll();
         this.resetHands();
-        console.log("suffling");
         this.shuffle();
-        console.log("done shuffling, about to deal");
         switch (this.numPlayers) {
             case 2:
                 this.dealForTwo();
@@ -780,13 +750,10 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
      * Deal the cards for a two player game
      */
     private dealForTwo():void {
-        console.log("dealing for 2");
         var player = this.nextPlayerInOrder(this.dealer);
         while (player.numCards() < 6) {
             var card = this.draw();
-            console.log(`giving ${player.name} card ${card.toString()}`);
             player.hand.takeCard(card);
-            console.log(`gave ${player.name} card ${card.toString()}`);
             player = this.nextPlayerInOrder(player);
         }
     }
