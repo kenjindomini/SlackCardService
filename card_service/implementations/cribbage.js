@@ -343,12 +343,6 @@ var Cribbage = (function (_super) {
                 else {
                     var scores = this.roundOverResetState();
                     response.message += "\n                " + scores;
-                    if (!is31)
-                        points++;
-                    if (team.addPoints(player, 1)) {
-                        response = this.setGameOver(team);
-                        break;
-                    }
                     var ros = this.roundOverStr();
                     response.message += "\n                 " + ros;
                     break;

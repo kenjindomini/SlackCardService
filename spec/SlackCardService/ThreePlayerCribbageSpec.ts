@@ -267,7 +267,7 @@ describe("Test a Cribbage game between three players", function() {
             playerTwo.hand =
                 new CribbageHand([nineOfHearts, tenOfDiamonds, jackOfSpades, queenOfHearts, kingOfHearts]);
             playerThree.hand =
-                new CribbageHand([fiveOfSpades, aceOfDiamonds, twoOfClubs, twoOfDiamonds, threeOfHearts]);
+                new CribbageHand([aceOfDiamonds, twoOfClubs, twoOfDiamonds, threeOfHearts, fiveOfSpades]);
             game.dealer = playerOne;
             game.nextPlayerInSequence = playerTwo;
             game.giveToKitty(playerOne.name, new ItemCollection([sevenOfDiamonds]));
@@ -297,7 +297,7 @@ describe("Test a Cribbage game between three players", function() {
             game.playCard(playerThree.name, fiveOfSpades);
             expect(game.getTeam(2).countPoints()).toEqual(4);
             game.playCard(playerOne.name, sevenOfSpades);
-            expect(game.getTeam(0).countPoints()).toEqual(2 + 4 + 2); // Pairs + 15s + run of play
+            expect(game.getTeam(0).countPoints()).toEqual(2 + 4 + 2 + 2); // Pairs + 15s + run of play + kitty
             expect(game.getTeam(1).countPoints()).toEqual(5 + 1 + 2); // Run + RightJack + Run of play
             expect(game.getTeam(2).countPoints()).toEqual(2 + 4 + 4); // Pairs + 15s + Run of play
             expect(game.dealer.equalsOther(playerTwo)).toBe(true);
