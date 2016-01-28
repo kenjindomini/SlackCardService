@@ -17,11 +17,7 @@ var ImageConvert;
     }
     ImageConvert.getCardImageUrl = getCardImageUrl;
     var download = function (uri, filename, callback) {
-        console.log("Downloading from " + uri);
         request.head(uri, function (err, res, body) {
-            console.log('content-type:', res.headers['content-type']);
-            console.log('content-length:', res.headers['content-length']);
-            console.log("about to create stream " + filename);
             request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
         });
     };
@@ -32,29 +28,31 @@ var ImageConvert;
                 resolve(cardFilePath);
             }
             else {
-                console.log("Downloading the " + card.toString());
                 download(getCardImageUrl(card), cardFilePath, function () {
-                    console.log("Resolving to " + cardFilePath);
                     resolve(cardFilePath);
                 });
             }
         });
     }
     function makeHandImage(hand, player, cardsPath) {
+        console.log("Making the hand image at " + cardsPath);
         return new Promise(function (resolve, reject) {
             var playerHandPath = "";
             if (cardsPath.indexOf("/", cardsPath.length - 1) == -1)
                 cardsPath = cardsPath.concat("/");
+            if (!fs.existsSync(cardsPath)) {
+                console.log("Creating directory " + cardsPath);
+                fs.mkdirSync(cardsPath);
+            }
             hand.sortCards();
             var promises = [];
-            console.log("Begin downloading Cards");
+            console.log("downloading the cards");
             for (var ix = 0; ix < hand.size(); ix++) {
                 promises.push(downloadCard(hand.itemAt(ix), cardsPath));
             }
             Promise.all(promises).then(function (values) {
-                console.log("Begin Merging Cards");
+                console.log("Finished downloading the cards, now create the final image");
                 playerHandPath = "" + cardsPath + player + ".png";
-                console.log("Merging the hand into " + playerHandPath);
                 var width = 0, maxHeight = 0;
                 for (var jx = 0; jx < values.length; jx++) {
                     var cardFilePath = values[jx];
@@ -73,6 +71,7 @@ var ImageConvert;
                     playerHandImage = playerHandImage.draw(images(filePath), xOffset, 0);
                     xOffset = width;
                 }
+                console.log("Creating the final image...");
                 try {
                     playerHandImage.size(width, maxHeight).save(playerHandPath);
                 }
@@ -207,7 +206,7 @@ var CribbageRoutes;
             return (req.body.user_name ? req.body.user_name : req.query.user_name ? req.query.user_name : "Unknown Player");
         };
         Router.getResponseUrl = function (req) {
-            return (req.body.response_url ? req.body.response_url : "");
+            return (req.body.response_url ? req.body.response_url : req.query.response_url ? req.query.response_url : "");
         };
         Router.verifyRequest = function (req, route) {
             var verified = false;
@@ -391,8 +390,24 @@ var CribbageRoutes;
             }
             Router.sendResponse(response, res);
         };
+        Router.prototype.sendPlayerHand = function (player, hand, response, req) {
+            console.log("calling makeHandImage");
+            ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
+                .done(function (handPath) {
+                var imagePath = process.env.APP_HOST_URL + "/" + handPath;
+                response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
+                if (response.data.attachments.length == 0) {
+                    response.data.text = "You played all your cards!";
+                }
+                else {
+                    response.data.text = "";
+                }
+                console.log("Returning " + JSON.stringify(response));
+                Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
+            });
+        };
         Router.prototype.showHand = function (req, res) {
-            var response = Router.makeResponse(200, "");
+            var response = Router.makeResponse(200, "creating your hand's image...");
             if (!Router.verifyRequest(req, Routes.showHand)) {
                 response = Router.VALIDATION_FAILED_RESPONSE;
             }
@@ -400,22 +415,13 @@ var CribbageRoutes;
                 try {
                     var player = Router.getPlayerName(req);
                     var hand = this.currentGame.getPlayerHand(player);
-                    ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
-                        .done(function (handPath) {
-                        var imagePath = process.env.APP_HOST_URL + "/" + handPath;
-                        response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
-                        if (response.data.attachments.length == 0) {
-                            response.data.text = "You played all your cards!";
-                        }
-                        console.log("Returning " + JSON.stringify(response));
-                        Router.sendResponse(response, res);
-                    });
+                    this.sendPlayerHand(player, hand, response, req);
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
                 }
-                return "Have patience...";
             }
+            Router.sendResponse(response, res);
         };
         Router.prototype.playCard = function (req, res) {
             var player = Router.getPlayerName(req);
@@ -425,7 +431,6 @@ var CribbageRoutes;
             }
             else {
                 try {
-                    console.log("index.playCard: parsing cards");
                     var cards = Router.parseCards(req.body.text);
                     if (cards.length == 0)
                         throw cribbage_1.CribbageStrings.ErrorStrings.INVALID_CARD_SYNTAX;
@@ -435,13 +440,11 @@ var CribbageRoutes;
                     if (card == undefined || card.suit == undefined || card.value == undefined) {
                         throw "Parsing the card failed without throwing, so I'm doing it now!";
                     }
-                    console.log("index.playCard: parsed " + card.toString());
                     var cribRes = this.currentGame.playCard(player, card);
-                    console.log("index.playCard: played " + card.toString());
                     var responseText = cribRes.message;
                     var justPlayed = player + " played the " + card.toString() + ".";
                     var currentCount = "The count is at " + this.currentGame.count + ".";
-                    var cardsInPlay = this.currentGame.sequence.toString() ?
+                    var cardsInPlay = this.currentGame.sequence.length() > 0 ?
                         "The cards in play are: " + this.currentGame.sequence.toString() + "." :
                         "There are no cards currently in play.";
                     var nextPlayer = "You're up, " + this.currentGame.nextPlayerInSequence.name + ".";

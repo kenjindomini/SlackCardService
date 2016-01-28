@@ -20,6 +20,9 @@ export function setup(app: Express):Express {
         extended: true
     }));
 
+    app.use("/public", express.static(__dirname + "/public"));
+    app.use(express.static(__dirname + "/public"));
+
     var env = process.env.NODE_ENV || "development";
     if("development" == env) {
         app.use(errorHandler({ dumpExceptions: true, showStack: true }));

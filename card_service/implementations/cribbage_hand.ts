@@ -23,16 +23,12 @@ export class CribbageHand extends BaseHand {
     }
     countPoints(cutCard: Card, mustHaveFiveCardFlush: boolean) {
         var points = 0;
-        console.log("taking the cut card");
         this.takeCard(cutCard);
         // Count pairs
-        console.log("counting the pairs");
         points += this.countPairs();
         // Count 15s
-        console.log("counting the fifteens");
         points += this.countFifteens(0, 0);
         // Count runs
-        console.log("counting the runs");
         var runLength = this.countRuns();
         if (runLength.runLength >= 3) {
             points += (runLength.runLength * runLength.numRuns);
@@ -42,7 +38,6 @@ export class CribbageHand extends BaseHand {
             points++;
         }
         // Count flush
-        console.log("counting the flush");
         var numInFlush = 0;
         if (mustHaveFiveCardFlush) {
             numInFlush = this.countFlush();
@@ -87,11 +82,8 @@ export class CribbageHand extends BaseHand {
      * @returns {number} the number of points gained from the pairs
      */
     private countPairs(): number {
-        console.log("making a copy of the hand");
         var hand = this.makeCopy();
-        console.log("finding the duplicates");
         var duplicates = CribbageHand.findDuplicates(hand);
-        console.log("iterating the duplicates");
         var points = 0;
         for (var ix = 0; ix < duplicates.length; ix++) {
             var dup = duplicates[ix];
