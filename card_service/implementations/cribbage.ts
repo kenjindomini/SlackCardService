@@ -321,12 +321,6 @@ export class Cribbage extends CardGame<CribbagePlayer, StandardDeck> {
                     var scores = this.roundOverResetState();
                     response.message += `
                 ${scores}`;
-                    if (!is31)
-                        points++;
-                    if (team.addPoints(player, 1)) {
-                        response = this.setGameOver(team);
-                        break;
-                    }
                     var ros = this.roundOverStr();
                     response.message += `
                  ${ros}`;
