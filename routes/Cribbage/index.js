@@ -320,6 +320,21 @@ var CribbageRoutes;
             }
             return cards;
         };
+        Router.sendPlayerHand = function (player, hand, response, req) {
+            ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
+                .done(function (handPath) {
+                var imagePath = process.env.APP_HOST_URL + "/" + handPath;
+                response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
+                if (response.data.attachments.length == 0) {
+                    response.data.text = "You played all your cards!";
+                }
+                else {
+                    response.data.text = "";
+                }
+                console.log("Returning " + JSON.stringify(response));
+                Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
+            });
+        };
         Router.prototype.joinGame = function (req, res) {
             var player = Router.getPlayerName(req);
             var newPlayer = new cribbage_player_1.CribbagePlayer(player, new cribbage_hand_1.CribbageHand([]));
@@ -399,19 +414,7 @@ var CribbageRoutes;
                 try {
                     var player = Router.getPlayerName(req);
                     var hand = this.currentGame.getPlayerHand(player);
-                    ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
-                        .done(function (handPath) {
-                        var imagePath = process.env.APP_HOST_URL + "/" + handPath;
-                        response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
-                        if (response.data.attachments.length == 0) {
-                            response.data.text = "You played all your cards!";
-                        }
-                        else {
-                            response.data.text = "";
-                        }
-                        console.log("Returning " + JSON.stringify(response));
-                        Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
-                    });
+                    Router.sendPlayerHand(player, hand, response, req);
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
