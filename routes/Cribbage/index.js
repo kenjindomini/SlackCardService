@@ -390,7 +390,7 @@ var CribbageRoutes;
             }
             Router.sendResponse(response, res);
         };
-        Router.prototype.sendPlayerHand = function (player, hand, response, res) {
+        Router.prototype.sendPlayerHand = function (player, hand, response, req) {
             console.log("calling makeHandImage");
             ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                 .done(function (handPath) {
@@ -415,7 +415,7 @@ var CribbageRoutes;
                 try {
                     var player = Router.getPlayerName(req);
                     var hand = this.currentGame.getPlayerHand(player);
-                    this.sendPlayerHand(player, hand, response, res);
+                    this.sendPlayerHand(player, hand, response, req);
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);

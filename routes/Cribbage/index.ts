@@ -393,7 +393,7 @@ export module CribbageRoutes {
             Router.sendResponse(response, res);
         }
 
-        private sendPlayerHand(player:string, hand:CribbageHand, response:CribbageResponse, res:Response):void {
+        private sendPlayerHand(player:string, hand:CribbageHand, response:CribbageResponse, req:Request):void {
             console.log("calling makeHandImage");
             ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                 .done(function(handPath:string) {
@@ -419,7 +419,7 @@ export module CribbageRoutes {
                 try {
                     var player = Router.getPlayerName(req);
                     var hand:CribbageHand = this.currentGame.getPlayerHand(player);
-                    this.sendPlayerHand(player, hand, response, res);
+                    this.sendPlayerHand(player, hand, response, req);
                     //ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
                     //    .done(function(handPath:string) {
                     //        var imagePath = `${process.env.APP_HOST_URL}/${handPath}`;
