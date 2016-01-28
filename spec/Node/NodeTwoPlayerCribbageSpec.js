@@ -79,5 +79,22 @@ describe("Integration test the Cribbage game between two players", function () {
         });
         async.series(series, done);
     });
+    it("is able to show a player's cards", function (done) {
+        var runShowHands = false;
+        if (runShowHands) {
+            var agent = request(this.app);
+            process.env.TMP_CARDS_PATH = "../../public";
+            var series = joinGameAndBeginSeries(agent).concat(function (cb) {
+                agent.get(app_1.CribbageRoutePrefix + index_1.CribbageRoutes.Routes.showHand)
+                    .query({ token: "" + Tokens.showHand, user_name: PeterGriffin.name })
+                    .expect(200)
+                    .end(cb);
+            });
+            async.series(series, done);
+        }
+        else {
+            done();
+        }
+    });
 });
 //# sourceMappingURL=NodeTwoPlayerCribbageSpec.js.map
