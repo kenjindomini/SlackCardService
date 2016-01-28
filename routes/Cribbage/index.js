@@ -392,6 +392,19 @@ var CribbageRoutes;
         };
         Router.prototype.sendPlayerHand = function (player, hand, response, res) {
             console.log("calling makeHandImage");
+            ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
+                .done(function (handPath) {
+                var imagePath = process.env.APP_HOST_URL + "/" + handPath;
+                response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
+                if (response.data.attachments.length == 0) {
+                    response.data.text = "You played all your cards!";
+                }
+                else {
+                    response.data.text = "";
+                }
+                console.log("Returning " + JSON.stringify(response));
+                Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
+            });
         };
         Router.prototype.showHand = function (req, res) {
             var response = Router.makeResponse(200, "creating your hand's image...");
@@ -402,24 +415,7 @@ var CribbageRoutes;
                 try {
                     var player = Router.getPlayerName(req);
                     var hand = this.currentGame.getPlayerHand(player);
-                    ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
-                        .done(function (handPath) {
-                        var imagePath = process.env.APP_HOST_URL + "/" + handPath;
-                        response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
-                        if (response.data.attachments.length == 0) {
-                            response.data.text = "You played all your cards!";
-                        }
-                        else {
-                            response.data.text = "";
-                        }
-                        console.log("Returning " + JSON.stringify(response));
-                        Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
-                        setTimeout(function () {
-                            if (fs.existsSync(handPath)) {
-                                fs.unlinkSync(handPath);
-                            }
-                        }, 3000);
-                    });
+                    this.sendPlayerHand(player, hand, response, res);
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
