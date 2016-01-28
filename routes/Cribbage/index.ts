@@ -393,22 +393,22 @@ export module CribbageRoutes {
             Router.sendResponse(response, res);
         }
 
-        private sendPlayerHand(player:string, hand:CribbageHand, response:CribbageResponse, req:Request):void {
-            console.log("calling makeHandImage");
-            ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
-                .done(function(handPath:string) {
-                    var imagePath = `${process.env.APP_HOST_URL}/${handPath}`;
-                    response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
-                    if (response.data.attachments.length == 0) {
-                        response.data.text = "You played all your cards!";
-                    }
-                    else {
-                        response.data.text = "";
-                    }
-                    console.log(`Returning ${JSON.stringify(response)}`);
-                    Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
-                });
-        }
+        //private sendPlayerHand(player:string, hand:CribbageHand, response:CribbageResponse, req:Request):void {
+        //    console.log("calling makeHandImage");
+        //    ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
+        //        .done(function(handPath:string) {
+        //            var imagePath = `${process.env.APP_HOST_URL}/${handPath}`;
+        //            response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
+        //            if (response.data.attachments.length == 0) {
+        //                response.data.text = "You played all your cards!";
+        //            }
+        //            else {
+        //                response.data.text = "";
+        //            }
+        //            console.log(`Returning ${JSON.stringify(response)}`);
+        //            Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
+        //        });
+        //}
 
         showHand(req:Request, res:Response) {
             var response = Router.makeResponse(200, "creating your hand's image...");
@@ -419,20 +419,20 @@ export module CribbageRoutes {
                 try {
                     var player = Router.getPlayerName(req);
                     var hand:CribbageHand = this.currentGame.getPlayerHand(player);
-                    this.sendPlayerHand(player, hand, response, req);
-                    //ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
-                    //    .done(function(handPath:string) {
-                    //        var imagePath = `${process.env.APP_HOST_URL}/${handPath}`;
-                    //        response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
-                    //        if (response.data.attachments.length == 0) {
-                    //            response.data.text = "You played all your cards!";
-                    //        }
-                    //        else {
-                    //            response.data.text = "";
-                    //        }
-                    //        console.log(`Returning ${JSON.stringify(response)}`);
-                    //        Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
-                    //    });
+                    //this.sendPlayerHand(player, hand, response, req);
+                    ImageConvert.makeHandImage(hand, player, process.env.TMP_CARDS_PATH)
+                        .done(function(handPath:string) {
+                            var imagePath = `${process.env.APP_HOST_URL}/${handPath}`;
+                            response.data.attachments = [new CribbageResponseAttachment("", "", imagePath)];
+                            if (response.data.attachments.length == 0) {
+                                response.data.text = "You played all your cards!";
+                            }
+                            else {
+                                response.data.text = "";
+                            }
+                            console.log(`Returning ${JSON.stringify(response)}`);
+                            Router.sendDelayedResponse(response.data, Router.getResponseUrl(req));
+                        });
                 }
                 catch (e) {
                     response = Router.makeResponse(500, e);
